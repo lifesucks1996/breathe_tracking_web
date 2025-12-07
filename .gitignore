@@ -1,0 +1,6 @@
+# Ignorar llaves secretas y archivos de sistema firebase
+
+serviceAccountkey.json
+**/serviceAccountkey.json
+.DS_Store
+Thumbs.db
