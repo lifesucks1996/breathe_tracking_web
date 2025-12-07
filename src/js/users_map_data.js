@@ -1,109 +1,173 @@
 /**
- * Autor: Marc Vilagrosa
- * Descripción: Simulación de datos de sensores y cálculos matemáticos de contaminación basados en proximidad geográfica.
- * Fecha: 2025
+ * js/users_map_data.js
+ * Descarga datos y normaliza la escala dinámicamente según el gas seleccionado.
  */
 
-/**
- * Archivo: js/users_map_data.js
- * Propósito: Simular datos y calcular valores basados en proximidad (Interpolación simple).
- */
+// 1. CONFIGURACIÓN (Pon tus claves reales)
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+    apiKey: "PON_TU_API_KEY_AQUI", 
+    authDomain: "biometria-g3.firebaseapp.com",
+    projectId: "biometria-g3",
+    storageBucket: "biometria-g3.appspot.com",
+    messagingSenderId: "TU_SENDER_ID",
+    appId: "TU_APP_ID"
+};
 
-// --- DATOS DE MAPA DE CALOR (Igual que antes) ---
-const simulatedO3Data = [
-    [38.9660, -0.1850, 0.40], [38.9675, -0.1815, 0.50],
-    [38.9920, -0.1650, 0.90], [38.9880, -0.1700, 0.85],
-    [38.9850, -0.1750, 0.75], [38.9550, -0.2000, 0.30],
-    [38.9700, -0.1900, 0.60], [38.9600, -0.1950, 0.25],
-    [38.9750, -0.1880, 0.45], [38.9500, -0.1800, 0.10],
-    [38.9620, -0.1830, 0.60], [38.9690, -0.1780, 0.55],
-    [38.9730, -0.1910, 0.35], [38.9800, -0.1600, 0.95]
-];
+let db = null;
+let auth = null;
+let globalDatosCache = []; // Datos crudos para los pines
 
-const simulatedCO2Data = [
-    [38.9665, -0.1840, 0.95], [38.9655, -0.1820, 0.88],
-    [38.9700, -0.1855, 0.70], [38.9720, -0.1750, 0.55],
-    [38.9640, -0.1790, 0.65], [38.9900, -0.1680, 0.20],
-    [38.9530, -0.1950, 0.35], [38.9800, -0.1720, 0.45],
-    [38.9580, -0.1800, 0.15], [38.9780, -0.1800, 0.50]
-];
+// Inicialización
+if (typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+        auth = firebase.auth();
+        console.log("✅ Firebase Data: Inicializado.");
+    } catch (e) {
+        console.error("❌ Error inicializando Firebase:", e);
+    }
+}
 
-// --- FUNCION MATEMÁTICA PARA "SENTIR" EL MAPA ---
+// Login Anónimo
+window.inicializarFirebase = function(alEstarListo) {
+    if (!auth) return;
+    auth.signInAnonymously().then((cred) => {
+        if(alEstarListo) alEstarListo(cred.user);
+    }).catch(e => console.error("Error Auth:", e));
+};
 
-/**
- * cálculo: Float, Float, String -> calculatePollutionAtLocation() -> String 
- */
-function calculatePollutionAtLocation(lat, lng, type) {
-    let dataSet = (type === 'O3') ? simulatedO3Data : simulatedCO2Data;
-    let totalInfluence = 0;
-    let count = 0;
+// --- OBTENCIÓN DE DATOS INTELIGENTE ---
+window.obtenerDatosDelSensor = async function(fechaISO, tipoGas) {
+    const partes = fechaISO.split('-'); 
+    const fechaFormateada = `${partes[2]}-${partes[1]}-${partes[0]}`; 
     
-    // Radio de influencia (aprox 1km en grados lat/lon para esta zona)
-    const influenceRadius = 0.015; 
+    // IDs Dinámicos: Funcionarán para CO, SO2, NO2... lo que sea que selecciones
+    const idDocumentoMapa = `${tipoGas}_${fechaFormateada}`;
+    const idDocumentoConfig = tipoGas; 
 
-    dataSet.forEach(point => {
-        const pLat = point[0];
-        const pLng = point[1];
-        const intensity = point[2];
+    console.log(`📡 Buscando configuración para gas: ${tipoGas}`);
 
-        // Distancia euclidiana simple (suficiente para áreas pequeñas)
-        const dist = Math.sqrt(Math.pow(lat - pLat, 2) + Math.pow(lng - pLng, 2));
+    try {
+        let configGradiente = null;
+        let unidad = "ppm"; 
+        let maximoEscala = 100; // Valor de seguridad
 
-        if (dist < influenceRadius) {
-            // Si está dentro del radio, añadimos valor.
-            // Cuanto más cerca (dist es pequeño), más valor.
-            let weight = 1 - (dist / influenceRadius); 
-            totalInfluence += intensity * weight;
-            count++;
+        // A) LEER LA CONFIGURACIÓN DEL GAS (Tipo_Gas)
+        try {
+            const docConfig = await db.collection("Tipo_Gas").doc(idDocumentoConfig).get();
+            if (docConfig.exists) {
+                const data = docConfig.data();
+                
+                // 1. Obtener Unidad
+                if (data.Umbrales && data.Umbrales.Unidad) {
+                    unidad = data.Umbrales.Unidad;
+                }
+                
+                // 2. Obtener Niveles para calcular colores y escala
+                if (data.Umbrales && data.Umbrales.niveles) {
+                    const niveles = data.Umbrales.niveles;
+                    
+                    configGradiente = procesarColoresDeBBDD(niveles);
+                    
+                    // AQUÍ ESTÁ LA CLAVE: Calculamos el máximo para ESTE gas específico
+                    maximoEscala = calcularMaximoDeLaBBDD(niveles);
+                    console.log(`📏 Escala calculada para ${tipoGas}: 0 - ${maximoEscala} ${unidad}`);
+                }
+            }
+        } catch (err) {
+            console.warn("⚠️ Error leyendo config del gas, usando valores por defecto.");
+        }
+
+        // B) LEER LOS PUNTOS (Mapas_Diarios)
+        const docMapa = await db.collection("Mapas_Diarios").doc(idDocumentoMapa).get();
+
+        if (!docMapa.exists) {
+            console.warn(`❌ No hay mapa para ${idDocumentoMapa}`);
+            globalDatosCache = [];
+            return { puntos: [], gradiente: configGradiente, unidad: unidad };
+        }
+
+        const dataMapa = docMapa.data();
+        const arrayPuntos = dataMapa.Puntos_array || [];
+
+        // C) NORMALIZAR PUNTOS
+        // Convertimos el valor real (ej: 5000 CO2) a intensidad (0.0-1.0) usando el máximo calculado
+        const puntosProcesados = arrayPuntos.map(p => {
+            let valorReal = parseFloat(p.valor);
+            let intensidad = valorReal / maximoEscala;
+            
+            // Tope visual en 1.0 (Rojo intenso)
+            if (intensidad > 1.0) intensidad = 1.0; 
+            
+            return [
+                parseFloat(p.lat),
+                parseFloat(p.lng),
+                intensidad 
+            ];
+        });
+
+        // Guardamos originales para los pines
+        globalDatosCache = arrayPuntos.map(p => [parseFloat(p.lat), parseFloat(p.lng), parseFloat(p.valor)]);
+
+        return {
+            puntos: puntosProcesados,
+            gradiente: configGradiente,
+            unidad: unidad
+        };
+
+    } catch (error) {
+        console.error("❌ Error general:", error);
+        return { puntos: [], gradiente: null, unidad: "ppm" };
+    }
+};
+
+// --- FUNCIONES AUXILIARES ---
+
+// Busca el valor más alto en los umbrales de la BBDD
+function calcularMaximoDeLaBBDD(niveles) {
+    let maximo = 0;
+    niveles.forEach(nivel => {
+        if (nivel.max && nivel.max > maximo) maximo = nivel.max;
+        if (nivel.min && nivel.min > maximo) maximo = nivel.min;
+    });
+    return maximo > 0 ? maximo : 100;
+}
+
+// Genera el gradiente de colores
+function procesarColoresDeBBDD(niveles) {
+    let gradiente = {};
+    const mapaColores = { 
+        'verde': 'green', 'amarillo': 'yellow', 'rojo': 'red', 
+        'naranja': 'orange', 'morado': 'purple', 'violeta': 'purple' 
+    };
+    
+    niveles.forEach((nivel, index) => {
+        let stop = (index + 1) / niveles.length; 
+        let c = nivel.color ? nivel.color.toLowerCase() : 'blue';
+        gradiente[stop.toFixed(2)] = mapaColores[c] || c;
+    });
+    return Object.keys(gradiente).length > 0 ? gradiente : null;
+}
+
+// Cálculo para los pines (Usa valor real)
+window.calcularContaminacionEnUbicacion = function(lat, lng) {
+    if (!globalDatosCache || globalDatosCache.length === 0) return 0;
+    let totalVal = 0;
+    let totalPeso = 0;
+    const radio = 0.008; 
+
+    globalDatosCache.forEach(pt => {
+        const d = Math.sqrt(Math.pow(lat - pt[0], 2) + Math.pow(lng - pt[1], 2));
+        if (d < radio) {
+            let peso = 1 / (d + 0.0001);
+            totalVal += pt[2] * peso;
+            totalPeso += peso;
         }
     });
 
-    // Valor base ambiental (para que nunca sea 0 absoluto)
-    let baseValue = 0.15; 
-    
-    // Si está cerca de muchos puntos, promediamos un poco, pero sumamos base
-    let result = baseValue + (count > 0 ? (totalInfluence / Math.max(1, count * 0.5)) : 0);
-    
-    // Limitar entre 0 y 1
-    return Math.min(Math.max(result, 0), 1).toFixed(2);
-}
-
-
-// --- OBTENER DETALLES ---
-
-/**
- * simulador: Float, Float -> getPinDetails() -> Object
- */
-function getPinDetails(lat, lng) {
-    // 1. Calculamos Ozono (0 a 1)
-    const valO3 = calculatePollutionAtLocation(lat, lng, 'O3');
-    
-    // 2. Calculamos CO2 REAL usando tu función de mapa de calor
-    // La función devuelve de 0.0 a 1.0.
-    const rawCO2 = calculatePollutionAtLocation(lat, lng, 'CO2');
-
-    // 3. Escalamos el CO2 para que encaje en la barra de 0 a 50
-    // Si el mapa dice 0.5 (medio contaminado), la barra mostrará 25.
-    const valCO2_Scaled = (rawCO2 * 50).toFixed(0);
-    
-    // 4. Temperatura simulada
-    const valTemp = (20 + (Math.random() * 5) + (valO3 * 5)).toFixed(1); 
-
-    return {
-        ozono: valO3, 
-        // Devolvemos el valor del CO2 en la propiedad 'radiacion' 
-        // para que users_map.js lo pinte en la barra correcta sin tocar ese archivo.
-        radiacion: valCO2_Scaled,
-        temperatura: valTemp,
-        ultimasMediciones: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-    };
-}
-
-/**
- * data: String -> getContaminantData() -> Array
- */
-function getContaminantData(type) {
-    if (type === 'O3') return simulatedO3Data;
-    if (type === 'CO2') return simulatedCO2Data; 
-    return [];
-}
+    if (totalPeso === 0) return 0;
+    return parseFloat((totalVal / totalPeso).toFixed(2));
+};
