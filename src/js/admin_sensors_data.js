@@ -40,6 +40,25 @@ const adminSensorsData = [
         lastConnection: '15:10',
         hasIncident: false,
         coords: [38.9900, -0.1600]
+    },
+    // --- NUEVOS SENSORES INACTIVOS ---
+    {
+        id: 'OFF_99',
+        name: 'Sensor OFF_99',
+        location: 'Almacén Municipal',
+        lastConnection: 'Hace 12 días',
+        hasIncident: false,
+        active: false, // Inactivo
+        coords: [38.9600, -0.1900]
+    },
+    {
+        id: 'OLD_00',
+        name: 'Sensor OLD_00',
+        location: 'Grao de Gandia (Zona Norte)',
+        lastConnection: 'Sin señal',
+        hasIncident: false,
+        active: false, // Inactivo
+        coords: [38.9950, -0.1550]
     }
 ];
 

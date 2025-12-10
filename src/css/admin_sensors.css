@@ -297,3 +297,34 @@ body {
     background-color: #ff4d4f; /* Rojo para marcadores con incidencia */
     border-color: #ffe0e0;
 }
+
+/* --- ESTILOS PARA SENSORES INACTIVOS --- */
+.sensor-item.inactive {
+    background-color: #f4f4f4; /* Fondo grisáceo */
+    border-color: #ddd;
+    opacity: 0.8;
+}
+
+.sensor-item.inactive .sensor-icon {
+    color: #999; /* Icono gris */
+}
+
+.sensor-item.inactive h4 {
+    color: #777; /* Texto título apagado */
+}
+
+.sensor-item.inactive .button-report {
+    background-color: #999; /* Botón gris */
+    pointer-events: none;   /* No clickable si quieres, o déjalo clickable */
+}
+
+/* Etiqueta opcional para inactivos */
+.inactive-tag {
+    font-size: 0.75em;
+    background-color: #ddd;
+    color: #666;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: normal;
+}

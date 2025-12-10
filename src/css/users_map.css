@@ -7,13 +7,76 @@ body {
     overflow: hidden; 
     display: flex;
     flex-direction: column;
+    margin: 0;
 }
 
-/* Aseguramos que el header y el footer no se encojan */
-.main-header, .main-footer-landing {
+/* 2. PEGA ESTO A CONTINUACIÓN (Sustituye cualquier cosa de .main-header que tuvieras ahí) */
+
+/* =================== HEADER / ENCABEZADO =================== */
+.main-header {
+    display: flex;                  /* Flexbox para alinear */
+    justify-content: space-between; /* Logo a un lado, botón al otro */
+    align-items: center;            /* CENTRADO VERTICAL PERFECTO */
+    padding: 0 30px;                /* Margen lateral (aire) */
+    height: 90px;                   /* Altura fija */
+    background-color: #1A2E44;      /* Color de fondo azul oscuro */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombra suave */
+    
+    /* Propiedades de estructura */
     flex-shrink: 0;
-    z-index: 50; /* Asegurar que queden por encima si algo se mueve */
+    z-index: 50;
+    box-sizing: border-box;
 }
+
+/* Alineación de la caja del logo */
+.logo {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+/* Tamaño de la imagen del logo */
+.logo img {
+    height: 35px;       /* Altura controlada para que no sea gigante */
+    width: auto;        /* Mantiene proporción */
+    object-fit: contain;
+}
+
+/* Contenedor de botones derecha (Icono user + Cerrar Sesión) */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Separación entre elementos */
+}
+
+/* Icono de usuario */
+.nav-icon {
+    font-size: 1.6em;
+    color: rgba(255,255,255,0.8);
+    transition: color 0.3s;
+    display: flex; /* Para centrar el icono en sí mismo */
+}
+.nav-icon:hover { color: #fff; }
+
+/* Botón Cerrar Sesión (Estilo Ghost) */
+.nav-button-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-family: var(--font-primary, sans-serif);
+    transition: all 0.3s ease;
+}
+
+.nav-button-ghost:hover {
+    border-color: #fff;
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* =================== FIN HEADER =================== */
 
 /* --- Contenedor Principal (El cuerpo del mapa) --- */
 .main-container {
