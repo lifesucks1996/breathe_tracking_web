@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Sensor - Breathe Tracking</title>
 
-    <!-- Estilos globales y específicos -->
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -13,53 +12,42 @@
 </head>
 <body>
 
-    <!-- Cabecera con logo y navegación -->
     <header class="main-header">
         <div class="logo">
             <img src="images/logo-breathe-tracking.png" alt="Breathe Tracking Logo">
         </div>
         
         <nav class="header-nav">
-            <!-- Volver a listado de sensores -->
             <a href="admin_sensors.html" class="nav-button nav-button-ghost">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
-            <!-- Cerrar sesión -->
             <a href="index.html" class="nav-button nav-button-ghost">Cerrar Sesión</a>
         </nav>
     </header>
 
-    <!-- Contenido principal dividido en dos paneles -->
     <main class="main-content-detail">
 
-        <!-- Panel izquierdo: detalles del sensor -->
         <section class="sensor-info-panel">
 
-            <!-- Nombre del sensor -->
             <h2 id="sensor-detail-title">Sensor...</h2>
 
-            <!-- Bloque: ubicación y estado del sensor -->
             <div class="info-block block-location">
                 <div class="location-header">
                     <h3>Ubicación Actual</h3>
-                    <!-- Botón para apagar sensor -->
                     <button class="button-danger compact-apagar">Apagar</button> 
                 </div>
                 
-                <!-- Última conexión y estado de batería -->
                 <div class="status-row">
                     <p id="last-connection-info">--</p>
                     <p id="battery-status-text">--</p>
                 </div>
                 
-                <!-- Ubicación actual y promedio -->
                 <div class="address-row">
                     <p class="location-text main-location" id="current-location">--</p>
                     <p class="location-text avg-location" id="avg-location">--</p>
                 </div>
             </div>
 
-            <!-- Bloque: mediciones actuales -->
             <div class="info-block block-point-4">
                 <div class="point-header">
                     <h3>Mediciones Actuales</h3>
@@ -68,80 +56,90 @@
 
                 <p class="point-location" id="point-location-text">--</p>
             
-                <!-- Lectura de ozono -->
-                <div class="slider-display">
-                    <label>Ozono</label>
-                    <input type="range" min="0" max="1" step="0.1" disabled>
-                    <span id="ozono-value">--ppm</span>
-                </div>
-            
-                <!-- Lectura de CO2 -->
-                <div class="slider-display">
-                    <label>CO2</label>
-                    <input type="range" min="0" max="1000" step="10" disabled>
-                    <span id="co2-value">--ppm</span>
-                </div>
-            
-                <!-- Lectura de temperatura -->
-                <div class="slider-display">
-                    <label>Temperatura</label>
-                    <input type="range" min="0" max="40" disabled>
-                    <span id="temperatura-value">--°C</span>
+                <div class="pollutants-list">
+                    
+                    <div class="pollutant-row">
+                        <span class="pollutant-label">PM2.5</span>
+                        <div class="progress-bg">
+                            <div class="progress-fill fill-green" style="width: 25%;"></div>
+                        </div>
+                        <span class="pollutant-value">12 µg/m³</span>
+                    </div>
+
+                    <div class="pollutant-row">
+                        <span class="pollutant-label">PM10</span>
+                        <div class="progress-bg">
+                            <div class="progress-fill fill-green" style="width: 35%;"></div>
+                        </div>
+                        <span class="pollutant-value">25 µg/m³</span>
+                    </div>
+
+                    <div class="pollutant-row">
+                        <span class="pollutant-label">NO2</span>
+                        <div class="progress-bg">
+                            <div class="progress-fill fill-yellow" style="width: 55%;"></div>
+                        </div>
+                        <span class="pollutant-value">40 µg/m³</span>
+                    </div>
+
+                    <div class="pollutant-row">
+                        <span class="pollutant-label">SO2</span>
+                        <div class="progress-bg">
+                            <div class="progress-fill fill-green" style="width: 10%;"></div>
+                        </div>
+                        <span class="pollutant-value">5 µg/m³</span>
+                    </div>
+
+                    <div class="pollutant-row">
+                        <span class="pollutant-label">Ozono</span>
+                        <div class="progress-bg">
+                            <div class="progress-fill fill-green" style="width: 20%;"></div>
+                        </div>
+                        <span class="pollutant-value">0.3 ppm</span>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Bloque: histórico y opciones -->
             <div class="info-block activity-block">
                 <h3>Actividad</h3>
 
-                <!-- Selección del contaminante a graficar -->
                 <select id="activity-contaminant-select">
                     <option value="Ozono">Ozono</option>
-                    <option value="CO2">Dióxido de Carbono</option>
+                    <option value="PM25">PM2.5</option>
+                    <option value="PM10">PM10</option>
+                    <option value="NO2">NO2</option>
+                    <option value="SO2">SO2</option>
                 </select>
 
-                <!-- Espacio para la gráfica -->
                 <div class="chart-placeholder">
                     <p style="margin:0; font-size: 0.8em; color:#999;">Histórico de Lecturas</p>
                 </div>
-
-                <!-- Botones adicionales -->
-                <button class="button-primary full-width">Informe Completo</button>
-                <button class="button-primary full-width secondary-btn">Ver en Mapa</button>
-            </div>
+                
+                </div>
 
         </section>
 
-        <!-- Panel derecho: mapa del sensor -->
         <section class="sensor-map-panel">
-
             <div class="section-header-map">
                 <h2>Mapa del Sensor</h2>
-
-                <!-- Filtros de fecha y hora -->
                 <div class="filter-controls">
                     <div class="date-time-group">
                         <input type="date" value="2025-10-01">
                         <input type="time" value="00:00">
                         <input type="time" value="23:59">
                     </div>
-
-                    <!-- Botones de acción -->
                     <button class="button-primary">Punto Actual</button>
                     <button class="button-primary">Buscar</button>
                 </div>
             </div>
             
-            <!-- Contenedor del mapa -->
             <div id="detail-map" class="detail-map"></div>
-            
-            <!-- Botón para recolocar el pin del sensor -->
             <button class="button-primary change-pin-button">Cambiar Pin</button>
         </section>
 
     </main>
 
-    <!-- Scripts del mapa y datos -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="js/admin_sensors_data.js"></script>
     <script src="js/admin_sensor_detail.js"></script>
