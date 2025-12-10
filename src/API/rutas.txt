@@ -1,6 +1,0 @@
-activar Render registro -> https://api-a044.onrender.com/activar_render
-registro -> https://api-a044.onrender.com/register
-login-> https://api-a044.onrender.com/login
-activar Render newsletter -> GET https://api-envio-correos.onrender.com/
-correo verificacion -> POST https://api-envio-correos.onrender.com/email/verificacion
-correo recuperacion -> POST https://api-envio-correos.onrender.com/email/recuperacion
