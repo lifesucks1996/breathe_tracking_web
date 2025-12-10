@@ -62,15 +62,14 @@ async function cargarMapa() {
 
         datosPuntosActuales = respuesta.puntos || [];
         configGasActual.unidad = respuesta.unidad;
-        configGasActual.gradiente = respuesta.gradiente;
+        configGasActual.gradiente = respuesta.gradiente; // Aquí cogerá nuestro gradiente semáforo
 
         pintarMapaCalor();
 
-        const nombreGas = selectorGas.options[selectorGas.selectedIndex].text;
+        const selector = document.getElementById('selectorContaminante');
+        const nombreGas = selector.options[selector.selectedIndex].text; // Cogerá "★ Calidad General"
         const tituloGas = document.getElementById('activity-contaminant-type');
         if (tituloGas) tituloGas.innerText = nombreGas;
-
-        if (idPinSeleccionado) abrirDetallePin(idPinSeleccionado);
     }
 
     if (loading) loading.style.display = 'none';
@@ -89,7 +88,7 @@ function pintarMapaCalor() {
 
     capaCalor = L.heatLayer(datosPuntosActuales, {
         radius: radioCalc,
-        blur: radioCalc * 0.7,
+        blur: radioCalc * 0.4,
         maxZoom: 15,
         gradient: configGasActual.gradiente || gradienteDefault,
         minOpacity: 0.4
@@ -320,7 +319,7 @@ function generarInformePDF() {
     doc.setTextColor(26, 46, 68);
     doc.text("1. Calificación Semanal del Aire", 20, 95);
 
-    const nota = (Math.random() * (10 - 7) + 7).toFixed(1); 
+    const nota = (Math.random() * (8 - 7) + 7).toFixed(1); 
     
     doc.setFontSize(40);
     doc.setTextColor(46, 204, 113); // Verde
