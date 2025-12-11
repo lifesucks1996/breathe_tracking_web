@@ -59,19 +59,19 @@
                 <div class="pollutants-list">
                     
                     <div class="pollutant-row">
-                        <span class="pollutant-label">PM2.5</span>
+                        <span class="pollutant-label">CO2</span>
                         <div class="progress-bg">
                             <div class="progress-fill fill-green" style="width: 25%;"></div>
                         </div>
-                        <span class="pollutant-value">12 µg/m³</span>
+                        <span class="pollutant-value">12 ppm</span>
                     </div>
 
                     <div class="pollutant-row">
-                        <span class="pollutant-label">PM10</span>
+                        <span class="pollutant-label">CO</span>
                         <div class="progress-bg">
                             <div class="progress-fill fill-green" style="width: 35%;"></div>
                         </div>
-                        <span class="pollutant-value">25 µg/m³</span>
+                        <span class="pollutant-value">25 mg/m³</span>
                     </div>
 
                     <div class="pollutant-row">
@@ -89,7 +89,7 @@
                         </div>
                         <span class="pollutant-value">5 µg/m³</span>
                     </div>
-
+                    
                     <div class="pollutant-row">
                         <span class="pollutant-label">Ozono</span>
                         <div class="progress-bg">
@@ -105,44 +105,37 @@
                 <h3>Actividad</h3>
 
                 <select id="activity-contaminant-select">
-                    <option value="Ozono">Ozono</option>
-                    <option value="PM25">PM2.5</option>
-                    <option value="PM10">PM10</option>
-                    <option value="NO2">NO2</option>
-                    <option value="SO2">SO2</option>
+                    <option value="ozono">Ozono</option>
+                    <option value="co2">Dióxido de Carbono</option>
+                    <option value="co">Monóxido de Carbono</option>
+                    <option value="no2">Dióxido de Nitrógeno</option>
+                    <option value="so2">Dióxido de Azufre</option>
                 </select>
 
                 <div class="chart-placeholder">
-                    <p style="margin:0; font-size: 0.8em; color:#999;">Histórico de Lecturas</p>
+                    <canvas id="activityChart"></canvas>
                 </div>
                 
-                </div>
+            </div>
 
         </section>
 
         <section class="sensor-map-panel">
+
             <div class="section-header-map">
                 <h2>Mapa del Sensor</h2>
-                <div class="filter-controls">
-                    <div class="date-time-group">
-                        <input type="date" value="2025-10-01">
-                        <input type="time" value="00:00">
-                        <input type="time" value="23:59">
-                    </div>
-                    <button class="button-primary">Punto Actual</button>
-                    <button class="button-primary">Buscar</button>
                 </div>
-            </div>
             
             <div id="detail-map" class="detail-map"></div>
-            <button class="button-primary change-pin-button">Cambiar Pin</button>
-        </section>
+            
+            </section>
 
     </main>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="js/admin_sensors_data.js"></script>
-    <script src="js/admin_sensor_detail.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script type="module" src="js/admin_sensor_detail.js"></script>
 
 </body>
 </html>

@@ -15,14 +15,14 @@ body {
 
 .header-nav {
     display: flex;
-    gap: 20px; /* Esto crea el espacio de 20px entre "Volver" y "Cerrar Sesión" */
+    gap: 20px;
     align-items: center;
 }
 
 /* Layout Principal */
 .main-content-detail {
     display: flex;
-    flex: 1; /* Ocupa el espacio restante */
+    flex: 1;
     overflow: hidden;
     background-color: #f8f9fa;
 }
@@ -32,17 +32,16 @@ body {
     width: 420px;
     background-color: #fff;
     border-right: 1px solid var(--border-color);
-    overflow-y: auto; /* Scroll solo aquí */
+    overflow-y: auto;
     padding: 25px;
     box-sizing: border-box;
 }
 
-/* Estilo del Scrollbar (Para que no salga el gris feo) */
+/* Estilo del Scrollbar */
 .sensor-info-panel::-webkit-scrollbar { width: 8px; }
 .sensor-info-panel::-webkit-scrollbar-track { background: #f1f1f1; }
 .sensor-info-panel::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 .sensor-info-panel::-webkit-scrollbar-thumb:hover { background: #aaa; }
-
 
 .sensor-info-panel h2 {
     font-family: var(--font-headings);
@@ -70,14 +69,13 @@ body {
     margin: 0;
 }
 
-/* --- BLOQUE 1: UBICACIÓN (ARREGLADO) --- */
+/* --- BLOQUE 1: UBICACIÓN --- */
 .block-location {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* Cabecera del bloque: Título a la izq, botón a la derecha */
 .location-header {
     display: flex;
     justify-content: space-between;
@@ -85,7 +83,7 @@ body {
 }
 
 .compact-apagar {
-    background-color: #a92e2e; /* Rojo oscuro elegante */
+    background-color: #a92e2e;
     color: white;
     border: none;
     padding: 5px 15px;
@@ -94,7 +92,6 @@ body {
     cursor: pointer;
 }
 
-/* Fila de estado (Conexión y Batería) */
 .status-row {
     display: flex;
     justify-content: space-between;
@@ -106,7 +103,6 @@ body {
 #last-connection-info { color: #e74c3c; font-weight: 600; margin: 0; }
 #battery-status-text { color: #555; margin: 0; }
 
-/* Direcciones (Una debajo de otra, sin superponerse) */
 .address-row {
     display: flex;
     flex-direction: column;
@@ -124,8 +120,8 @@ body {
     margin: 0;
 }
 
-/* --- OTROS BLOQUES --- */
-.block-radio h3, .block-point-4 h3 { margin-bottom: 10px; }
+/* --- BLOQUE: MEDICIONES ACTUALES --- */
+.block-point-4 h3 { margin-bottom: 10px; }
 
 .point-header {
     display: flex;
@@ -134,35 +130,73 @@ body {
     margin-bottom: 5px;
 }
 .point-time { font-size: 0.9em; color: #999; }
-.point-location { font-size: 0.95em; color: #666; margin-top: 0; margin-bottom: 15px; }
+.point-location { font-size: 0.95em; color: #666; margin-top: 0; margin-bottom: 20px; }
 
-/* Sliders */
-.slider-display {
+/* Lista de contaminantes */
+.pollutants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pollutant-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    justify-content: space-between;
+    font-size: 0.9em;
 }
-.slider-display label { width: 85px; font-size: 0.9em; font-weight: 600; color: #555; }
-.slider-display input { flex-grow: 1; accent-color: var(--primary-dark-blue); }
-.slider-display span { width: 55px; text-align: right; font-weight: 700; color: var(--primary-dark-blue); font-size: 0.9em; }
 
-/* Actividad */
+.pollutant-label {
+    width: 60px;
+    font-weight: 700;
+    color: #555;
+}
+
+.progress-bg {
+    flex-grow: 1;
+    height: 8px;
+    background-color: #eee;
+    border-radius: 10px;
+    margin: 0 15px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+}
+
+.fill-green { background-color: #2ecc71; }
+.fill-yellow { background-color: #f1c40f; }
+.fill-red { background-color: #e74c3c; }
+
+.pollutant-value {
+    width: 75px;
+    text-align: right;
+    font-weight: 700;
+    color: var(--primary-dark-blue);
+}
+
+
+/* --- BLOQUE: ACTIVIDAD --- */
 .activity-block select {
     width: 100%;
     padding: 8px;
     border-radius: 6px;
     border: 1px solid #ddd;
     margin-bottom: 15px;
+    margin-top: 10px;
 }
+
+/* ESTILO ACTUALIZADO PARA EL GRÁFICO */
 .chart-placeholder {
-    width: 100%; height: 100px;
-    background: #f9f9f9; border: 1px dashed #ccc;
-    display: flex; justify-content: center; align-items: center;
-    margin-bottom: 15px; border-radius: 8px;
+    width: 100%;
+    height: 300px; /* Altura aumentada para el gráfico */
+    position: relative; /* Necesario para Chart.js */
+    background: #fff;
+    display: block; /* Quitado el flex center */
+    margin-bottom: 20px;
 }
-.full-width { width: 100%; margin-bottom: 8px; justify-content: center; }
-.secondary-btn { background-color: #fff; color: var(--primary-dark-blue); border: 1px solid var(--primary-dark-blue); }
 
 /* --- PANEL DERECHO: MAPA --- */
 .sensor-map-panel {
@@ -170,7 +204,7 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    padding: 0; /* Sin padding para que el mapa toque bordes si quieres */
+    padding: 0;
 }
 
 .section-header-map {
@@ -202,12 +236,11 @@ body {
 
 .sensor-map-panel .button-primary { padding: 6px 15px; font-size: 0.9em; }
 
-/* EL MAPA: Altura crítica */
 .detail-map {
-    flex-grow: 1; /* Ocupa todo el espacio restante */
+    flex-grow: 1;
     width: 100%;
     background-color: #e6f2ff;
-    min-height: 400px; /* Altura mínima de seguridad */
+    min-height: 400px;
 }
 
 .change-pin-button {
@@ -217,4 +250,3 @@ body {
     z-index: 1000;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
-
