@@ -76,7 +76,8 @@ function initIncidentsSystem() {
 }
 
 function updateNotificationsUI() {
-    // CORRECCIÓN: Filtrar usando el campo 'estado' == 'PENDIENTE'
+    // Filtrar usando el campo 'estado' == 'PENDIENTE'
+    // (Esto asegura que la UI sea coherente con lo que ves escrito)
     const pending = incidentsData.filter(i => i.estado === 'PENDIENTE');
     const resolved = incidentsData.filter(i => i.estado === 'RESUELTA');
     
@@ -156,16 +157,17 @@ window.toggleIncident = function(element) {
     element.parentElement.classList.toggle('expanded');
 };
 
-// CORRECCIÓN PRINCIPAL AQUÍ
+// --- AQUÍ ESTÁ EL CAMBIO IMPORTANTE ---
 window.resolveIncident = async function(docId) {
     if(!confirm('¿Confirmar que la incidencia ha sido solucionada?')) return;
     
     try {
         const incidentRef = doc(db, "incidencias", docId);
         
-        // Aquí actualizamos el campo 'estado' a 'RESUELTA'
+        // Actualizamos AMBOS campos para que todo cuadre
         await updateDoc(incidentRef, {
             estado: 'RESUELTA',
+            resuelta: true,       // <--- AHORA SÍ CAMBIA EL BOOLEANO TAMBIÉN
             fecha_resolucion: new Date()
         });
         
