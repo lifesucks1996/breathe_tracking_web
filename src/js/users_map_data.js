@@ -5,12 +5,13 @@
 
 // ========================= 1. CONFIGURACIÓN =========================
 const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-    apiKey: "PON_TU_API_KEY_AQUI", 
+     apiKey: "AIzaSyCbAVEYYdtSLmrH_opCM72G_G01QXPRZ48",
     authDomain: "biometria-g3.firebaseapp.com",
+    databaseURL: "https://biometria-g3-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "biometria-g3",
-    storageBucket: "biometria-g3.appspot.com",
-    messagingSenderId: "TU_SENDER_ID",
-    appId: "TU_APP_ID"
+    storageBucket: "biometria-g3.firebasestorage.app",
+    messagingSenderId: "817957103566",
+    appId: "1:817957103566:web:75c78a0a28f3380d092d9f"
 };
 
 let db = null;

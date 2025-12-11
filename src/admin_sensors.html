@@ -17,6 +17,11 @@
         </div>
         
         <nav class="header-nav">
+            <button id="btn-incidents" style="margin-right: 15px;" class="nav-button nav-button-ghost notification-btn" title="Ver Incidencias">
+                <i class="fas fa-bell"></i>
+                <span id="incident-badge" class="badge hidden"></span>
+            </button>
+
             <a href="index.html" class="nav-button nav-button-ghost">Cerrar Sesión</a>
         </nav>
     </header>
@@ -42,26 +47,38 @@
         <section class="admin-section sensor-map-section">
             <div class="section-header">
                 <h2>Mapa de Sensores</h2>
-                <div class="filter-controls">
-                    <div class="date-time-group">
-                        <label for="adminDate">Día</label>
-                        <input type="date" id="adminDate" value="2025-10-01">
-                        <label for="adminTimeFrom">Desde</label>
-                        <input type="time" id="adminTimeFrom" value="00:00">
-                        <label for="adminTimeTo">Hasta</label>
-                        <input type="time" id="adminTimeTo" value="23:59">
-                    </div>
-                    <button class="button-primary">Punto Actual</button>
-                    <button class="button-primary">Buscar</button>
-                </div>
             </div>
             
             <div id="admin-map" class="admin-map"></div>
         </section>
-    </main>>
+    </main>
+
+    <div id="modal-incidents" class="modal-backdrop hidden">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-circle"></i> Gestión de Incidencias</h3>
+                <button id="close-modal" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="pending">Pendientes <span id="count-pending">(0)</span></button>
+                <button class="tab-btn" data-tab="resolved">Histórico</button>
+            </div>
+
+            <div class="modal-body">
+                <div id="list-pending" class="incident-list active">
+                    <p class="empty-msg">No hay incidencias pendientes.</p>
+                </div>
+                
+                <div id="list-resolved" class="incident-list hidden">
+                    <p class="empty-msg">No hay incidencias resueltas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="js/admin_sensors_data.js"></script>
-    <script src="js/admin_sensors.js"></script>
+    <script type="module" src="js/admin_sensors.js"></script>
 </body>
 </html>

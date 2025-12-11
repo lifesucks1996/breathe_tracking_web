@@ -16,9 +16,9 @@
         <a href="../index.html" class="logo">
             <img src="../images/logo-breathe-tracking.png" alt="Breathe Tracking Logo" />
         </a>
-        <a href="../users_map.html" class="nav-button nav-button-ghost">Volver al mapa</a>
     </div>
     <nav class="header-nav">
+        <a href="../users_map.html" class="nav-button nav-button-ghost">Volver al mapa</a>
         <a href="login.html" class="nav-button nav-button-ghost">Iniciar Sesión</a>
     </nav>
 </header>
@@ -51,9 +51,6 @@
                     <div class="profile-label">Cód. Postal:</div>
                     <div class="profile-value" id="p-cp">Cargando...</div>
 
-                    <div class="profile-label">Teléfono:</div>
-                    <div class="profile-value" id="p-telefono">Cargando...</div>
-
                     <div class="profile-label">Email:</div>
                     <div class="profile-value" id="p-email">Cargando...</div>
 
@@ -74,16 +71,6 @@
         </div>
     </div>
 </main>
-
-<footer class="site-footer">
-    <div class="footer-inner">
-        <span>Copyright</span>
-        <span class="footer-sep"> | </span>
-        <span>FAQ</span>
-        <span class="footer-sep"> | </span>
-        <span>Enlaces a redes</span>
-    </div>
-</footer>
 
 <div id="modal-edit" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document">
@@ -107,12 +94,6 @@
                 <div class="field-error" data-for="cp"></div>
             </div>
 
-            <div class="form-row">
-                <label for="edit-telefono">Teléfono</label>
-                <input id="edit-telefono" name="telefono" type="tel" placeholder="111-111-111" />
-                <div class="field-error" data-for="telefono"></div>
-            </div>
-            
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" id="edit-cancel">Cancelar</button>
                 <button type="submit" class="btn-save" id="edit-save">Guardar cambios</button>

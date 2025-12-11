@@ -9,6 +9,8 @@ main.users-page {
   padding: 32px 24px 48px;
   background: #fff;
   flex: 1 1 auto;
+  /* Asegura que ocupe toda la altura si no hay footer */
+  min-height: 100vh; 
 }
 
 .users-container {
@@ -88,9 +90,7 @@ main.users-page {
 .btn-icon { width:18px; height:18px; display:inline-block; }
 .btn-icon.invert { filter: invert(1) brightness(2); }
 
-/* Footer */
-.site-footer { background: var(--primary-dark-blue); color: var(--text-light); padding: 18px 0; position: fixed; left:0; right:0; bottom:0; }
-.site-footer .footer-inner { max-width:1200px; margin:0 auto; display:flex; justify-content:center; gap:40px; align-items:center; }
+/* Estilos de Footer eliminados */
 
 .actions {
   display: flex;
@@ -98,8 +98,6 @@ main.users-page {
   gap: 10px;
   margin-top: 16px;
 }
-
-/* estilos de tabla eliminados, no se usan en perfil */
 
 .status-bar {
   display: none;

@@ -197,22 +197,35 @@ function abrirDetallePin(id) {
     document.getElementById('detail-pin-title').innerText = pin.nombre;
     document.getElementById('detail-direccion').innerText = pin.direccion;
 
+    // --- SIMULACIÓN DE HORA ---
+    // Generamos una fecha actual y le restamos entre 0 y 45 minutos aleatorios
+    const fechaSimulada = new Date();
+    fechaSimulada.setMinutes(fechaSimulada.getMinutes() - Math.floor(Math.random() * 45));
+    
+    // Formateamos a HH:MM (ej: 14:30)
+    const horas = fechaSimulada.getHours().toString().padStart(2, '0');
+    const minutos = fechaSimulada.getMinutes().toString().padStart(2, '0');
+    const horaTexto = `${horas}:${minutos}`;
+
+    // Insertamos la hora en el HTML
+    document.getElementById('detail-ultimas-mediciones').innerText = horaTexto;
+    // ------------------------------------------
+
     const txtVal = document.getElementById('ozono-value');
     txtVal.innerText = `${valor} ${configGasActual.unidad}`;
 
     const slider = document.getElementById('ozono-slider');
-    slider.max = valor > 50 ? 500 : 1;
+    slider.max = valor > 50 ? 500 : 1; // Ajuste dinámico simple
+    
+    // Pequeño truco visual: si el valor es muy bajo (ej 0.08), el slider se ve mejor ajustado
+    if(valor < 1) slider.max = 1;
+    else if(valor < 100) slider.max = 100;
+    
     slider.value = valor;
 
     document.getElementById('pin-list-view').style.display = 'none';
     document.getElementById('pin-detail-view').style.display = 'block';
 }
-
-window.mostrarListaPines = function() {
-    document.getElementById('pin-list-view').style.display = 'block';
-    document.getElementById('pin-detail-view').style.display = 'none';
-    idPinSeleccionado = null;
-};
 
 
 // ========================= *** BOTÓN ELIMINAR PIN *** =========================

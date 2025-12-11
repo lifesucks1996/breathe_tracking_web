@@ -1,21 +1,57 @@
 // src/js/admin_sensor_detail.js
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyCbAVEYYdtSLmrH_opCM72G_G01QXPRZ48",
+    authDomain: "biometria-g3.firebaseapp.com",
+    databaseURL: "https://biometria-g3-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "biometria-g3",
+    storageBucket: "biometria-g3.firebasestorage.app",
+    messagingSenderId: "817957103566",
+    appId: "1:817957103566:web:75c78a0a28f3380d092d9f"
+};
+
+let firebaseApp;
+let db;
+let sensorChart = null;
+
+try {
+    firebaseApp = initializeApp(FIREBASE_CONFIG);
+    db = getFirestore(firebaseApp);
+} catch (error) {
+    console.error("Error al inicializar Firebase.", error);
+}
+
+const HOURLY_LABELS = Array.from({ length: 24 }, (_, i) => 
+    `${i.toString().padStart(2, '0')}:00`
+);
+
 document.addEventListener('DOMContentLoaded', () => {
     initDetailMap();
     loadSensorData();
+
+    // Iniciar con Ozono por defecto
+    renderChart('Ozono');
+
+    const select = document.getElementById('activity-contaminant-select');
+    if (select) {
+        select.addEventListener('change', (e) => {
+            renderChart(e.target.value);
+        });
+    }
 });
 
 function initDetailMap() {
-    // Obtener posición
+    if (!sensorDetailData || !sensorDetailData.pathCoords) return;
     const center = sensorDetailData.pathCoords[sensorDetailData.pathCoords.length - 1];
-    
     const map = L.map('detail-map').setView(center, 16);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Icono personalizado
     const sensorIcon = L.divIcon({
         className: 'custom-div-icon',
         html: `<div class="leaflet-marker-icon sensor-marker" style="background-color: var(--primary-dark-blue); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-size: 1.2em;"><i class="fas fa-microchip"></i></div>`,
@@ -28,16 +64,12 @@ function initDetailMap() {
 }
 
 function loadSensorData() {
+    if (!sensorDetailData) return;
     const data = sensorDetailData;
-
-    // 1. Título
     document.getElementById('sensor-detail-title').textContent = data.name;
 
-    // 2. Ubicación y Estado
     const lastConnInfo = document.getElementById('last-connection-info');
-    if(lastConnInfo) {
-        lastConnInfo.innerHTML = `Última conex: <span style="color:#e74c3c">${data.lastConnection}</span>`;
-    }
+    if(lastConnInfo) lastConnInfo.innerHTML = `Última conex: <span style="color:#e74c3c">${data.lastConnection}</span>`;
     
     const battElem = document.getElementById('battery-status-text');
     if(battElem) {
@@ -55,36 +87,106 @@ function loadSensorData() {
     const avgLoc = document.getElementById('avg-location');
     if(avgLoc) avgLoc.textContent = data.avgLocation;
 
-    // --- AQUÍ ESTABA EL ERROR: Se ha eliminado toda referencia al RADIO ---
-
-    // 3. Mediciones (Ahora funciona porque el script no se rompe antes)
     const pLoc = document.getElementById('point-location-text');
     if(pLoc) pLoc.textContent = data.point4.location;
     
     const pTime = document.getElementById('point-time');
     if(pTime) pTime.textContent = `Hora: ${data.point4.time}`;
+}
 
-    // Seleccionamos los inputs del bloque de mediciones
-    const inputs = document.querySelectorAll('.block-point-4 input');
-    
-    if(inputs.length >= 3) {
-        const ozonoInput = inputs[0];
-        const co2Input = inputs[1];
-        const tempInput = inputs[2];
+// --- Lógica del Gráfico (SOLO LOS 5 QUE PEDISTE) ---
 
-        // Ozono
-        ozonoInput.value = data.point4.ozono;
-        const ozonoVal = document.getElementById('ozono-value');
-        if(ozonoVal) ozonoVal.textContent = data.point4.ozono + 'ppm';
-
-        // CO2
-        co2Input.value = data.point4.co2;
-        const co2Val = document.getElementById('co2-value');
-        if(co2Val) co2Val.textContent = data.point4.co2 + 'ppm';
-
-        // Temperatura
-        tempInput.value = data.point4.temperatura;
-        const tempVal = document.getElementById('temperatura-value');
-        if(tempVal) tempVal.textContent = data.point4.temperatura + '°C';
+function mapContaminantToId(uiName) {
+    // Asegúrate de que los <option value="..."> de tu HTML coincidan con los 'case'
+    // He puesto los casos tanto en minúscula como mayúscula por seguridad
+    switch (uiName) {
+        case 'Ozono': 
+        case 'ozono': return 'ozono';
+        
+        case 'CO2':
+        case 'co2': return 'co2';
+        
+        case 'CO':
+        case 'co': return 'co';
+        
+        case 'NO2':
+        case 'no2': return 'no2';
+        
+        case 'SO2':
+        case 'so2': return 'so2';
+        
+        default: return ''; 
     }
+}
+
+async function renderChart(contaminantType) {
+    const ctx = document.getElementById('activityChart')?.getContext('2d');
+    if (!ctx) return; 
+
+    let dataValues = [];
+    let unit = '';
+    let labelText = `Nivel de ${contaminantType}`;
+    let borderColor = '#95a5a6'; 
+    
+    const queryType = mapContaminantToId(contaminantType);
+    
+    switch (queryType) {
+        case 'ozono': borderColor = '#8A2BE2'; unit = 'ppm'; break;
+        case 'co2':   borderColor = '#32CD32'; unit = 'ppm'; break;
+        case 'co':    borderColor = '#FF8C00'; unit = 'mg/m³'; break;
+        case 'no2':   borderColor = '#E6A100'; unit = 'µg/m³'; break;
+        case 'so2':   borderColor = '#00BFFF'; unit = 'µg/m³'; break;
+        default:      borderColor = '#95a5a6';
+    }
+    
+    let bgColor = borderColor.replace('rgb', 'rgba').replace(')', ', 0.2)');
+    if (bgColor.startsWith('#')) bgColor = 'rgba(100, 100, 100, 0.2)';
+
+    if (db && queryType) {
+        try {
+            const docRef = doc(db, "datos_grafico", queryType); 
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                dataValues = data.valor || []; 
+            } else {
+                console.log(`No hay datos para ${queryType}`);
+            }
+        } catch (e) {
+            console.error("Error al consultar Firebase:", e);
+        }
+    }
+    
+    if (dataValues.length !== HOURLY_LABELS.length) {
+        dataValues = HOURLY_LABELS.map(() => null); 
+    }
+
+    if (sensorChart) sensorChart.destroy();
+
+    sensorChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: HOURLY_LABELS,
+            datasets: [{
+                label: labelText,
+                data: dataValues,
+                borderColor: borderColor,
+                backgroundColor: bgColor,
+                borderWidth: 2,
+                tension: 0.4,
+                fill: false,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            interaction: { mode: 'nearest', axis: 'x', intersect: false },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: unit } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
 }

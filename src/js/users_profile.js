@@ -39,14 +39,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const pNombre = document.getElementById('p-nombre');
     const pApellidos = document.getElementById('p-apellidos');
     const pCp = document.getElementById('p-cp'); 
-    const pTelefono = document.getElementById('p-telefono');
+    // const pTelefono eliminado
     const pEmail = document.getElementById('p-email');
 
     // Inputs del modal de edición
     const editNombre = document.getElementById('edit-nombre');
     const editApellidos = document.getElementById('edit-apellidos');
     const editCp = document.getElementById('edit-cp'); 
-    const editTelefono = document.getElementById('edit-telefono');
+    // const editTelefono eliminado
 
     // Botón de iniciar sesión para ocultarlo
     const loginLink = document.querySelector('.header-nav a[href="login.html"]');
@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
             pNombre.textContent = '—';
             pApellidos.textContent = '—';
             pCp.textContent = '—'; 
-            pTelefono.textContent = '—';
             pEmail.textContent = '—';
             document.getElementById('p-password').textContent = '••••••••';
             return;
@@ -86,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function () {
         pNombre.textContent = user.nombre || '—';
         pApellidos.textContent = user.apellidos || '—'; 
         pCp.textContent = user.cp || '—'; 
-        pTelefono.textContent = user.telefono || '—'; 
         pEmail.textContent = user.email || auth.currentUser?.email || '—'; 
         document.getElementById('p-password').textContent = '••••••••';
     }
@@ -96,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function () {
         editNombre.value = userData.nombre || '';
         editApellidos.value = userData.apellidos || '';
         editCp.value = userData.cp || ''; 
-        editTelefono.value = userData.telefono || ''; 
     }
 
 
@@ -165,10 +162,11 @@ document.addEventListener('DOMContentLoaded', function () {
             nombre: editNombre.value.trim(),
             apellidos: editApellidos.value.trim(),
             cp: editCp.value.trim(), 
-            telefono: editTelefono.value.trim(),
         };
         const validationValues = { ...payload };
         clearFieldErrors();
+        
+        // Asumiendo que validate() en users_edit.js no valida telefono si no está en el objeto
         if (!validate(validationValues)) {
             showStatus('Corrige los campos marcados antes de guardar.', 'warning');
             return;
@@ -189,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 nombre: payload.nombre,
                 apellidos: payload.apellidos,
                 cp: payload.cp, 
-                telefono: payload.telefono,
+                // telefono eliminado
                 email: auth.currentUser?.email || undefined,
                 uid: currentUserId,
                 updated_at: new Date(),
@@ -245,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.location.href = 'login.html'; 
                 }
             }, 1500); 
-        }
-    });
+        }
+    });
 
 });
