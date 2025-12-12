@@ -53,48 +53,46 @@
         <!-- ******* PANEL IZQUIERDO (lista y detalle de pines) ******* -->
         <div id="left-panel" class="left-panel">
 
-            <!-- Vista con la lista completa de pines -->
             <div id="pin-list-view">
                 <h3>Mis Puntos Guardados</h3>
 
-                <!-- Barra de búsqueda de direcciones -->
                 <div class="search-bar">
                     <input type="text" placeholder="Busca tus direcciones...">
                     <button><i class="fas fa-search"></i></button>
                 </div>
 
-                <!-- Contenedor donde se insertan dinámicamente los pines -->
+                <div id="empty-state" style="text-align: center; padding: 40px 20px; color: #666; display: none;">
+                    <i class="fas fa-map-marked-alt" style="font-size: 40px; color: #ccc; margin-bottom: 15px;"></i>
+                    <p>Aún no tienes ubicaciones guardadas.</p>
+                    <p style="font-size: 0.9em;">Haz clic en <strong>"Añadir Marcador"</strong> en el mapa para empezar.</p>
+                    <div style="margin-top: 20px; font-size: 20px; animation: bounce 2s infinite;">
+                        ⬇ </div>
+                </div>
+
                 <div id="pins-container" class="pins-container"></div>
             </div>
 
-            <!-- Vista de información detallada de un pin concreto -->
             <div id="pin-detail-view" style="display: none;">
                 <h3 id="detail-pin-title">Nombre del Lugar</h3>
 
-                <!-- Datos principales del pin seleccionado -->
                 <div class="pin-detail-item">
-                    <span>Dirección</span>
-                    <p id="detail-direccion">C/...</p>
+                    <span>Coordenadas</span> <p id="detail-direccion">--</p>
                 </div>
 
                 <div class="pin-detail-item">
-                    <span>Última lectura</span>
-                    <p id="detail-ultimas-mediciones">--:--</p>
+                    <span>Lectura del Sensor</span> <p id="detail-ultimas-mediciones">--:--</p>
                 </div>
 
-                <!-- Nivel medido del contaminante -->
                 <div class="slider-group">
                     <label>Nivel Actual</label>
                     <input type="range" id="ozono-slider" min="0" max="1" step="0.01" disabled>
                     <span id="ozono-value" style="font-weight: bold;">--</span>
                 </div>
 
-                <!-- Tipo de contaminante mostrado -->
                 <h4 class="activity-title">
                     Gas: <span id="activity-contaminant-type">--</span>
                 </h4>
 
-                <!-- Botones de acciones del pin -->
                 <div class="detail-actions">
                     <button id="btn-premium-report" class="button-premium">
                         <i class="fas fa-file-contract"></i> Informe Personalizado
@@ -104,7 +102,6 @@
                         <i class="fas fa-trash"></i> Eliminar</button>
                 </div>
 
-                <!-- Botón para volver a la lista de pines -->
                 <button class="back-to-list-button" onclick="window.mostrarListaPines()">← Volver a mis pines</button>
             </div>
         </div>

@@ -158,8 +158,9 @@ function crearPin(coords, nombre) {
         lat: coords.lat,
         lng: coords.lng,
         nombre,
+        
         direccion: `Lat: ${coords.lat.toFixed(4)}, Lng: ${coords.lng.toFixed(4)}`,
-        marker: L.marker([coords.lat, coords.lng]).addTo(mapa)
+        marker: L.marker([coords.lat, coords.lng]).addTo(mapa) // Usa tu configuración de iconos aquí
     };
 
     nuevoPin.marker.on('click', () => abrirDetallePin(id));
@@ -225,6 +226,21 @@ function abrirDetallePin(id) {
 
     document.getElementById('pin-list-view').style.display = 'none';
     document.getElementById('pin-detail-view').style.display = 'block';
+
+    // ========================= VOLVER A LISTA DE PINES =========================
+    window.mostrarListaPines = function() {
+    // 1. Ocultamos la vista de detalle
+    document.getElementById('pin-detail-view').style.display = 'none';
+    
+    // 2. Mostramos la vista de la lista
+    document.getElementById('pin-list-view').style.display = 'block';
+    
+    // 3. Reseteamos el pin seleccionado para evitar errores
+    idPinSeleccionado = null;
+    
+    // Opcional: Si quieres que al volver el mapa se aleje un poco para verlos todos:
+    // mapa.setView([38.9670, -0.1830], 13);
+};
 }
 
 
