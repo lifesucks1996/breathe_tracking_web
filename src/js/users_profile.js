@@ -1,6 +1,13 @@
 /**
- * Archivo: js/users_profile.js
- * Propósito: Gestionar la sesión (Auth) y cargar/guardar los datos de perfil (Firestore).
+ * @file users_profile.js
+ * @brief Gestor de sesión de usuario y manipulación de datos de perfil (CRUD).
+ * @details
+ * Este script actúa como el controlador principal de la página de perfil.
+ * Sus responsabilidades incluyen:
+ * 1. Escuchar cambios en la autenticación de Firebase (Login/Logout).
+ * 2. Recuperar datos del usuario desde Firestore (soportando búsqueda por UID o Email).
+ * 3. Renderizar la información en el DOM.
+ * 4. Gestionar el formulario de edición y guardar los cambios en la base de datos.
  */
 
 import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -8,6 +15,7 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { openModal, closeModal, validate, clearFieldErrors } from "./users_edit.js";
 
+// Configuración de conexión
 const firebaseConfig = {
     apiKey: "AIzaSyCbAVEYYdtSLmrH_opCM72G_G01QXPRZ48",
     authDomain: "biometria-g3.firebaseapp.com",
@@ -18,40 +26,47 @@ const firebaseConfig = {
     appId: "1:817957103566:web:75c78a0a28f3380d092d9f"
 };
 
-// Inicializa Firebase o reutiliza la instancia existente para evitar errores.
+// Inicialización Singleton (evita errores si el script se carga dos veces)
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Referencia global al UID del usuario actual
+// Variables de estado global para el contexto del usuario
 let currentUserId = null;
-let currentProfileDocId = null;
+let currentProfileDocId = null; // Almacena el ID real del documento (puede ser UID o Email)
 
 
 document.addEventListener('DOMContentLoaded', function () {
+    // 1. Referencias UI Generales
     const statusEl = document.getElementById('status');
-    const editForm = document.getElementById('editForm'); // Referencia al formulario del modal
+    const editForm = document.getElementById('editForm'); 
     const modalBackdrop = document.getElementById('modal-edit');
     const btnEdit = document.getElementById('btn-edit');
     const btnCancel = document.getElementById('edit-cancel');
 
-    // 2. Referencias a los elementos del DOM (Vista del perfil)
+    // 2. Referencias a los elementos de visualización (Solo lectura)
     const pNombre = document.getElementById('p-nombre');
     const pApellidos = document.getElementById('p-apellidos');
     const pCp = document.getElementById('p-cp'); 
-    // const pTelefono eliminado
     const pEmail = document.getElementById('p-email');
 
-    // Inputs del modal de edición
+    // 3. Referencias a Inputs del modal (Edición)
     const editNombre = document.getElementById('edit-nombre');
     const editApellidos = document.getElementById('edit-apellidos');
     const editCp = document.getElementById('edit-cp'); 
-    // const editTelefono eliminado
-
-    // Botón de iniciar sesión para ocultarlo
+    
+    // Referencia para control de navegación
     const loginLink = document.querySelector('.header-nav a[href="login.html"]');
 
-    /** Muestra un mensaje de estado. */
+    /**
+     * @brief Muestra un mensaje de retroalimentación visual al usuario.
+     * message:string, type:string -> showStatus() -> void
+     * * @details
+     * Hace visible la barra de estado con un color específico (info, success, error)
+     * y programa su ocultación automática tras 5 segundos.
+     * * @param message El texto a mostrar.
+     * @param type El tipo de alerta ('info', 'warning', 'error', 'success').
+     */
     function showStatus(message, type = 'info') {
         if (!statusEl) return;
         statusEl.textContent = message;
@@ -59,7 +74,10 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(hideStatus, 5000); // Ocultar después de 5 segundos
     }
 
-    /** Oculta el mensaje de estado. */
+    /**
+     * @brief Oculta la barra de estado inmediatamente.
+     * (void) -> hideStatus() -> void
+     */
     function hideStatus() {
         if (!statusEl) return;
         statusEl.className = 'status-bar';
@@ -67,12 +85,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * Renderiza los datos del perfil en la vista de la página.
-     * @param {Object} user - Objeto con los datos del usuario de Firestore.
+     * @brief Actualiza el DOM con los datos del usuario.
+     * user:Object -> renderProfile() -> void
+     * * @details
+     * Si el objeto usuario es válido, rellena los campos de texto.
+     * Si es null o undefined, muestra guiones (—) como placeholders.
+     * * @param user Objeto con las propiedades del usuario (nombre, apellidos, cp, email).
      */
     function renderProfile(user) {
         if (!user) {
-            // Si no hay datos, muestra placeholders o mensaje de error.
+            // Estado vacío / Cargando
             pNombre.textContent = '—';
             pApellidos.textContent = '—';
             pCp.textContent = '—'; 
@@ -82,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         hideStatus();
 
+        // Inyección de datos segura (prevención básica de XSS vía textContent)
         pNombre.textContent = user.nombre || '—';
         pApellidos.textContent = user.apellidos || '—'; 
         pCp.textContent = user.cp || '—'; 
@@ -89,22 +112,34 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('p-password').textContent = '••••••••';
     }
     
-    /** Rellena los campos del modal de edición con los datos actuales. */
+    /**
+     * @brief Prepara el formulario del modal con los valores actuales.
+     * userData:Object -> fillEditModal() -> void
+     * * @details
+     * Mapea los datos de la vista a los inputs del formulario para facilitar la edición.
+     */
     function fillEditModal(userData) {
         editNombre.value = userData.nombre || '';
         editApellidos.value = userData.apellidos || '';
         editCp.value = userData.cp || ''; 
     }
 
-
     /**
-     * Carga los datos del perfil desde Firestore usando el UID del usuario.
-     * @param {string} userId - El UID del usuario logueado.
+     * @brief Recupera el perfil desde Firestore con estrategia de doble búsqueda.
+     * userId:string -> loadUserProfileFromFirestore() -> Promise<Object|null>
+     * * @details
+     * Implementa una lógica de fallback para compatibilidad con registros antiguos:
+     * 1. Intenta buscar el documento por UID (Estándar actual).
+     * 2. Si no existe, intenta buscar por Email (Legacy).
+     * 3. Retorna los datos fusionados con el email actual de la sesión.
+     * * @param userId El UID del usuario autenticado.
+     * @return Promesa con los datos del usuario o null si hay error crítico.
      */
     async function loadUserProfileFromFirestore(userId) {
         currentUserId = userId;
         const emailKey = auth.currentUser?.email ? auth.currentUser.email.toLowerCase() : null;
 
+        // Función helper interna para intentar cargar un documento
         const tryLoad = async (docId) => {
             if (!docId) return null;
             const ref = doc(db, "Usuarios", docId);
@@ -114,13 +149,17 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         try {
+            // Intento 1: Búsqueda por UID
             let result = await tryLoad(userId);
+            
+            // Intento 2: Fallback a búsqueda por Email si falla el UID
             if (!result && emailKey) {
                 result = await tryLoad(emailKey);
             }
 
             if (result) {
                 currentProfileDocId = result.docId;
+                // Construcción del objeto final asegurando que el email esté presente
                 const userData = {
                     ...result.data,
                     email: auth.currentUser?.email || result.data.email,
@@ -129,10 +168,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 return userData;
             }
 
+            // Caso: Usuario autenticado pero sin documento en 'Usuarios'
             currentProfileDocId = null;
             console.warn("Documento de perfil no encontrado para:", userId, emailKey);
             showStatus('Perfil incompleto. Por favor, completa tus datos.', 'warning');
             return { email: auth.currentUser?.email };
+
         } catch (error) {
             console.error("Error al obtener el perfil de Firestore:", error);
             showStatus('Error al cargar el perfil. Por favor, revisa tus Reglas de Seguridad.', 'error');
@@ -140,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // --- Listeners de Interfaz ---
 
     btnEdit?.addEventListener('click', () => {
         clearFieldErrors();
@@ -154,7 +196,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    /** Maneja el envío y actualización del formulario de edición. */
+    /**
+     * @brief Manejador del envío del formulario de edición (Update).
+     * event:SubmitEvent -> (anon_async) -> void
+     * * @details
+     * 1. Recolecta y limpia los datos del formulario.
+     * 2. Valida los campos usando `users_edit.js`.
+     * 3. Determina el ID del documento a actualizar.
+     * 4. Escribe en Firestore (usando `merge: true` para no borrar otros campos).
+     * 5. Actualiza la vista local y cierra el modal.
+     */
     editForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -166,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const validationValues = { ...payload };
         clearFieldErrors();
         
-        // Asumiendo que validate() en users_edit.js no valida telefono si no está en el objeto
+        // Validación de negocio (longitud, formato CP, etc.)
         if (!validate(validationValues)) {
             showStatus('Corrige los campos marcados antes de guardar.', 'warning');
             return;
@@ -177,9 +228,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Determinar clave primaria (preferencia por ID existente, sino UID)
         const primaryDocId = currentProfileDocId || currentUserId;
         const emailDocId = auth.currentUser?.email ? auth.currentUser.email.toLowerCase() : null;
         const docRef = doc(db, "Usuarios", primaryDocId);
+        
         try {
             showStatus('Guardando cambios...', 'info');
             
@@ -187,22 +240,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 nombre: payload.nombre,
                 apellidos: payload.apellidos,
                 cp: payload.cp, 
-                // telefono eliminado
                 email: auth.currentUser?.email || undefined,
                 uid: currentUserId,
                 updated_at: new Date(),
             };
 
+            // Escritura principal
             await setDoc(docRef, docPayload, { merge: true });
 
+            // Mantenimiento de integridad: Si existe un doc con ID email, sincronizarlo también
             if (emailDocId && emailDocId !== primaryDocId) {
                 await setDoc(doc(db, "Usuarios", emailDocId), docPayload, { merge: true });
             }
             
+            // Recargar datos para confirmar la escritura
             const updatedData = await loadUserProfileFromFirestore(currentUserId);
             renderProfile(updatedData);
 
-            closeModal(); // Cierra el modal después de guardar
+            closeModal(); 
             showStatus('¡Perfil actualizado con éxito!', 'success');
             
         } catch (error) {
@@ -212,17 +267,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    // 3. Manejador del botón de cerrar sesión (Uso de 'signOut' global)
+    // 3. Manejador del botón de cerrar sesión
     document.getElementById('btn-logout')?.addEventListener('click', async () => {
         try {
-            await signOut(auth); // Cierra la sesión en Firebase
+            await signOut(auth); // Cierra la sesión en Firebase y dispara onAuthStateChanged
         } catch (error) {
             showStatus('Error al cerrar sesión: ' + error.message, 'error');
         }
     });
 
 
-    // 4. PUNTO DE ENTRADA: Monitorear el estado de autenticación (Uso de 'onAuthStateChanged' global)
+    // 4. PUNTO DE ENTRADA PRINCIPAL: Monitor de Estado de Autenticación
+    /**
+     * @brief Listener global de cambios en la sesión de Firebase.
+     * user:User|null -> (anon_async) -> void
+     * * @details
+     * Se dispara automáticamente al cargar la página o al hacer login/logout.
+     * - Si hay usuario: Carga el perfil desde Firestore.
+     * - Si no hay usuario: Muestra estado vacío y redirige al login tras una breve pausa.
+     */
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             // USUARIO LOGUEADO
@@ -232,12 +295,13 @@ document.addEventListener('DOMContentLoaded', function () {
             renderProfile(userData);
 
         } else {
-            // USUARIO NO LOGUEADO
+            // USUARIO NO LOGUEADO (O Logout finalizado)
             if (loginLink) loginLink.style.display = 'block'; 
             renderProfile(null); 
             
             showStatus('No hay sesión iniciada. Redirigiendo a login...', 'warning');
             
+            // Redirección de seguridad
             setTimeout(() => {
                 if (!auth.currentUser) {
                     window.location.href = 'login.html'; 

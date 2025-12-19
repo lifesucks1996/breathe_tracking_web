@@ -1,12 +1,31 @@
-// src/js/admin_sensors_data.js
+/**
+ * @file admin_sensors_data.js
+ * @brief Archivo de datos simulados (Mock Data) para el panel de administración.
+ * @details
+ * Este archivo contiene estructuras JSON estáticas que simulan la respuesta
+ * de una base de datos. Se utiliza para poblar las tablas de sensores y
+ * las vistas de detalle sin necesidad de conexión activa al backend durante el desarrollo de la UI.
+ */
 
+/**
+ * @brief Lista principal de sensores registrados en el sistema.
+ * (void) -> adminSensorsData -> Array<Object>
+ * * @details
+ * Array de objetos donde cada elemento representa un sensor físico.
+ * Contiene información básica para el listado general (ID, nombre, ubicación, estado).
+ * Incluye sensores activos e inactivos para probar diferentes estados de la interfaz.
+ * * @note
+ * El campo 'coords' sigue el formato [Latitud, Longitud] compatible con Leaflet.
+ * El campo 'hasIncident' determina si se muestra una alerta visual en la tabla.
+ */
 const adminSensorsData = [
+    // --- SENSORES ACTIVOS ---
     {
         id: 'ADS133',
         name: 'Sensor ADS133',
         location: 'C/ Gandia, Gandia',
         lastConnection: '14:32',
-        hasIncident: false,
+        hasIncident: false, // Estado normal
         coords: [38.9660, -0.1850]
     },
     {
@@ -14,7 +33,7 @@ const adminSensorsData = [
         name: 'Sensor AKMSF134',
         location: 'Av. del Cid 8, Gandia',
         lastConnection: '13:23',
-        hasIncident: true,
+        hasIncident: true, // Simulación de incidencia activa (alerta roja)
         coords: [38.9700, -0.1800]
     },
     {
@@ -41,14 +60,14 @@ const adminSensorsData = [
         hasIncident: false,
         coords: [38.9900, -0.1600]
     },
-    // --- NUEVOS SENSORES INACTIVOS ---
+    // --- SENSORES INACTIVOS (Para pruebas de filtrado) ---
     {
         id: 'OFF_99',
         name: 'Sensor OFF_99',
         location: 'Almacén Municipal',
         lastConnection: 'Hace 12 días',
         hasIncident: false,
-        active: false, // Inactivo
+        active: false, // Propiedad específica para marcar sensores fuera de servicio
         coords: [38.9600, -0.1900]
     },
     {
@@ -62,22 +81,37 @@ const adminSensorsData = [
     }
 ];
 
+/**
+ * @brief Datos detallados de un sensor específico para la vista de detalle.
+ * (void) -> sensorDetailData -> Object
+ * * @details
+ * Objeto singular que simula la información completa recuperada al hacer clic en un sensor.
+ * Contiene métricas específicas como batería, lecturas de gases (Ozono, CO2) y 
+ * el historial de ruta para pintar en el mapa.
+ * * @note
+ * El objeto 'point4' representa el último punto de medición recibido.
+ * El array 'pathCoords' se usa para dibujar la polilínea de recorrido en el mapa.
+ */
 const sensorDetailData = {
     id: 'AKMSF134',
     name: 'Sensor AKMSF134',
     currentLocation: 'C/ Gandia, Gandia',
-    avgLocation: 'Av. del Cid 8, Gandia',
+    avgLocation: 'Av. del Cid 8, Gandia', // Ubicación media calculada
     lastConnection: '14:32',
-    battery: '20%',
+    battery: '20%', // Nivel crítico para probar iconos de batería baja
     radio: 29,
+    
+    // Punto de medición específico con valores ambientales
     point4: {
         location: 'C/ Acacias, Gandia',
         time: '13:23',
         ozono: 0.3,
-        // --- IMPORTANTE: AQUÍ DEBE PONER CO2 ---
+        // --- IMPORTANTE: Dato de CO2 simulado para gráficas ---
         co2: 500, 
         temperatura: 24
     },
+    
+    // Historial de coordenadas para trazado de ruta [Lat, Lng]
     pathCoords: [
         [38.9700, -0.1800], 
         [38.9720, -0.1780],
