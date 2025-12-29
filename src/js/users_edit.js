@@ -14,9 +14,8 @@ const getFieldError = (name) => document.querySelector(`.field-error[data-for="$
 
 /**
  * @brief Abre el modal de edición y gestiona el foco inicial.
- * (SIN EXPORT)
  */
-function openModal() {
+export function openModal() {
     const modal = getModal();
     if (!modal) return;
     
@@ -33,9 +32,8 @@ function openModal() {
 
 /**
  * @brief Cierra el modal, limpia errores y restaura el foco.
- * (SIN EXPORT)
  */
-function closeModal() {
+export function closeModal() {
     const modal = getModal();
     if (!modal) return;
     
@@ -54,9 +52,8 @@ function closeModal() {
 
 /**
  * @brief Elimina todos los mensajes de error visibles en el formulario.
- * (SIN EXPORT)
  */
-function clearFieldErrors() {
+export function clearFieldErrors() {
     document.querySelectorAll('.field-error').forEach((el) => {
         el.textContent = '';
         el.classList.remove('show');
@@ -76,9 +73,8 @@ function showFieldError(name, message) {
 
 /**
  * @brief Valida los datos del formulario aplicando reglas de negocio.
- * (SIN EXPORT)
  */
-function validate(values) {
+export function validate(values) {
     let ok = true;
     
     // Validación de Nombre
@@ -99,7 +95,86 @@ function validate(values) {
         ok = false;
     }
     
+    // Validación de cambio de contraseña (opcional, pero si inicia debe ser completo)
+    const hasPasswordFields = values.currentPassword || values.newPassword || values.confirmPassword;
+    
+    if (hasPasswordFields) {
+        // Si hay al menos un campo de contraseña, todos deben estar presentes y válidos
+        if (!values.currentPassword || values.currentPassword.trim().length === 0) {
+            showFieldError('currentPassword', 'La contraseña actual es obligatoria para cambiar la contraseña.');
+            ok = false;
+        }
+        
+        if (!values.newPassword || values.newPassword.trim().length === 0) {
+            showFieldError('newPassword', 'La nueva contraseña es obligatoria.');
+            ok = false;
+        } else {
+            // Validar complejidad de la nueva contraseña
+            const passValidation = validatePasswordStrength(values.newPassword);
+            if (!passValidation.valid) {
+                showFieldError('newPassword', passValidation.message);
+                ok = false;
+            }
+        }
+        
+        if (!values.confirmPassword || values.confirmPassword.trim().length === 0) {
+            showFieldError('confirmPassword', 'Debes confirmar la nueva contraseña.');
+            ok = false;
+        } else if (values.newPassword !== values.confirmPassword) {
+            showFieldError('confirmPassword', 'Las contraseñas no coinciden.');
+            ok = false;
+        }
+    }
+    
     return ok;
+}
+
+/**
+ * @brief Valida la complejidad de una contraseña según los requisitos.
+ */
+export function validatePasswordStrength(password) {
+    const requirements = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        number: /\d/.test(password),
+        special: /[\W_]/.test(password)
+    };
+    
+    const allValid = Object.values(requirements).every(req => req);
+    
+    if (!allValid) {
+        let missing = [];
+        if (!requirements.length) missing.push('8 caracteres');
+        if (!requirements.uppercase) missing.push('una mayúscula');
+        if (!requirements.number) missing.push('un número');
+        if (!requirements.special) missing.push('un carácter especial');
+        
+        return {
+            valid: false,
+            message: `La contraseña debe contener: ${missing.join(', ')}.`,
+            requirements
+        };
+    }
+    
+    return { valid: true, requirements };
+}
+
+/**
+ * @brief Actualiza el indicador visual de requisitos de contraseña en tiempo real.
+ */
+export function updatePasswordRequirements(password) {
+    const requirements = validatePasswordStrength(password);
+    
+    document.querySelectorAll('.req-item').forEach(item => {
+        const req = item.getAttribute('data-req');
+        if (requirements.requirements[req]) {
+            item.classList.add('met');
+            item.classList.remove('unmet');
+        } else {
+            item.classList.remove('met');
+            item.classList.add('unmet');
+        }
+    });
 }
 
 // --- EXPORTACIÓN COMPATIBLE CON JEST ---
@@ -109,6 +184,8 @@ if (typeof module !== 'undefined' && module.exports) {
         openModal,
         closeModal,
         clearFieldErrors,
-        validate
+        validate,
+        validatePasswordStrength,
+        updatePasswordRequirements
     };
 }

@@ -6,7 +6,7 @@
     <title>Mi perfil - Breathe Tracking</title>
 
     <link rel="stylesheet" href="../css/global.css?v=4" />
-    <link rel="stylesheet" href="../css/users.css?v=1" />
+    <link rel="stylesheet" href="../css/users.css?v=2" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
@@ -76,22 +76,87 @@
     <div class="modal" role="document">
         <h2>Editar Perfil</h2>
         <form id="editForm">
-            <div class="form-row">
-                <label for="edit-nombre">Nombre</label>
-                <input id="edit-nombre" name="nombre" type="text" placeholder="Nombre" />
-                <div class="field-error" data-for="nombre"></div>
+            <!-- SECCIÓN 1: DATOS PERSONALES -->
+            <div class="modal-section">
+                <h3>Información Personal</h3>
+                
+                <div class="form-row">
+                    <label for="edit-nombre">Nombre</label>
+                    <input id="edit-nombre" name="nombre" type="text" placeholder="Nombre" />
+                    <div class="field-error" data-for="nombre"></div>
+                </div>
+
+                <div class="form-row">
+                    <label for="edit-apellidos">Apellidos</label>
+                    <input id="edit-apellidos" name="apellidos" type="text" placeholder="Apellidos" />
+                    <div class="field-error" data-for="apellidos"></div>
+                </div>
+                
+                <div class="form-row">
+                    <label for="edit-cp">Código Postal</label>
+                    <input id="edit-cp" name="cp" type="text" placeholder="12345" />
+                    <div class="field-error" data-for="cp"></div>
+                </div>
             </div>
 
-            <div class="form-row">
-                <label for="edit-apellidos">Apellidos</label>
-                <input id="edit-apellidos" name="apellidos" type="text" placeholder="Apellidos" />
-                <div class="field-error" data-for="apellidos"></div>
-            </div>
-            
-            <div class="form-row">
-                <label for="edit-cp">Código Postal</label>
-                <input id="edit-cp" name="cp" type="text" placeholder="12345" />
-                <div class="field-error" data-for="cp"></div>
+            <!-- SECCIÓN 2: CAMBIO DE CONTRASEÑA -->
+            <div class="modal-section">
+                <h3>Cambiar Contraseña</h3>
+                <p class="section-hint">Completa todos los campos para cambiar tu contraseña</p>
+                
+                <div class="form-row">
+                    <label for="edit-current-password">Contraseña Actual</label>
+                    <div class="password-input-wrapper">
+                        <input id="edit-current-password" name="currentPassword" type="password" placeholder="Introduce tu contraseña actual" />
+                        <span class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-eye-slash" style="display:none;"></i>
+                        </span>
+                    </div>
+                    <div class="field-error" data-for="currentPassword"></div>
+                </div>
+
+                <div class="form-row">
+                    <label for="edit-new-password">Nueva Contraseña</label>
+                    <div class="password-input-wrapper">
+                        <input id="edit-new-password" name="newPassword" type="password" placeholder="Crea una nueva contraseña" />
+                        <span class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-eye-slash" style="display:none;"></i>
+                        </span>
+                    </div>
+                    <div class="field-error" data-for="newPassword"></div>
+                </div>
+
+                <div class="form-row">
+                    <label for="edit-confirm-password">Repetir Nueva Contraseña</label>
+                    <div class="password-input-wrapper">
+                        <input id="edit-confirm-password" name="confirmPassword" type="password" placeholder="Repite la nueva contraseña" />
+                        <span class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-eye-slash" style="display:none;"></i>
+                        </span>
+                    </div>
+                    <div class="field-error" data-for="confirmPassword"></div>
+                </div>
+
+                <div class="password-requirements">
+                    <p class="req-title">La contraseña debe cumplir:</p>
+                    <ul class="req-list">
+                        <li class="req-item" data-req="length">
+                            <span class="req-icon">✓</span> Mínimo 8 caracteres
+                        </li>
+                        <li class="req-item" data-req="uppercase">
+                            <span class="req-icon">✓</span> Al menos 1 mayúscula (A-Z)
+                        </li>
+                        <li class="req-item" data-req="number">
+                            <span class="req-icon">✓</span> Al menos 1 número (0-9)
+                        </li>
+                        <li class="req-item" data-req="special">
+                            <span class="req-icon">✓</span> Al menos 1 carácter especial (!@#$%^&*)
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <div class="modal-actions">
@@ -102,7 +167,7 @@
     </div>
 </div>
 
-<script type="module" src="../js/users_profile.js?v=2"></script>
+<script type="module" src="../js/users_profile.js?v=3"></script>
 
 </body>
 </html>
