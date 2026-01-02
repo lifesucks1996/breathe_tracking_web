@@ -1,19 +1,3 @@
-<!--
-===============================================================================
-    Nombre del fichero: users_map.html
-    Descripción: Interfaz de usuario del sistema Breathe Tracking. Contiene
-                 la visualización del mapa, los pines guardados, controles de
-                 fecha y contaminantes, modales de interacción y funciones
-                 de generación de informes premium.
-    Copyright: © 2025 Marc Vilagrosa - Todos los derechos reservados
-    Autor: Marc Vilagrosa
-    Fecha: 01/12/2025
-    Aportación: Implementación completa de la interfaz gráfica, organización 
-                del layout, integración con Leaflet, estructura de paneles, y
-                activación de los modales y controles del usuario.
-===============================================================================
--->
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -22,10 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa de Usuario - Breathe Tracking</title>
 
-    <!-- Librería para generar informes PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-    <!-- Hojas de estilos generales y específicas -->
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -34,8 +16,6 @@
 
 <body>
 
-    <!-- =================== HEADER SUPERIOR =================== -->
-    <!-- Contiene logo y botones principales: perfil y cerrar sesión -->
     <header class="main-header">
         <div class="logo">
             <img src="images/logo-breathe-tracking.png" alt="Breathe Tracking Logo">
@@ -47,10 +27,8 @@
         </nav>
     </header>
 
-    <!-- =================== CONTENEDOR PRINCIPAL =================== -->
     <main class="main-container">
         
-        <!-- ******* PANEL IZQUIERDO (lista y detalle de pines) ******* -->
         <div id="left-panel" class="left-panel">
 
             <div id="pin-list-view">
@@ -106,22 +84,16 @@
             </div>
         </div>
 
-        <!-- ******* PANEL DERECHO (mapa y controles) ******* -->
         <div id="map-panel" class="map-panel">
             
-            <!-- Indicador visual durante la carga de datos -->
             <div id="loading-indicator"
                 style="display:none; position:absolute; top:10px; right:10px; background:white; padding:10px; z-index:1000; border-radius:5px; box-shadow:0 0 5px rgba(0,0,0,0.2);">
                 <i class="fas fa-spinner fa-spin"></i> Cargando datos...
             </div>
 
-            <!-- Controles superiores del mapa: fecha, contaminante y actualización -->
             <div class="map-controls-top">
-                <input type="date" id="dateSelector" value="2025-12-01">
-
                 <select id="selectorContaminante">
                     <option value="GENERAL" style="font-weight:bold; color:#e74c3c;">Calidad General del Aire</option>
-                    <!--option disabled>----------------</option-->
                     <option value="O3" selected>Ozono (O₃)</option>
                     <option value="NO2">Dióxido de Nitrógeno (NO₂)</option>
                     <option value="CO">Monóxido de Carbono (CO)</option>
@@ -132,10 +104,8 @@
                 <button class="button-primary" id="btn-update-map">Actualizar</button>
             </div>
 
-            <!-- Contenedor del mapa Leaflet -->
             <div id="mapa"></div>
 
-            <!-- Modal para añadir y nombrar un nuevo pin -->
             <div id="name-pin-modal" class="modal-overlay" style="display: none;">
                 <div class="modal-content">
                     <h3>Guardar Nueva Ubicación</h3>
@@ -148,13 +118,11 @@
                 </div>
             </div>
 
-            <!-- Botón inferior para añadir pin manualmente -->
             <div class="map-controls-bottom">
                 <button id="add-pin-btn" class="button-primary">
                     <i class="fas fa-map-marker-alt"></i> Añadir Marcador</button>
             </div>
 
-            <!-- Modal de pago del informe premium -->
             <div id="modal-payment" class="modal-overlay" style="display: none;">
                 <div class="modal-content payment-content">
 
@@ -190,14 +158,12 @@
         </div>
     </main>
 
-    <!-- Librerías externas: Leaflet, Firebase, heatmap -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
-    <!-- Scripts propios del proyecto -->
     <script src="js/users_map_data.js"></script>
     <script src="js/users_map.js"></script>
 
