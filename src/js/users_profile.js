@@ -11,9 +11,9 @@
  */
 
 import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { openModal, closeModal, validate, clearFieldErrors } from "./users_edit.js";
+import { openModal, closeModal, validate, clearFieldErrors, updatePasswordRequirements } from "./users_edit.js";
 
 // Configuración de conexión
 const firebaseConfig = {
@@ -53,7 +53,42 @@ document.addEventListener('DOMContentLoaded', function () {
     // 3. Referencias a Inputs del modal (Edición)
     const editNombre = document.getElementById('edit-nombre');
     const editApellidos = document.getElementById('edit-apellidos');
-    const editCp = document.getElementById('edit-cp'); 
+    const editCp = document.getElementById('edit-cp');
+    
+    // 4. Referencias a Inputs de cambio de contraseña
+    const editCurrentPassword = document.getElementById('edit-current-password');
+    const editNewPassword = document.getElementById('edit-new-password');
+    const editConfirmPassword = document.getElementById('edit-confirm-password');
+    
+    // 5. Listeners de toggle de visibilidad de contraseña
+    const passwordToggles = document.querySelectorAll('.password-input-wrapper .toggle-password');
+    passwordToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const wrapper = toggle.closest('.password-input-wrapper');
+            const input = wrapper.querySelector('input');
+            const eyeOpen = toggle.querySelector('.fas.fa-eye');
+            const eyeClosed = toggle.querySelector('.fas.fa-eye-slash');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeOpen.style.display = 'none';
+                eyeClosed.style.display = 'inline-block';
+            } else {
+                input.type = 'password';
+                eyeOpen.style.display = 'inline-block';
+                eyeClosed.style.display = 'none';
+            }
+        });
+    });
+    
+    // 6. Listener en tiempo real para validar requisitos de contraseña
+    if (editNewPassword) {
+        editNewPassword.addEventListener('input', () => {
+            if (editNewPassword.value) {
+                updatePasswordRequirements(editNewPassword.value);
+            }
+        });
+    }
     
     // Referencia para control de navegación
     const loginLink = document.querySelector('.header-nav a[href="login.html"]');
@@ -203,8 +238,9 @@ document.addEventListener('DOMContentLoaded', function () {
      * 1. Recolecta y limpia los datos del formulario.
      * 2. Valida los campos usando `users_edit.js`.
      * 3. Determina el ID del documento a actualizar.
-     * 4. Escribe en Firestore (usando `merge: true` para no borrar otros campos).
-     * 5. Actualiza la vista local y cierra el modal.
+     * 4. Si hay cambio de contraseña: reautentica y actualiza.
+     * 5. Escribe en Firestore (usando `merge: true` para no borrar otros campos).
+     * 6. Actualiza la vista local y cierra el modal.
      */
     editForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -212,13 +248,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const payload = {
             nombre: editNombre.value.trim(),
             apellidos: editApellidos.value.trim(),
-            cp: editCp.value.trim(), 
+            cp: editCp.value.trim(),
+            currentPassword: editCurrentPassword?.value?.trim() || '',
+            newPassword: editNewPassword?.value?.trim() || '',
+            confirmPassword: editConfirmPassword?.value?.trim() || '',
         };
-        const validationValues = { ...payload };
+        
         clearFieldErrors();
         
-        // Validación de negocio (longitud, formato CP, etc.)
-        if (!validate(validationValues)) {
+        // Validación de negocio (longitud, formato CP, complejidad de contraseña, etc.)
+        if (!validate(payload)) {
             showStatus('Corrige los campos marcados antes de guardar.', 'warning');
             return;
         }
@@ -236,6 +275,37 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             showStatus('Guardando cambios...', 'info');
             
+            // --- PASO 1: Cambio de contraseña (si está presente) ---
+            if (payload.newPassword) {
+                try {
+                    // Reautenticar al usuario con la contraseña actual
+                    const credential = EmailAuthProvider.credential(
+                        auth.currentUser.email,
+                        payload.currentPassword
+                    );
+                    
+                    await reauthenticateWithCredential(auth.currentUser, credential);
+                    
+                    // Si la reautenticación es exitosa, actualizar la contraseña
+                    await updatePassword(auth.currentUser, payload.newPassword);
+                    
+                } catch (authError) {
+                    console.error("Error de autenticación:", authError.code);
+                    
+                    // Mapeo de errores de autenticación
+                    let authErrorMessage = 'Error al cambiar la contraseña.';
+                    if (authError.code === 'auth/wrong-password') {
+                        authErrorMessage = 'La contraseña actual es incorrecta.';
+                    } else if (authError.code === 'auth/invalid-credential') {
+                        authErrorMessage = 'La contraseña actual es incorrecta.';
+                    }
+                    
+                    showStatus(authErrorMessage, 'error');
+                    return;
+                }
+            }
+            
+            // --- PASO 2: Actualizar datos del perfil en Firestore ---
             const docPayload = {
                 nombre: payload.nombre,
                 apellidos: payload.apellidos,
@@ -256,6 +326,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // Recargar datos para confirmar la escritura
             const updatedData = await loadUserProfileFromFirestore(currentUserId);
             renderProfile(updatedData);
+
+            // Limpiar campos de contraseña
+            if (editCurrentPassword) editCurrentPassword.value = '';
+            if (editNewPassword) editNewPassword.value = '';
+            if (editConfirmPassword) editConfirmPassword.value = '';
 
             closeModal(); 
             showStatus('¡Perfil actualizado con éxito!', 'success');
