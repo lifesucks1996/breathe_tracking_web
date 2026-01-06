@@ -1,0 +1,351 @@
+/* ========================================
+   FAQ PAGE - ESTILOS PROFESIONALES
+   ======================================== */
+
+/* ===== SECCIÓN HERO ===== */
+.faq-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.faq-hero h1 {
+    font-size: 3em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+}
+
+.faq-hero p {
+    font-size: 1.3em;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ===== TABLA DE CONTENIDOS ===== */
+.toc-section {
+    max-width: 1000px;
+    margin: 0 auto 80px;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.toc-section h2 {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+    color: #1a1a1a;
+}
+
+.table-of-contents {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.table-of-contents ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin-bottom: 12px;
+}
+
+.table-of-contents a {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 1.05em;
+    padding: 8px 0;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.table-of-contents a:hover {
+    color: #764ba2;
+    border-bottom-color: #764ba2;
+}
+
+/* ===== CONTENEDOR FAQ ===== */
+.faq-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+}
+
+/* ===== SECCIÓN FAQ ===== */
+.faq-section {
+    margin-bottom: 80px;
+    scroll-margin-top: 100px;
+}
+
+.section-title {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.section-title h2 {
+    font-size: 2.2em;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.section-subtitle {
+    font-size: 1.1em;
+    color: #666;
+    margin: 0;
+}
+
+/* ===== ITEMS FAQ ===== */
+.faq-item {
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+}
+
+/* ===== BOTÓN PREGUNTA ===== */
+.faq-question {
+    width: 100%;
+    background: white;
+    border: none;
+    padding: 25px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+}
+
+.faq-question:hover {
+    background: #f8f9fa;
+    color: #667eea;
+}
+
+.faq-question i {
+    margin-left: 20px;
+    transition: transform 0.3s ease;
+    color: #667eea;
+    font-size: 0.8em;
+}
+
+.faq-item.active .faq-question {
+    background: #f0f0f0;
+    color: #667eea;
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(-180deg);
+}
+
+/* ===== RESPUESTA FAQ ===== */
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: #fafafa;
+    padding: 0 25px;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 2000px;
+    padding: 25px;
+}
+
+.faq-answer p {
+    margin: 0 0 15px 0;
+    line-height: 1.7;
+    color: #333;
+    font-size: 1em;
+}
+
+.faq-answer p:last-child {
+    margin-bottom: 0;
+}
+
+.faq-answer ul,
+.faq-answer ol {
+    margin: 15px 0;
+    padding-left: 25px;
+    color: #333;
+    line-height: 1.8;
+}
+
+.faq-answer li {
+    margin-bottom: 10px;
+}
+
+.faq-answer strong {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.faq-answer a {
+    color: #667eea;
+    text-decoration: none;
+    border-bottom: 1px solid #667eea;
+    transition: all 0.3s ease;
+}
+
+.faq-answer a:hover {
+    color: #764ba2;
+    border-bottom-color: #764ba2;
+}
+
+/* ===== SECCIÓN DE CONTACTO ===== */
+.contact-cta {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+    border-radius: 12px;
+    margin-top: 100px;
+    margin-bottom: 60px;
+}
+
+.contact-cta h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+}
+
+.contact-cta p {
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    opacity: 0.95;
+}
+
+.contact-cta .btn-primary {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.05em;
+}
+
+.contact-cta .btn-primary:hover {
+    background: #f0f0f0;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 768px) {
+    .faq-hero {
+        padding: 60px 20px;
+    }
+
+    .faq-hero h1 {
+        font-size: 2em;
+    }
+
+    .faq-hero p {
+        font-size: 1.1em;
+    }
+
+    .section-title h2 {
+        font-size: 1.8em;
+    }
+
+    .faq-question {
+        padding: 20px;
+        font-size: 1em;
+    }
+
+    .faq-answer {
+        padding: 0 20px;
+    }
+
+    .faq-item.active .faq-answer {
+        padding: 20px;
+    }
+
+    .table-of-contents {
+        grid-template-columns: 1fr;
+    }
+
+    .toc-section {
+        padding: 30px 20px;
+    }
+
+    .contact-cta {
+        padding: 40px 20px;
+    }
+
+    .contact-cta h2 {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 480px) {
+    .faq-hero h1 {
+        font-size: 1.5em;
+    }
+
+    .faq-hero p {
+        font-size: 0.95em;
+    }
+
+    .section-title h2 {
+        font-size: 1.4em;
+    }
+
+    .faq-question {
+        font-size: 0.95em;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .faq-question i {
+        margin-left: auto;
+        margin-top: -25px;
+    }
+
+    .question-text {
+        display: block;
+        margin-bottom: 10px;
+    }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.faq-item {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.faq-item:nth-child(1) { animation-delay: 0s; }
+.faq-item:nth-child(2) { animation-delay: 0.1s; }
+.faq-item:nth-child(3) { animation-delay: 0.2s; }
+.faq-item:nth-child(4) { animation-delay: 0.3s; }
+.faq-item:nth-child(5) { animation-delay: 0.4s; }
+
+/* ===== SCROLL SMOOTH ===== */
+html {
+    scroll-behavior: smooth;
+}

@@ -530,3 +530,109 @@
     font-size: 0.9em;
     border-top: 1px solid #e0e0e0; /* Una línea sutil de separación */
 }
+
+/* ===================================================
+   NUEVO: Sección CTA - Preguntas Frecuentes
+   =================================================== */
+
+.faq-cta-section {
+    padding: 80px 5%;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    margin: 60px 0;
+}
+
+.faq-cta-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.faq-cta-text h2 {
+    font-size: 2.5em;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.faq-cta-text p {
+    font-size: 1.1em;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.faq-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.faq-benefits li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    font-size: 1.05em;
+    color: #333;
+}
+
+.faq-benefits i {
+    color: #667eea;
+    font-size: 1.2em;
+}
+
+.btn-faq {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    padding: 18px 40px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-faq:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+}
+
+.btn-faq i {
+    transition: transform 0.3s ease;
+}
+
+.btn-faq:hover i {
+    transform: translateX(5px);
+}
+
+/* ===== RESPONSIVO: FAQ CTA ===== */
+@media (max-width: 768px) {
+    .faq-cta-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .faq-cta-text h2 {
+        font-size: 2em;
+    }
+
+    .faq-cta-text p {
+        font-size: 1em;
+    }
+
+    .btn-faq {
+        width: 100%;
+        justify-content: center;
+        padding: 16px 30px;
+        font-size: 1em;
+    }
+}
