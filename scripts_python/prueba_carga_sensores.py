@@ -76,19 +76,35 @@ def inicializar_firebase():
         if not firebase_admin._apps:
             firebase_admin.initialize_app(cred)
         db = firestore.client()
-        print("✅ Firebase inicializado correctamente\n")
+        print(" Firebase inicializado correctamente\n")
         return db
     except FileNotFoundError:
-        print("❌ Error: No se encontró serviceAccountKey.json")
+        print(" Error: No se encontró serviceAccountKey.json")
         print("   Descárgalo desde Firebase Console > Configuración del proyecto > Cuentas de servicio\n")
         exit(1)
     except Exception as e:
-        print(f"❌ Error al inicializar Firebase: {e}\n")
+        print(f" Error al inicializar Firebase: {e}\n")
         exit(1)
 
 # ============================================================================
 # GENERACIÓN DE DATOS
 # ============================================================================
+
+def generar_coordenadas_sensor():
+    """
+    Genera coordenadas geográficas aleatorias dentro del radio de Gandía.
+    
+    Returns:
+        list: [Latitud, Longitud] en formato Leaflet compatible
+    """
+    # Generar variación aleatoria dentro del radio
+    variacion_lat = random.uniform(-RADIO_VARIACION, RADIO_VARIACION)
+    variacion_lng = random.uniform(-RADIO_VARIACION, RADIO_VARIACION)
+    
+    lat = round(LAT_BASE + variacion_lat, 4)
+    lng = round(LNG_BASE + variacion_lng, 4)
+    
+    return [lat, lng]
 
 def generar_datos_sensor_pruebas(sensor_id):
     """
@@ -117,6 +133,7 @@ def generar_datos_sensor_pruebas(sensor_id):
     return {
         "bateria": bateria,
         "co2": co2,
+        "coords": generar_coordenadas_sensor(),  
         "estado": estado,
         "id_admin": id_admin,
         "nombre": f"Sensor{random.randint(1, 999)}",
@@ -158,6 +175,7 @@ def generar_datos_sensor_produccion(sensor_id):
     return {
         "bateria": bateria,
         "co2": co2,
+        "coords": generar_coordenadas_sensor(),  
         "estado": estado,
         "id_admin": id_admin,
         "nombre": f"Sensor{random.randint(1, 999)}",
@@ -236,18 +254,18 @@ def verificar_crear_colecciones(db):
         
         if not docs_list:
             # Colección vacía o no existe - crear documento metadata
-            print(f"📝 Colección '{coleccion}' vacía. Creando estructura inicial...")
+            print(f" Colección '{coleccion}' vacía. Creando estructura inicial...")
             db.collection(coleccion).document("_metadata").set({
                 "creada_el": datetime.now().isoformat(),
                 "proposito": "Colección para sensores IoT",
                 "descripcion": "Metadata - Este documento marca que la colección fue inicializada"
             })
-            print(f"✅ Colección '{coleccion}' inicializada\n")
+            print(f" Colección '{coleccion}' inicializada\n")
         else:
-            print(f"✅ Colección '{coleccion}' ya existe\n")
+            print(f" Colección '{coleccion}' ya existe\n")
             
     except Exception as e:
-        print(f"⚠️  Advertencia al verificar colecciones: {e}\n")
+        print(f"  Advertencia al verificar colecciones: {e}\n")
 
 # ============================================================================
 # EJECUCIÓN DE PRUEBA
@@ -265,9 +283,9 @@ def ejecutar_prueba_carga(db, num_sensores=NUM_SENSORES, num_threads=NUM_THREADS
     nombre_coleccion = "Sensores" if MODO == "pruebas" else "sensores"
     
     print("=" * 70)
-    print("🔬 PRUEBA DE CARGA - SENSORES IoT")
+    print(" PRUEBA DE CARGA - SENSORES IoT")
     print("=" * 70)
-    print(f"📊 Configuración:")
+    print(f" Configuración:")
     print(f"   • Modo: {MODO.upper()}")
     print(f"   • Colección: '{nombre_coleccion}'")
     print(f"   • Sensores: {num_sensores}")
@@ -285,7 +303,7 @@ def ejecutar_prueba_carga(db, num_sensores=NUM_SENSORES, num_threads=NUM_THREADS
         "errores": []
     }
     
-    print("📤 Enviando datos a Firestore...\n")
+    print(" Enviando datos a Firestore...\n")
     
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
         if MODO == "pruebas":
@@ -327,35 +345,35 @@ def ejecutar_prueba_carga(db, num_sensores=NUM_SENSORES, num_threads=NUM_THREADS
     # ========================================================================
     
     print("\n" + "=" * 70)
-    print("📈 RESULTADOS DE LA PRUEBA")
+    print(" RESULTADOS DE LA PRUEBA")
     print("=" * 70)
     
     tasa_exito = (resultados["exitosos"] / num_sensores) * 100
-    print(f"\n✅ Éxito: {resultados['exitosos']}/{num_sensores} ({tasa_exito:.1f}%)")
-    print(f"❌ Fallos: {resultados['fallos']}/{num_sensores}")
+    print(f"\n Éxito: {resultados['exitosos']}/{num_sensores} ({tasa_exito:.1f}%)")
+    print(f" Fallos: {resultados['fallos']}/{num_sensores}")
     
     if resultados["latencias"]:
         latencias = resultados["latencias"]
-        print(f"\n⏱️  Latencia:")
+        print(f"\n  Latencia:")
         print(f"   • Promedio: {sum(latencias)/len(latencias):.2f} ms")
         print(f"   • Mínima: {min(latencias):.2f} ms")
         print(f"   • Máxima: {max(latencias):.2f} ms")
     
     velocidad = resultados["exitosos"] / num_threads
-    print(f"\n🚀 Velocidad: ~{velocidad:.1f} documentos/segundo")
+    print(f"\n Velocidad: ~{velocidad:.1f} documentos/segundo")
     
     if resultados["errores"]:
-        print(f"\n⚠️  Errores encontrados:")
+        print(f"\n  Errores encontrados:")
         for error in resultados["errores"][:5]:
             print(f"   • {error}")
         if len(resultados["errores"]) > 5:
             print(f"   • ... y {len(resultados['errores']) - 5} más")
     
     print("\n" + "=" * 70)
-    print("✨ Prueba completada")
+    print(" Prueba completada")
     print("=" * 70)
-    print(f"\n📍 Documentos escritos en: {nombre_coleccion}/")
-    print(f"🔍 Verifica en Firebase Console > Firestore Database\n")
+    print(f"\n Documentos escritos en: {nombre_coleccion}/")
+    print(f" Verifica en Firebase Console > Firestore Database\n")
     
     return resultados
 
@@ -391,9 +409,9 @@ if __name__ == "__main__":
                 }
             }, f, indent=2)
         
-        print("💾 Resultados guardados en: resultados_prueba_carga.json\n")
+        print(" Resultados guardados en: resultados_prueba_carga.json\n")
         
     except KeyboardInterrupt:
-        print("\n\n⛔ Prueba interrumpida por el usuario")
+        print("\n\n Prueba interrumpida por el usuario")
     except Exception as e:
-        print(f"\n❌ Error durante la prueba: {e}")
+        print(f"\n Error durante la prueba: {e}")

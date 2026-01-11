@@ -18,12 +18,12 @@ let db = null;
 let auth = null;
 let globalDatosCache = []; 
 
-// 🛠️ UNIDADES
+//  UNIDADES
 const UNIDADES_ESTANDAR = {
     'CO2': 'ppm', 'CO': 'ppm', 'O3': 'µg/m³', 'NO2': 'µg/m³', 'SO2': 'µg/m³', 'GENERAL': 'ICA'
 };
 
-// 🎨 SEMÁFORO ESTRICTO (3 NIVELES)
+//  SEMÁFORO ESTRICTO (3 NIVELES)
 const INTENSIDAD_COLORES = {
     'verde': 0.2, 
     'amarillo': 0.6, 

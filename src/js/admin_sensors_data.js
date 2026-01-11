@@ -5,21 +5,108 @@
  * Este archivo contiene estructuras JSON estáticas que simulan la respuesta
  * de una base de datos. Se utiliza para poblar las tablas de sensores y
  * las vistas de detalle sin necesidad de conexión activa al backend durante el desarrollo de la UI.
+ * 
+ * INCLUYE: 7 sensores reales + 200 sensores simulados para prueba de carga.
  */
+
+// ============================================================================
+// CONFIGURACIÓN PARA GENERACIÓN DE SENSORES SIMULADOS
+// ============================================================================
+
+// Centro de Gandía, Valencia, España
+const LAT_BASE = 38.9660;
+const LNG_BASE = -0.1850;
+const RADIO_VARIACION = 0.05; // ~5km de dispersión
+
+// Ubicaciones reales en Gandía
+const UBICACIONES_GANDIA = [
+    "C/ Gandia, Centro",
+    "Av. del Cid, Gandia",
+    "Plaza Mayor, Gandia",
+    "Polígono Industrial, Gandia",
+    "Puerto de Gandia",
+    "Grao de Gandia",
+    "Barrio de Marítimo",
+    "Av. de la República",
+    "C/ Mayor, Centro",
+    "Paseo Marítimo",
+    "Playa Centro",
+    "C/ Acacias",
+    "Av. Valencia",
+    "Zona Portuaria",
+    "C/ San Vicente Ferrer",
+    "Parque de la Paz",
+    "Av. Maestrazgo",
+    "C/ Blasco Ibáñez",
+    "Zona Comercial Centro",
+    "Barrio Nuevo",
+    "C/ León",
+    "Av. Peris i Valero",
+    "Playa Norte",
+    "C/ Zorrilla",
+    "Av. Carlos Sarthou"
+];
+
+// Función para generar coordenadas aleatorias
+function generarCoordenadas() {
+    const varLat = (Math.random() - 0.5) * 2 * RADIO_VARIACION;
+    const varLng = (Math.random() - 0.5) * 2 * RADIO_VARIACION;
+    return [
+        Math.round((LAT_BASE + varLat) * 10000) / 10000,
+        Math.round((LNG_BASE + varLng) * 10000) / 10000
+    ];
+}
+
+// Función para generar última conexión (formato HH:MM realista)
+function generarUltimaConexion() {
+    const ahora = new Date();
+    const minutosAtras = Math.floor(Math.random() * 720); // 0-720 minutos (12 horas)
+    const fecha = new Date(ahora.getTime() - minutosAtras * 60000);
+    
+    const horas = String(fecha.getHours()).padStart(2, '0');
+    const minutos = String(fecha.getMinutes()).padStart(2, '0');
+    
+    return `${horas}:${minutos}`;
+}
+
+// Función para generar 200 sensores simulados
+function generarSensoresSimulados() {
+    const sensores = [];
+    
+    for (let i = 1; i <= 200; i++) {
+        const numeroSensor = String(i).padStart(3, '0');
+        const tieneIncidente = Math.random() < 0.15; // 15% con incidentes
+        
+        sensores.push({
+            id: `SENSOR_${numeroSensor}`,
+            name: `Sensor ${numeroSensor}`,
+            location: UBICACIONES_GANDIA[Math.floor(Math.random() * UBICACIONES_GANDIA.length)],
+            lastConnection: generarUltimaConexion(),
+            hasIncident: tieneIncidente,
+            coords: generarCoordenadas()
+        });
+    }
+    
+    return sensores;
+}
 
 /**
  * @brief Lista principal de sensores registrados en el sistema.
  * (void) -> adminSensorsData -> Array<Object>
- * * @details
+ * 
+ * ESTRUCTURA: 7 sensores reales + 200 sensores simulados
+ * 
+ * @details
  * Array de objetos donde cada elemento representa un sensor físico.
  * Contiene información básica para el listado general (ID, nombre, ubicación, estado).
  * Incluye sensores activos e inactivos para probar diferentes estados de la interfaz.
- * * @note
+ * 
+ * @note
  * El campo 'coords' sigue el formato [Latitud, Longitud] compatible con Leaflet.
  * El campo 'hasIncident' determina si se muestra una alerta visual en la tabla.
  */
 const adminSensorsData = [
-    // --- SENSORES ACTIVOS ---
+    // --- SENSORES REALES (7 sensores originales) ---
     {
         id: 'ADS133',
         name: 'Sensor ADS133',
@@ -67,7 +154,7 @@ const adminSensorsData = [
         location: 'Almacén Municipal',
         lastConnection: 'Hace 12 días',
         hasIncident: false,
-        active: false, // Propiedad específica para marcar sensores fuera de servicio
+        active: false,
         coords: [38.9600, -0.1900]
     },
     {
@@ -76,9 +163,12 @@ const adminSensorsData = [
         location: 'Grao de Gandia (Zona Norte)',
         lastConnection: 'Sin señal',
         hasIncident: false,
-        active: false, // Inactivo
+        active: false,
         coords: [38.9950, -0.1550]
-    }
+    },
+    
+    // --- SENSORES SIMULADOS (200 sensores para prueba de carga) ---
+    ...generarSensoresSimulados()
 ];
 
 /**

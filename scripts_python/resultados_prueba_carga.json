@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-30T13:25:46.187101",
+  "timestamp": "2026-01-11T18:34:35.911578",
   "config": {
     "num_sensores": 200,
     "num_threads": 20
@@ -7,8 +7,8 @@
   "resultados": {
     "exitosos": 200,
     "fallos": 0,
-    "latencia_promedio": 183.1034541130066,
-    "latencia_min": 136.35516166687012,
-    "latencia_max": 382.7376365661621
+    "latencia_promedio": 230.08917689323425,
+    "latencia_min": 129.896879196167,
+    "latencia_max": 509.4170570373535
   }
 }

@@ -109,7 +109,7 @@ function hexToRgba(hex, alpha) {
 function pintarMapaCalor() {
     if (!datosPuntosActuales.length || !L.heatLayer) return;
 
-    // 🛠️ TRUCO DE INTENSIDAD:
+    // TRUCO DE INTENSIDAD:
     // Fijamos max en 0.8. Esto significa que cualquier valor >= 0.8 (como nuestro Rojo 1.0)
     // se pintará con la intensidad MÁXIMA absoluta del gradiente.
     // Esto arregla que el mapa general se vea "flojo" comparado con los individuales.
