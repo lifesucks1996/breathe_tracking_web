@@ -1,0 +1,552 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║              GUÍA: PRUEBA DE CARGA - SIMULACIÓN DE 200 SENSORES            ║
+║                                                                              ║
+║         Proyecto Breathe Tracking - Simulación de Sensores IoT             ║
+║         Grupo 3 - Proyecto de Biometría                                   ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+⏱️ TIEMPO ESTIMADO: 10 minutos
+📊 RESULTADO: 207 sensores (7 reales + 200 simulados)
+✅ DIFICULTAD: Fácil - Solo copiar y pegar comandos
+
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 ¿QUÉ VAMOS A HACER?
+════════════════════════════════════════════════════════════════════════════════
+
+1. Preparar el entorno (Python, dependencias)
+2. Ejecutar script de simulación de 200 sensores
+3. Verificar que se cargaron en Firebase
+4. Abrir panel web para visualizar todos los sensores
+
+
+════════════════════════════════════════════════════════════════════════════════
+📋 REQUISITOS PREVIOS
+════════════════════════════════════════════════════════════════════════════════
+
+ANTES DE EMPEZAR, VERIFICA QUE TIENES:
+
+✅ Python 3.8+ instalado
+   → Abre PowerShell y ejecuta: python --version
+   → Debe mostrar: Python 3.8.x o superior
+   → Si no está instalado: https://www.python.org/downloads/
+
+✅ Archivo: serviceAccountKey.json
+   → Ubicación: scripts_python/serviceAccountKey.json
+   → Este archivo contiene credenciales de Firebase
+   → Si NO lo tienes:
+      1. Ve a: https://console.firebase.google.com
+      2. Selecciona proyecto: "biometria-g3"
+      3. Configuración (⚙️) → Cuentas de Servicio
+      4. Botón "Generar nueva clave privada"
+      5. Se descargará un JSON
+      6. Cópialo a scripts_python/serviceAccountKey.json
+
+✅ Conexión a Internet
+   → Necesaria para conectar con Firebase
+   → Verifica que tienes acceso a internet
+
+
+════════════════════════════════════════════════════════════════════════════════
+🚀 PASO 1: PREPARAR EL ENTORNO
+════════════════════════════════════════════════════════════════════════════════
+
+1️⃣  ABRE POWERSHELL
+    ─────────────────
+    Windows → Busca "PowerShell" → Clic derecho → "Ejecutar como administrador"
+
+
+2️⃣  NAVEGA A LA CARPETA DEL PROYECTO
+    ──────────────────────────────────
+    Copia y pega este comando:
+
+    cd "c:\DATA\UPV\3CuatrimestreA\PROYECTOBIOMETRIA\ProyectoGrupo3\WEB\breathe_tracking_web"
+
+    📌 NOTA: Si tu carpeta está en otra ubicación, reemplaza la ruta arriba.
+
+
+3️⃣  VERIFICA QUE ESTÉS EN LA CARPETA CORRECTA
+    ──────────────────────────────────────────
+    Ejecuta:
+
+    dir
+
+    Debes ver carpetas:
+    • scripts_python
+    • src
+    • doc
+    • node_modules (opcional)
+
+
+4️⃣  INSTALA DEPENDENCIAS PYTHON (SOLO LA PRIMERA VEZ)
+    ──────────────────────────────────────────────────
+    Ejecuta:
+
+    pip install firebase-admin tqdm
+
+    Espera a que termine. Debes ver:
+    "Successfully installed firebase-admin-X.X.X tqdm-X.X.X"
+
+
+════════════════════════════════════════════════════════════════════════════════
+⚡ PASO 2: EJECUTAR LA SIMULACIÓN
+════════════════════════════════════════════════════════════════════════════════
+
+1️⃣  NAVEGA A LA CARPETA SCRIPTS
+    ──────────────────────────────
+    Ejecuta:
+
+    cd scripts_python
+
+
+2️⃣  VERIFICA QUE serviceAccountKey.json EXISTE
+    ────────────────────────────────────────────
+    Ejecuta:
+
+    dir serviceAccountKey.json
+
+    Debes ver el archivo listado. Si NO aparece, descárgalo primero.
+
+
+3️⃣  EJECUTA EL SCRIPT DE SIMULACIÓN
+    ───────────────────────────────────
+    Ejecuta:
+
+    python prueba_carga_sensores.py
+
+    ⏳ Espera 2-3 segundos para que termine.
+
+
+4️⃣  VERIFICA EL RESULTADO
+    ──────────────────────
+    Debes ver en la terminal algo como:
+
+    ✅ Firebase inicializado correctamente
+    ✅ Colección 'Sensores' ya existe
+    
+    ======================================================================
+    🔬 PRUEBA DE CARGA - SENSORES IoT
+    ======================================================================
+    📊 Configuración:
+       • Modo: PRUEBAS
+       • Colección: 'Sensores'
+       • Sensores: 200
+       • Threads: 20
+       • Timestamp: 2026-01-11T18:34:33.451416
+    ======================================================================
+
+    📤 Enviando datos a Firestore...
+
+    Progreso: 100%|██████████| 200/200 [00:02<00:00, 84.21sensores/s]
+
+    ======================================================================
+    📈 RESULTADOS DE LA PRUEBA
+    ======================================================================
+
+    ✅ Éxito: 200/200 (100.0%)
+    ❌ Fallos: 0/200
+
+    ⏱️  Latencia:
+       • Promedio: 230.09 ms
+       • Mínima: 129.90 ms
+       • Máxima: 509.42 ms
+
+    🚀 Velocidad: ~10.0 documentos/segundo
+
+    ======================================================================
+    ✨ Prueba completada
+    ======================================================================
+
+    📍 Documentos escritos en: Sensores/
+    🔍 Verifica en Firebase Console > Firestore Database
+
+    💾 Resultados guardados en: resultados_prueba_carga.json
+
+
+════════════════════════════════════════════════════════════════════════════════
+✅ PASO 3: VERIFICAR EN FIREBASE CONSOLE
+════════════════════════════════════════════════════════════════════════════════
+
+1️⃣  ABRE FIREBASE CONSOLE
+    ───────────────────────
+    Ve a: https://console.firebase.google.com
+
+
+2️⃣  SELECCIONA EL PROYECTO
+    ───────────────────────
+    Elige: biometria-g3
+
+
+3️⃣  ACCEDE A FIRESTORE DATABASE
+    ─────────────────────────────
+    Menú izquierdo → "Firestore Database"
+
+
+4️⃣  VERIFICA LA COLECCIÓN SENSORES
+    ──────────────────────────────
+    Debes ver:
+    • Colección: "Sensores"
+    • Documentos: 200+ documentos
+    • Cada documento tiene campos: bateria, co2, coords, estado, etc.
+
+
+════════════════════════════════════════════════════════════════════════════════
+🌐 PASO 4: VISUALIZAR EN EL PANEL WEB
+════════════════════════════════════════════════════════════════════════════════
+
+1️⃣  ABRE UNA NUEVA TERMINAL/POWERSHELL
+    ───────────────────────────────────
+    Abre otra ventana de PowerShell (NUEVA, no cierres la anterior)
+
+
+2️⃣  NAVEGA A LA CARPETA WEB
+    ────────────────────────
+    Ejecuta:
+
+    cd "c:\DATA\UPV\3CuatrimestreA\PROYECTOBIOMETRIA\ProyectoGrupo3\WEB"
+
+
+3️⃣  INICIA EL SERVIDOR WEB
+    ────────────────────────
+    Ejecuta:
+
+    python -m http.server 8000
+
+    Debes ver:
+    Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+
+
+4️⃣  ABRE EL NAVEGADOR
+    ──────────────────
+    Ve a esta dirección:
+
+    http://localhost:8000/breathe_tracking_web/src/admin_sensors.html
+
+    📌 NOTA: Reemplaza localhost con tu IP si accedes desde otro equipo
+
+
+5️⃣  VERIFICA EL PANEL
+    ──────────────────
+    Debes ver:
+
+    PANEL IZQUIERDO:
+    • Título: "Panel de Administración de Sensores"
+    • Página 1 de 11 | Mostrando sensores 1 a 20 de 207
+    • Lista de 20 sensores con botones "Ver"
+    • Controles: Primero | Anterior | [Input] | Siguiente | Último
+    • Filtros: Todos | Con Incidencias | Inactivos
+
+    PANEL DERECHO:
+    • Mapa de Gandía, Valencia
+    • 207 marcadores distribuidos
+    • Selector de gases: O₃, NO₂, CO, SO₂, CO₂
+    • Selector de fecha
+    • Botón "Actualizar Mapa"
+
+
+════════════════════════════════════════════════════════════════════════════════
+🎮 CÓMO USAR EL PANEL
+════════════════════════════════════════════════════════════════════════════════
+
+NAVEGAR SENSORES:
+────────────────
+• Botón "Siguiente" → Ir a siguiente página (21-40)
+• Botón "Anterior" → Ir a página anterior
+• Botón "Primero" → Ir a página 1
+• Botón "Último" → Ir a página 11 (sensores 201-207)
+• Campo de número → Escribe "5" y presiona Enter para ir a página 5
+
+VER DETALLES:
+─────────────
+• Haz clic en botón "Ver" en cualquier sensor
+• Se abre página de detalles con gráficos
+
+FILTRAR SENSORES:
+─────────────────
+• Desplegable "Actividad":
+  - Todos (207 sensores)
+  - Con Incidencias (~31 sensores rojos)
+  - Inactivos (2 sensores grises)
+
+INTERACTUAR CON MAPA:
+─────────────────────
+• Haz clic en un marcador (punto en el mapa) → Ver popup del sensor
+• Rueda del ratón → Zoom in/out
+• Arrastra → Mover el mapa
+
+CAMBIAR GAS A VISUALIZAR:
+────────────────────────
+• Selector "Contaminante" → Elige O₃, NO₂, CO, SO₂ o CO₂
+• Botón "Actualizar Mapa" → Actualiza el heatmap
+
+
+════════════════════════════════════════════════════════════════════════════════
+❌ TROUBLESHOOTING - PROBLEMAS COMUNES
+════════════════════════════════════════════════════════════════════════════════
+
+PROBLEMA 1: "No se encontró serviceAccountKey.json"
+──────────────────────────────────────────────────
+
+❌ ERROR:
+    FileNotFoundError: [Errno 2] No such file or directory: 
+    'serviceAccountKey.json'
+
+✅ SOLUCIÓN:
+    1. Descarga el archivo desde Firebase Console:
+       https://console.firebase.google.com → biometria-g3 → Configuración → 
+       Cuentas de Servicio → Generar nueva clave
+    2. Colócalo en: scripts_python/serviceAccountKey.json
+    3. Vuelve a ejecutar el script
+
+
+PROBLEMA 2: "ModuleNotFoundError: No module named 'firebase_admin'"
+─────────────────────────────────────────────────────────────────
+
+❌ ERROR:
+    ModuleNotFoundError: No module named 'firebase_admin'
+
+✅ SOLUCIÓN:
+    Ejecuta:
+    pip install firebase-admin tqdm
+    
+    Si sigue fallando:
+    pip install --upgrade firebase-admin tqdm
+
+
+PROBLEMA 3: "ConnectionError" o "Error de conexión a Firebase"
+───────────────────────────────────────────────────────────────
+
+❌ ERROR:
+    google.api_core.exceptions.GoogleAPICallError
+    Connection refused
+
+✅ SOLUCIÓN:
+    1. Verifica conexión a internet
+    2. Verifica que serviceAccountKey.json es válido
+    3. Verifica que el proyecto "biometria-g3" existe en Firebase
+    4. Espera unos minutos y vuelve a intentar
+
+
+PROBLEMA 4: "El panel web muestra sin resultados"
+──────────────────────────────────────────────────
+
+❌ SÍNTOMA:
+    Panel abre pero no muestra sensores
+
+✅ SOLUCIÓN:
+    1. Recarga la página (F5)
+    2. Abre DevTools (F12) → Pestaña Console
+    3. Busca errores rojos (❌)
+    4. Verifica en Firebase que los documentos se crearon:
+       https://console.firebase.google.com → biometria-g3 → 
+       Firestore Database → Colección "Sensores"
+    5. Vuelve a ejecutar: python prueba_carga_sensores.py
+
+
+PROBLEMA 5: "Puerto 8000 ya está en uso"
+─────────────────────────────────────────
+
+❌ ERROR:
+    Address already in use
+
+✅ SOLUCIÓN - OPCIÓN A:
+    Usa otro puerto:
+    python -m http.server 8001
+    
+    Luego abre en navegador:
+    http://localhost:8001/breathe_tracking_web/src/admin_sensors.html
+
+✅ SOLUCIÓN - OPCIÓN B:
+    Encuentra y cierra qué está usando puerto 8000:
+    netstat -ano | findstr :8000
+    taskkill /PID <NUMERO> /F
+
+
+PROBLEMA 6: "Los botones de paginación no funcionan"
+────────────────────────────────────────────────────
+
+❌ SÍNTOMA:
+    Hago clic en "Siguiente" pero no cambia de página
+
+✅ SOLUCIÓN:
+    1. Abre DevTools (F12)
+    2. Pestaña Console → Busca errores
+    3. Recarga la página (Ctrl+F5 para limpiar caché)
+    4. Vuelve a intentar
+
+
+════════════════════════════════════════════════════════════════════════════════
+📊 ESTRUCTURA DE UN SENSOR SIMULADO
+════════════════════════════════════════════════════════════════════════════════
+
+Cada sensor tiene esta estructura en Firebase:
+
+{
+  "id": "SENSOR_001",                    ← ID único
+  "nombre": "Sensor 001",                ← Nombre
+  "ubicacion": "Parque Central, Gandía", ← Ubicación
+  "coords": [38.9640, -0.1850],          ← [Latitud, Longitud]
+  "estado": "normal",                    ← Estado del sensor
+  "bateria": 87,                         ← % Batería
+  "temperatura": 22.5,                   ← Temperatura (°C)
+  "co2": 412,                            ← CO₂ (ppm)
+  "ozono": 0.045,                        ← Ozono (ppm)
+  "ultima_conexion": "12:34",            ← Última conexión (HH:MM)
+  "hasIncident": false,                  ← ¿Tiene incidencia?
+  "active": true                         ← ¿Activo?
+}
+
+VARIABLES:
+──────────
+• 7 sensores reales (ADS133, AKMSF134, LMN789, etc.)
+• 200 sensores simulados (SENSOR_001 a SENSOR_200)
+• ~15% con incidencias (hasIncident: true, color rojo)
+• ~1% inactivos (active: false, color gris)
+• ~84% normales (color azul)
+
+
+════════════════════════════════════════════════════════════════════════════════
+📈 ESTADÍSTICAS ESPERADAS
+════════════════════════════════════════════════════════════════════════════════
+
+TOTAL DE SENSORES:
+  • Reales: 7
+  • Simulados: 200
+  • TOTAL: 207
+
+DISTRIBUCIÓN POR ESTADO:
+  • Normales: ~174 (azul)
+  • Con incidencias: ~31 (rojo)
+  • Inactivos: 2 (gris)
+
+PAGINACIÓN:
+  • Sensores por página: 20
+  • Total de páginas: 11
+  • Última página: Sensores 201-207 (solo 7 sensores)
+
+UBICACIÓN:
+  • Centro: Gandía, Valencia (38.9660, -0.1850)
+  • Radio variación: 0.05° (~5km)
+  • Ubicaciones específicas: Parques, plazas, calles de Gandía
+
+
+════════════════════════════════════════════════════════════════════════════════
+💾 ARCHIVOS GENERADOS
+════════════════════════════════════════════════════════════════════════════════
+
+Después de ejecutar el script, se crean:
+
+resultados_prueba_carga.json
+  ├─ timestamp: Fecha y hora de ejecución
+  ├─ config: Configuración (sensores, threads, etc.)
+  └─ resultados: 
+      ├─ exitosos: 200
+      ├─ fallos: 0
+      └─ latencia: Estadísticas de latencia
+
+
+════════════════════════════════════════════════════════════════════════════════
+❓ PREGUNTAS FRECUENTES
+════════════════════════════════════════════════════════════════════════════════
+
+P: ¿Cuánto tiempo tarda la simulación?
+R: Aproximadamente 2-3 segundos para cargar los 200 sensores.
+
+P: ¿Puedo ejecutar el script varias veces?
+R: Sí. Los sensores se sobrescriben (actualización), no se crean duplicados.
+
+P: ¿Cuáles son las "7 sensores reales"?
+R: ADS133, AKMSF134, LMN789, XYZ001, BTH202, OFF_99, OLD_00
+
+P: ¿Por qué algunos sensores aparecen en rojo?
+R: Tienen incidencias detectadas (hasIncident: true)
+
+P: ¿Por qué algunos aparecen en gris?
+R: Están inactivos (active: false)
+
+P: ¿Puedo cambiar la cantidad de sensores simulados?
+R: Sí. En scripts_python/prueba_carga_sensores.py, línea 28:
+   NUM_SENSORES = 200  ← Cambia este número
+
+P: ¿Dónde se almacenan los datos?
+R: En Firebase Firestore, colección "Sensores"
+
+P: ¿Se eliminan después de cierto tiempo?
+R: No. Los datos permanecen hasta que los borres manualmente.
+
+P: ¿Puede acceder alguien más a estos sensores?
+R: Sí, si tiene credenciales Firebase (serviceAccountKey.json)
+
+P: ¿Cómo veo los detalles de un sensor?
+R: Haz clic en "Ver" en la lista o haz clic en un marcador del mapa.
+
+
+════════════════════════════════════════════════════════════════════════════════
+✅ CHECKLIST FINAL
+════════════════════════════════════════════════════════════════════════════════
+
+Antes de dar por completado:
+
+☐ Python 3.8+ instalado (python --version)
+☐ Dependencias instaladas (pip install firebase-admin tqdm)
+☐ serviceAccountKey.json en scripts_python/
+☐ Script ejecutado sin errores
+☐ Mensaje "✅ Éxito: 200/200 (100.0%)" en terminal
+☐ Panel web abre sin errores (F12 Console limpia)
+☐ Panel muestra "Página 1 de 11"
+☐ Se ven sensores en la lista
+☐ Se ven marcadores en el mapa
+☐ Botones de paginación funcionan
+☐ Filtros funcionan
+☐ Firebase Console muestra colección "Sensores" con documentos
+
+
+════════════════════════════════════════════════════════════════════════════════
+📞 SI ALGO NO FUNCIONA
+════════════════════════════════════════════════════════════════════════════════
+
+1. Revisa la sección "TROUBLESHOOTING" arriba
+2. Copia el mensaje de error completo
+3. Busca en Google: "[nombre_error] firebase-admin python"
+4. Verifica que serviceAccountKey.json sea válido (no corrompido)
+5. Intenta en otra máquina para descartar problemas locales
+
+
+════════════════════════════════════════════════════════════════════════════════
+🎓 NOTAS TÉCNICAS
+════════════════════════════════════════════════════════════════════════════════
+
+ARQUITECTURA:
+  • Backend: Python con Firebase Admin SDK
+  • Frontend: HTML/CSS/JavaScript vanilla
+  • Base de datos: Firebase Firestore
+  • Visualización: Leaflet.js + Chart.js
+  • Servidor web: Python SimpleHTTPServer (puerto 8000)
+
+FLUJO DE DATOS:
+  1. Script Python genera 200 sensores con datos aleatorios
+  2. Se cargan en Firebase Firestore (colección "Sensores")
+  3. Frontend carga datos desde admin_sensors_data.js (7 reales + 200 simulados)
+  4. Se renderizan con paginación (20 por página)
+  5. Se muestran marcadores en mapa Leaflet
+  6. Se generan gráficos con Chart.js
+
+PERFORMANCE:
+  • Latencia promedio: ~230ms por sensor
+  • Velocidad: ~10 documentos/segundo
+  • Carga total: 2-3 segundos
+
+
+════════════════════════════════════════════════════════════════════════════════
+¡LISTO PARA EMPEZAR! 🚀
+
+Sigue los pasos anteriores y en 10 minutos tendrás 207 sensores funcionando.
+
+¿Preguntas? Consulta la sección de TROUBLESHOOTING o revisa la documentación
+en la carpeta /doc/.
+
+¡Éxito! 🎉
+
+════════════════════════════════════════════════════════════════════════════════
