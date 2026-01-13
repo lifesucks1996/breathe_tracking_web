@@ -1,0 +1,130 @@
+\doxysection{analizar\+\_\+resultados Namespace Reference}
+\hypertarget{namespaceanalizar__resultados}{}\label{namespaceanalizar__resultados}\index{analizar\_resultados@{analizar\_resultados}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespaceanalizar__resultados_aa8ce32db5c95e54d2d76be43155fb6b4}{cargar\+\_\+resultados}} (archivo="{}resultados\+\_\+prueba\+\_\+carga.\+json"{})
+\item 
+\doxymbox{\hyperlink{namespaceanalizar__resultados_a33c9bbb6c4c66ffd1f1851dbac222284}{mostrar\+\_\+resultados}} (resultados)
+\item 
+\doxymbox{\hyperlink{namespaceanalizar__resultados_afbbcdff0b0850160514dced0c9facaf0}{inicializar\+\_\+firebase}} ()
+\item 
+\doxymbox{\hyperlink{namespaceanalizar__resultados_a92f184c18d120d8042b1ef7752362e52}{contar\+\_\+documentos\+\_\+sensores}} (\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}})
+\item 
+\doxymbox{\hyperlink{namespaceanalizar__resultados_a5d7edc1ce5ed0a01785915b3348c9e03}{obtener\+\_\+estadisticas\+\_\+firestore}} (\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}})
+\item 
+\doxymbox{\hyperlink{namespaceanalizar__resultados_ac0902a718423c93836a31541d3aeb5d4}{limpiar\+\_\+datos\+\_\+sensores}} (\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}, sensor\+\_\+id=None)
+\item 
+\doxymbox{\hyperlink{namespaceanalizar__resultados_a502b9866e809bc0a769f62781fd4290c}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}@file analizar_resultados.py
+@brief Script para analizar y visualizar resultados de la prueba de carga.
+@details
+Lee los resultados almacenados y genera estadísticas detalladas.
+También permite limpiar datos de prueba de Firestore.
+\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{namespaceanalizar__resultados_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespaceanalizar__resultados_aa8ce32db5c95e54d2d76be43155fb6b4}\index{analizar\_resultados@{analizar\_resultados}!cargar\_resultados@{cargar\_resultados}}
+\index{cargar\_resultados@{cargar\_resultados}!analizar\_resultados@{analizar\_resultados}}
+\doxysubsubsection{\texorpdfstring{cargar\_resultados()}{cargar\_resultados()}}
+{\footnotesize\ttfamily \label{namespaceanalizar__resultados_aa8ce32db5c95e54d2d76be43155fb6b4} 
+analizar\+\_\+resultados.\+cargar\+\_\+resultados (\begin{DoxyParamCaption}\item[{}]{archivo}{ = {\ttfamily "{}resultados\+\_\+prueba\+\_\+carga.json"{}}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Carga los resultados de la prueba desde archivo JSON\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{analizar__resultados_8py_source_l00019}{19}} of file \doxymbox{\hyperlink{analizar__resultados_8py_source}{analizar\+\_\+resultados.\+py}}.
+
+Here is the caller graph for this function:\+
+% FIG 0
+\Hypertarget{namespaceanalizar__resultados_a92f184c18d120d8042b1ef7752362e52}\index{analizar\_resultados@{analizar\_resultados}!contar\_documentos\_sensores@{contar\_documentos\_sensores}}
+\index{contar\_documentos\_sensores@{contar\_documentos\_sensores}!analizar\_resultados@{analizar\_resultados}}
+\doxysubsubsection{\texorpdfstring{contar\_documentos\_sensores()}{contar\_documentos\_sensores()}}
+{\footnotesize\ttfamily \label{namespaceanalizar__resultados_a92f184c18d120d8042b1ef7752362e52} 
+analizar\+\_\+resultados.\+contar\+\_\+documentos\+\_\+sensores (\begin{DoxyParamCaption}\item[{}]{db}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Cuenta cuántos sensores hay en Firestore\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{analizar__resultados_8py_source_l00073}{73}} of file \doxymbox{\hyperlink{analizar__resultados_8py_source}{analizar\+\_\+resultados.\+py}}.
+
+Here is the caller graph for this function:\+
+% FIG 1
+\Hypertarget{namespaceanalizar__resultados_afbbcdff0b0850160514dced0c9facaf0}\index{analizar\_resultados@{analizar\_resultados}!inicializar\_firebase@{inicializar\_firebase}}
+\index{inicializar\_firebase@{inicializar\_firebase}!analizar\_resultados@{analizar\_resultados}}
+\doxysubsubsection{\texorpdfstring{inicializar\_firebase()}{inicializar\_firebase()}}
+{\footnotesize\ttfamily \label{namespaceanalizar__resultados_afbbcdff0b0850160514dced0c9facaf0} 
+analizar\+\_\+resultados.\+inicializar\+\_\+firebase (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Inicializa Firebase Admin SDK\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{analizar__resultados_8py_source_l00062}{62}} of file \doxymbox{\hyperlink{analizar__resultados_8py_source}{analizar\+\_\+resultados.\+py}}.
+
+Here is the caller graph for this function:\+
+% FIG 2
+\Hypertarget{namespaceanalizar__resultados_ac0902a718423c93836a31541d3aeb5d4}\index{analizar\_resultados@{analizar\_resultados}!limpiar\_datos\_sensores@{limpiar\_datos\_sensores}}
+\index{limpiar\_datos\_sensores@{limpiar\_datos\_sensores}!analizar\_resultados@{analizar\_resultados}}
+\doxysubsubsection{\texorpdfstring{limpiar\_datos\_sensores()}{limpiar\_datos\_sensores()}}
+{\footnotesize\ttfamily \label{namespaceanalizar__resultados_ac0902a718423c93836a31541d3aeb5d4} 
+analizar\+\_\+resultados.\+limpiar\+\_\+datos\+\_\+sensores (\begin{DoxyParamCaption}\item[{}]{db}{, }\item[{}]{sensor\+\_\+id}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Limpia los datos de sensores de la prueba.
+
+Si sensor_id es None, limpia TODOS los sensores.
+Si sensor_id es una lista de IDs, limpia solo esos.
+\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{analizar__resultados_8py_source_l00113}{113}} of file \doxymbox{\hyperlink{analizar__resultados_8py_source}{analizar\+\_\+resultados.\+py}}.
+
+Here is the caller graph for this function:\+
+% FIG 3
+\Hypertarget{namespaceanalizar__resultados_a502b9866e809bc0a769f62781fd4290c}\index{analizar\_resultados@{analizar\_resultados}!main@{main}}
+\index{main@{main}!analizar\_resultados@{analizar\_resultados}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{namespaceanalizar__resultados_a502b9866e809bc0a769f62781fd4290c} 
+analizar\+\_\+resultados.\+main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Menú principal\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{analizar__resultados_8py_source_l00162}{162}} of file \doxymbox{\hyperlink{analizar__resultados_8py_source}{analizar\+\_\+resultados.\+py}}.
+
+Here is the call graph for this function:\+
+% FIG 4
+Here is the caller graph for this function:\+
+% FIG 5
+\Hypertarget{namespaceanalizar__resultados_a33c9bbb6c4c66ffd1f1851dbac222284}\index{analizar\_resultados@{analizar\_resultados}!mostrar\_resultados@{mostrar\_resultados}}
+\index{mostrar\_resultados@{mostrar\_resultados}!analizar\_resultados@{analizar\_resultados}}
+\doxysubsubsection{\texorpdfstring{mostrar\_resultados()}{mostrar\_resultados()}}
+{\footnotesize\ttfamily \label{namespaceanalizar__resultados_a33c9bbb6c4c66ffd1f1851dbac222284} 
+analizar\+\_\+resultados.\+mostrar\+\_\+resultados (\begin{DoxyParamCaption}\item[{}]{resultados}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Muestra un resumen formateado de los resultados\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{analizar__resultados_8py_source_l00029}{29}} of file \doxymbox{\hyperlink{analizar__resultados_8py_source}{analizar\+\_\+resultados.\+py}}.
+
+Here is the caller graph for this function:\+
+% FIG 6
+\Hypertarget{namespaceanalizar__resultados_a5d7edc1ce5ed0a01785915b3348c9e03}\index{analizar\_resultados@{analizar\_resultados}!obtener\_estadisticas\_firestore@{obtener\_estadisticas\_firestore}}
+\index{obtener\_estadisticas\_firestore@{obtener\_estadisticas\_firestore}!analizar\_resultados@{analizar\_resultados}}
+\doxysubsubsection{\texorpdfstring{obtener\_estadisticas\_firestore()}{obtener\_estadisticas\_firestore()}}
+{\footnotesize\ttfamily \label{namespaceanalizar__resultados_a5d7edc1ce5ed0a01785915b3348c9e03} 
+analizar\+\_\+resultados.\+obtener\+\_\+estadisticas\+\_\+firestore (\begin{DoxyParamCaption}\item[{}]{db}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Obtiene estadísticas de los datos en Firestore\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{analizar__resultados_8py_source_l00083}{83}} of file \doxymbox{\hyperlink{analizar__resultados_8py_source}{analizar\+\_\+resultados.\+py}}.
+
+Here is the caller graph for this function:\+
+% FIG 7

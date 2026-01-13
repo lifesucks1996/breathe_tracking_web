@@ -1,0 +1,423 @@
+\doxysection{prueba\+\_\+carga\+\_\+sensores.\+py}
+\hypertarget{prueba__carga__sensores_8py_source}{}\label{prueba__carga__sensores_8py_source}\index{scripts\_python/prueba\_carga\_sensores.py@{scripts\_python/prueba\_carga\_sensores.py}}
+\doxymbox{\hyperlink{prueba__carga__sensores_8py}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00001}\doxymbox{\hyperlink{namespaceprueba__carga__sensores}{00001}}\ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00002}00002\ \textcolor{stringliteral}{@file\ prueba\_carga\_sensores.py}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00003}00003\ \textcolor{stringliteral}{@brief\ Script\ de\ prueba\ de\ carga\ simulando\ 200\ sensores\ emitiendo\ datos\ a\ Firebase.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00004}00004\ \textcolor{stringliteral}{@details}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00005}00005\ \textcolor{stringliteral}{Simula\ N\ sensores\ enviando\ datos\ ficticios\ pero\ coherentes\ (siguiendo\ los\ rangos}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00006}00006\ \textcolor{stringliteral}{de\ valores\ reales\ de\ contaminación)\ a\ Firestore\ en\ paralelo.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00007}00007\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00008}00008\ \textcolor{stringliteral}{Mide:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00009}00009\ \textcolor{stringliteral}{-\/\ Tiempo\ total\ de\ escritura}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00010}00010\ \textcolor{stringliteral}{-\/\ Tasa\ de\ éxito/error}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00011}00011\ \textcolor{stringliteral}{-\/\ Latencia\ promedio}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00012}00012\ \textcolor{stringliteral}{-\/\ Documentos\ por\ segundo}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00013}00013\ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00015}00015\ \textcolor{keyword}{import}\ firebase\_admin}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00016}00016\ \textcolor{keyword}{from}\ firebase\_admin\ \textcolor{keyword}{import}\ credentials,\ firestore}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00017}00017\ \textcolor{keyword}{import}\ random}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00018}00018\ \textcolor{keyword}{from}\ datetime\ \textcolor{keyword}{import}\ datetime,\ timedelta}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00019}00019\ \textcolor{keyword}{from}\ concurrent.futures\ \textcolor{keyword}{import}\ ThreadPoolExecutor,\ as\_completed}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00020}00020\ \textcolor{keyword}{import}\ time}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00021}00021\ \textcolor{keyword}{from}\ tqdm\ \textcolor{keyword}{import}\ tqdm}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00022}00022\ \textcolor{keyword}{import}\ json}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00024}00024\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00025}00025\ \textcolor{comment}{\#\ CONFIGURACIÓN}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00026}00026\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00028}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_aa18cfd31745e89d5ab516ba01d180162}{00028}}\ NUM\_SENSORES\ =\ 200\ \ \textcolor{comment}{\#\ Número\ de\ sensores\ a\ simular}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00029}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_aae100d2f817c34e11c8023a2774061a0}{00029}}\ NUM\_THREADS\ =\ 20\ \ \textcolor{comment}{\#\ Threads\ concurrentes\ (sensores\ enviando\ en\ paralelo)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00030}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a522ae34b74efb661a467b82f26cca1e0}{00030}}\ TIMEOUT\_SEGUNDOS\ =\ 30\ \ \textcolor{comment}{\#\ Timeout\ por\ operación}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00032}00032\ \textcolor{comment}{\#\ MODO\ DE\ OPERACIÓN}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00033}00033\ \textcolor{comment}{\#\ "{}pruebas"{}\ =\ Colección\ "{}Sensores"{}\ (para\ pruebas\ de\ carga)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00034}00034\ \textcolor{comment}{\#\ "{}produccion"{}\ =\ Colección\ "{}sensores"{}\ (estructura\ real\ existente)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00035}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a31905fa1c9618cfb94fa3b3b93bbaeb6}{00035}}\ MODO\ =\ \textcolor{stringliteral}{"{}pruebas"{}}\ \ \textcolor{comment}{\#\ Cambiar\ a\ "{}produccion"{}\ para\ usar\ estructura\ real}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00036}00036\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00037}00037\ \textcolor{comment}{\#\ Centro\ de\ simulación\ (Gandía,\ España)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00038}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a5c37bc3deaf174d8d9ccaac015db5ed9}{00038}}\ LAT\_BASE\ =\ 38.9660}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00039}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a7b17ab1ebdc94c68f2df27bfca8b2775}{00039}}\ LNG\_BASE\ =\ -\/0.1850}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00040}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a5382a8f02fec35e505d69ce658cc5594}{00040}}\ RADIO\_VARIACION\ =\ 0.05\ \ \textcolor{comment}{\#\ 5km\ de\ dispersión}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00041}00041\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00042}00042\ \textcolor{comment}{\#\ IDs\ de\ administrador\ (para\ estructura\ real)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00043}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a0753e82462e62740898ff7f29f6ccbc7}{00043}}\ IDS\_ADMIN\ =\ [\textcolor{stringliteral}{"{}admin1"{}},\ \textcolor{stringliteral}{"{}admin2"{}},\ \textcolor{stringliteral}{"{}admin3"{}},\ \textcolor{stringliteral}{"{}admin4"{}},\ \textcolor{stringliteral}{"{}admin5"{}}]}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00045}00045\ \textcolor{comment}{\#\ Ubicaciones\ reales\ (para\ estructura\ real)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00046}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a6cf1a15773a626ce2dc3ae17376b03ff}{00046}}\ UBICACIONES\ =\ [}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00047}00047\ \ \ \ \ \textcolor{stringliteral}{"{}Plaça\ Polígono\ 20"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00048}00048\ \ \ \ \ \textcolor{stringliteral}{"{}Calle\ Principal"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00049}00049\ \ \ \ \ \textcolor{stringliteral}{"{}Parque\ Central"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00050}00050\ \ \ \ \ \textcolor{stringliteral}{"{}Zona\ Industrial"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00051}00051\ \ \ \ \ \textcolor{stringliteral}{"{}Centro\ Histórico"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00052}00052\ \ \ \ \ \textcolor{stringliteral}{"{}Barrio\ Residencial"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00053}00053\ \ \ \ \ \textcolor{stringliteral}{"{}Frente\ Marítimo"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00054}00054\ ]}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00055}00055\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00056}00056\ \textcolor{comment}{\#\ Rangos\ realistas\ de\ contaminación}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00057}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a6474f67fc2e1bd25e405a2c1bf535001}{00057}}\ RANGOS\ =\ \{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00058}00058\ \ \ \ \ \textcolor{stringliteral}{"{}ozono"{}}:\ (0.040,\ 0.130),\ \ \ \ \textcolor{comment}{\#\ O3}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00059}00059\ \ \ \ \ \textcolor{stringliteral}{"{}co2"{}}:\ (400,\ 2500)\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ CO2\ -\/\ ppm}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00060}00060\ \}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00061}00061\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00062}00062\ \textcolor{comment}{\#\ Índices\ de\ calidad\ del\ aire\ (AQI\ simplificado)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00063}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a58d41a9f5853e0f031319a00a3eeeec3}{00063}}\ NIVELES\_CALIDAD\ =\ [\textcolor{stringliteral}{"{}Excelente"{}},\ \textcolor{stringliteral}{"{}Bueno"{}},\ \textcolor{stringliteral}{"{}Aceptable"{}},\ \textcolor{stringliteral}{"{}Pobre"{}},\ \textcolor{stringliteral}{"{}Muy\ Pobre"{}}]}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00064}00064\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00065}00065\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00066}00066\ \textcolor{comment}{\#\ INICIALIZACIÓN\ FIREBASE}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00067}00067\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00069}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a94d36dc81bd1447ebbbe2c00c1a9678e}{00069}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a94d36dc81bd1447ebbbe2c00c1a9678e}{inicializar\_firebase}}():}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00070}00070\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00071}00071\ \textcolor{stringliteral}{\ \ \ \ Inicializa\ Firebase\ Admin\ SDK.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00072}00072\ \textcolor{stringliteral}{\ \ \ \ Carga\ credenciales\ desde\ serviceAccountKey.json}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00073}00073\ \textcolor{stringliteral}{\ \ \ \ "{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00074}00074\ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00075}00075\ \ \ \ \ \ \ \ \ cred\ =\ credentials.Certificate(\textcolor{stringliteral}{"{}serviceAccountKey.json"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00076}00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ firebase\_admin.\_apps:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00077}00077\ \ \ \ \ \ \ \ \ \ \ \ \ firebase\_admin.initialize\_app(cred)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00078}00078\ \ \ \ \ \ \ \ \ db\ =\ firestore.client()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00079}00079\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Firebase\ inicializado\ correctamente\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00080}00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ db}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00081}00081\ \ \ \ \ \textcolor{keywordflow}{except}\ FileNotFoundError:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00082}00082\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Error:\ No\ se\ encontró\ serviceAccountKey.json"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00083}00083\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ \ Descárgalo\ desde\ Firebase\ Console\ >\ Configuración\ del\ proyecto\ >\ Cuentas\ de\ servicio\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00084}00084\ \ \ \ \ \ \ \ \ exit(1)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00085}00085\ \ \ \ \ \textcolor{keywordflow}{except}\ Exception\ \textcolor{keyword}{as}\ e:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00086}00086\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Error\ al\ inicializar\ Firebase:\ \{e\}\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00087}00087\ \ \ \ \ \ \ \ \ exit(1)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00088}00088\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00089}00089\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00090}00090\ \textcolor{comment}{\#\ GENERACIÓN\ DE\ DATOS}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00091}00091\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00092}00092\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00093}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a02584deb6bf4ff1b4e51d939c4770194}{00093}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a02584deb6bf4ff1b4e51d939c4770194}{generar\_coordenadas\_sensor}}():}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00094}00094\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00095}00095\ \textcolor{stringliteral}{\ \ \ \ Genera\ coordenadas\ geográficas\ aleatorias\ dentro\ del\ radio\ de\ Gandía.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00096}00096\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00097}00097\ \textcolor{stringliteral}{\ \ \ \ Returns:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00098}00098\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ list:\ [Latitud,\ Longitud]\ en\ formato\ Leaflet\ compatible}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00099}00099\ \textcolor{stringliteral}{\ \ \ \ "{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00100}00100\ \ \ \ \ \textcolor{comment}{\#\ Generar\ variación\ aleatoria\ dentro\ del\ radio}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00101}00101\ \ \ \ \ variacion\_lat\ =\ random.uniform(-\/RADIO\_VARIACION,\ RADIO\_VARIACION)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00102}00102\ \ \ \ \ variacion\_lng\ =\ random.uniform(-\/RADIO\_VARIACION,\ RADIO\_VARIACION)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00103}00103\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00104}00104\ \ \ \ \ lat\ =\ round(LAT\_BASE\ +\ variacion\_lat,\ 4)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00105}00105\ \ \ \ \ lng\ =\ round(LNG\_BASE\ +\ variacion\_lng,\ 4)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00106}00106\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00107}00107\ \ \ \ \ \textcolor{keywordflow}{return}\ [lat,\ lng]}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00108}00108\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00109}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_ab809cccc71f36e94d2c0bb35bbdb976f}{00109}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespaceprueba__carga__sensores_ab809cccc71f36e94d2c0bb35bbdb976f}{generar\_datos\_sensor\_pruebas}}(sensor\_id):}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00110}00110\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00111}00111\ \textcolor{stringliteral}{\ \ \ \ Genera\ datos\ para\ MODO\ PRUEBAS\ (colección\ "{}Sensores"{}).}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00112}00112\ \textcolor{stringliteral}{\ \ \ \ Usa\ EXACTAMENTE\ los\ campos\ que\ existen\ en\ estructura\ real.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00113}00113\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00114}00114\ \textcolor{stringliteral}{\ \ \ \ Args:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00115}00115\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sensor\_id:\ ID\ único\ del\ sensor\ (ej:\ SENSOR\_001)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00116}00116\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00117}00117\ \textcolor{stringliteral}{\ \ \ \ Returns:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00118}00118\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ dict:\ Documento\ con\ estructura\ idéntica\ a\ sensores\ reales}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00119}00119\ \textcolor{stringliteral}{\ \ \ \ "{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00120}00120\ \ \ \ \ ozono\ =\ round(random.uniform(0.040,\ 0.130),\ 3)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00121}00121\ \ \ \ \ co2\ =\ random.randint(400,\ 2500)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00122}00122\ \ \ \ \ temperatura\ =\ random.randint(10,\ 35)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00123}00123\ \ \ \ \ bateria\ =\ random.randint(15,\ 100)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00124}00124\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00125}00125\ \ \ \ \ estados\ =\ [\textcolor{stringliteral}{"{}Desconectado"{}},\ \textcolor{stringliteral}{"{}Conectado"{}},\ \textcolor{stringliteral}{"{}En\ pausa"{}},\ \textcolor{stringliteral}{"{}Activo"{}}]}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00126}00126\ \ \ \ \ estado\ =\ random.choice(estados)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00127}00127\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00128}00128\ \ \ \ \ ubicacion\ =\ random.choice(UBICACIONES)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00129}00129\ \ \ \ \ id\_admin\ =\ random.choice(IDS\_ADMIN)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00130}00130\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00131}00131\ \ \ \ \ ahora\ =\ datetime.now().isoformat()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00132}00132\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00133}00133\ \ \ \ \ \textcolor{keywordflow}{return}\ \{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00134}00134\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}bateria"{}}:\ bateria,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00135}00135\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}co2"{}}:\ co2,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00136}00136\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}coords"{}}:\ \doxymbox{\hyperlink{namespaceprueba__carga__sensores_a02584deb6bf4ff1b4e51d939c4770194}{generar\_coordenadas\_sensor}}(),\ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00137}00137\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}estado"{}}:\ estado,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00138}00138\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}id\_admin"{}}:\ id\_admin,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00139}00139\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}nombre"{}}:\ f\textcolor{stringliteral}{"{}Sensor\{random.randint(1,\ 999)\}"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00140}00140\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ozono"{}}:\ ozono,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00141}00141\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}temperatura"{}}:\ temperatura,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00142}00142\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ubicacion"{}}:\ ubicacion,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00143}00143\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ultima\_conexion"{}}:\ ahora}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00144}00144\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00145}00145\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00146}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a5a05ee521f9deb83085b0b2e06466b39}{00146}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a5a05ee521f9deb83085b0b2e06466b39}{generar\_datos\_sensor\_produccion}}(sensor\_id):}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00147}00147\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00148}00148\ \textcolor{stringliteral}{\ \ \ \ Genera\ datos\ para\ MODO\ PRODUCCIÓN\ (colección\ "{}sensores"{}).}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00149}00149\ \textcolor{stringliteral}{\ \ \ \ Estructura\ similar\ a\ sensores\ reales\ existentes.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00150}00150\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00151}00151\ \textcolor{stringliteral}{\ \ \ \ Args:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00152}00152\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sensor\_id:\ ID\ único\ del\ sensor\ (número)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00153}00153\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00154}00154\ \textcolor{stringliteral}{\ \ \ \ Returns:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00155}00155\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ dict:\ Documento\ con\ estructura\ de\ sensor\ real}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00156}00156\ \textcolor{stringliteral}{\ \ \ \ "{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00157}00157\ \ \ \ \ \textcolor{comment}{\#\ Valor\ aleatorio\ para\ cada\ gas}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00158}00158\ \ \ \ \ ozono\ =\ round(random.uniform(0.040,\ 0.130),\ 3)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00159}00159\ \ \ \ \ co2\ =\ random.randint(400,\ 2500)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00160}00160\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00161}00161\ \ \ \ \ temperatura\ =\ random.randint(10,\ 35)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00162}00162\ \ \ \ \ bateria\ =\ random.randint(15,\ 100)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00163}00163\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00164}00164\ \ \ \ \ \textcolor{comment}{\#\ Estados\ posibles}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00165}00165\ \ \ \ \ estados\ =\ [\textcolor{stringliteral}{"{}Desconectado"{}},\ \textcolor{stringliteral}{"{}Conectado"{}},\ \textcolor{stringliteral}{"{}En\ pausa"{}},\ \textcolor{stringliteral}{"{}Activo"{}}]}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00166}00166\ \ \ \ \ estado\ =\ random.choice(estados)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00167}00167\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00168}00168\ \ \ \ \ \textcolor{comment}{\#\ Ubicación\ con\ variación}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00169}00169\ \ \ \ \ ubicacion\ =\ random.choice(UBICACIONES)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00170}00170\ \ \ \ \ id\_admin\ =\ random.choice(IDS\_ADMIN)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00171}00171\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00172}00172\ \ \ \ \ \textcolor{comment}{\#\ Timestamp\ actual}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00173}00173\ \ \ \ \ ahora\ =\ datetime.now().isoformat()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00174}00174\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00175}00175\ \ \ \ \ \textcolor{keywordflow}{return}\ \{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00176}00176\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}bateria"{}}:\ bateria,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00177}00177\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}co2"{}}:\ co2,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00178}00178\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}coords"{}}:\ \doxymbox{\hyperlink{namespaceprueba__carga__sensores_a02584deb6bf4ff1b4e51d939c4770194}{generar\_coordenadas\_sensor}}(),\ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00179}00179\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}estado"{}}:\ estado,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00180}00180\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}id\_admin"{}}:\ id\_admin,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00181}00181\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}nombre"{}}:\ f\textcolor{stringliteral}{"{}Sensor\{random.randint(1,\ 999)\}"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00182}00182\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ozono"{}}:\ ozono,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00183}00183\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}temperatura"{}}:\ temperatura,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00184}00184\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ubicacion"{}}:\ ubicacion,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00185}00185\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ultima\_conexion"{}}:\ ahora}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00186}00186\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00187}00187\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00188}00188\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00189}00189\ \textcolor{comment}{\#\ ESCRITURA\ A\ FIREBASE}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00190}00190\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00191}00191\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00192}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a43a65cdd50d671488ff508d40d64a002}{00192}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a43a65cdd50d671488ff508d40d64a002}{enviar\_sensor\_a\_firebase}}(db,\ sensor\_id,\ timestamp):}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00193}00193\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00194}00194\ \textcolor{stringliteral}{\ \ \ \ Envía\ datos\ de\ un\ sensor\ a\ Firestore\ según\ el\ MODO.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00195}00195\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00196}00196\ \textcolor{stringliteral}{\ \ \ \ Args:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00197}00197\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ db:\ Referencia\ a\ Firestore}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00198}00198\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sensor\_id:\ ID\ del\ sensor\ (string\ o\ número\ según\ modo)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00199}00199\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ timestamp:\ Timestamp\ del\ envío\ (para\ pruebas)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00200}00200\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00201}00201\ \textcolor{stringliteral}{\ \ \ \ Returns:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00202}00202\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ tuple:\ (sensor\_id,\ éxito:\ bool,\ latencia\_ms:\ float,\ error:\ str|None)}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00203}00203\ \textcolor{stringliteral}{\ \ \ \ "{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00204}00204\ \ \ \ \ tiempo\_inicio\ =\ time.time()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00205}00205\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00206}00206\ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00207}00207\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ MODO\ ==\ \textcolor{stringliteral}{"{}pruebas"{}}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00208}00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ MODO\ PRUEBAS:\ Colección\ "{}Sensores"{}\ con\ subcollection\ "{}mediciones"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00209}00209\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ Escribir\ datos\ tanto\ en\ documento\ principal\ como\ en\ subcollection}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00210}00210\ \ \ \ \ \ \ \ \ \ \ \ \ datos\ =\ \doxymbox{\hyperlink{namespaceprueba__carga__sensores_ab809cccc71f36e94d2c0bb35bbdb976f}{generar\_datos\_sensor\_pruebas}}(sensor\_id)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00211}00211\ \ \ \ \ \ \ \ \ \ \ \ \ db.collection(\textcolor{stringliteral}{"{}Sensores"{}}).\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}(sensor\_id).set(datos,\ merge=\textcolor{keyword}{True})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00212}00212\ \ \ \ \ \ \ \ \ \ \ \ \ db.collection(\textcolor{stringliteral}{"{}Sensores"{}}).\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}(sensor\_id).collection(\textcolor{stringliteral}{"{}mediciones"{}}).\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}(}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00213}00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ timestamp}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00214}00214\ \ \ \ \ \ \ \ \ \ \ \ \ ).set(datos,\ merge=\textcolor{keyword}{True})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00215}00215\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00216}00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{elif}\ MODO\ ==\ \textcolor{stringliteral}{"{}produccion"{}}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00217}00217\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ MODO\ PRODUCCIÓN:\ Colección\ "{}sensores"{}\ con\ subcollection\ "{}mediciones"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00218}00218\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ Escribir\ datos\ tanto\ en\ documento\ principal\ como\ en\ subcollection}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00219}00219\ \ \ \ \ \ \ \ \ \ \ \ \ datos\ =\ \doxymbox{\hyperlink{namespaceprueba__carga__sensores_ab809cccc71f36e94d2c0bb35bbdb976f}{generar\_datos\_sensor\_pruebas}}(sensor\_id)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00220}00220\ \ \ \ \ \ \ \ \ \ \ \ \ db.collection(\textcolor{stringliteral}{"{}sensores"{}}).\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}(str(sensor\_id)).set(datos,\ merge=\textcolor{keyword}{True})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00221}00221\ \ \ \ \ \ \ \ \ \ \ \ \ db.collection(\textcolor{stringliteral}{"{}sensores"{}}).\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}(str(sensor\_id)).collection(\textcolor{stringliteral}{"{}mediciones"{}}).\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}(}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00222}00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ timestamp}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00223}00223\ \ \ \ \ \ \ \ \ \ \ \ \ ).set(datos,\ merge=\textcolor{keyword}{True})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00224}00224\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00225}00225\ \ \ \ \ \ \ \ \ latencia\_ms\ =\ (time.time()\ -\/\ tiempo\_inicio)\ *\ 1000}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00226}00226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (sensor\_id,\ \textcolor{keyword}{True},\ latencia\_ms,\ \textcolor{keywordtype}{None})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00227}00227\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00228}00228\ \ \ \ \ \textcolor{keywordflow}{except}\ Exception\ \textcolor{keyword}{as}\ e:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00229}00229\ \ \ \ \ \ \ \ \ latencia\_ms\ =\ (time.time()\ -\/\ tiempo\_inicio)\ *\ 1000}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00230}00230\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (sensor\_id,\ \textcolor{keyword}{False},\ latencia\_ms,\ str(e))}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00231}00231\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00232}00232\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00233}00233\ \textcolor{comment}{\#\ VERIFICACIÓN\ DE\ COLECCIONES}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00234}00234\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00235}00235\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00236}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a7c355c1e229604aa490ea1f486a38120}{00236}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a7c355c1e229604aa490ea1f486a38120}{verificar\_crear\_colecciones}}(db):}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00237}00237\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00238}00238\ \textcolor{stringliteral}{\ \ \ \ Verifica\ y\ crea\ las\ colecciones\ necesarias\ si\ no\ existen.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00239}00239\ \textcolor{stringliteral}{\ \ \ \ En\ Firestore,\ las\ colecciones\ se\ crean\ implícitamente\ al\ escribir,}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00240}00240\ \textcolor{stringliteral}{\ \ \ \ pero\ esta\ función\ asegura\ su\ existencia.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00241}00241\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00242}00242\ \textcolor{stringliteral}{\ \ \ \ Args:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00243}00243\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ db:\ Referencia\ a\ Firestore}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00244}00244\ \textcolor{stringliteral}{\ \ \ \ "{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00245}00245\ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00246}00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ MODO\ ==\ \textcolor{stringliteral}{"{}pruebas"{}}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00247}00247\ \ \ \ \ \ \ \ \ \ \ \ \ coleccion\ =\ \textcolor{stringliteral}{"{}Sensores"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00248}00248\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00249}00249\ \ \ \ \ \ \ \ \ \ \ \ \ coleccion\ =\ \textcolor{stringliteral}{"{}sensores"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00250}00250\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00251}00251\ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ Intentar\ obtener\ documentos\ de\ la\ colección}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00252}00252\ \ \ \ \ \ \ \ \ docs\ =\ db.collection(coleccion).limit(1).stream()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00253}00253\ \ \ \ \ \ \ \ \ docs\_list\ =\ list(docs)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00254}00254\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00255}00255\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ docs\_list:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00256}00256\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ Colección\ vacía\ o\ no\ existe\ -\/\ crear\ documento\ metadata}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00257}00257\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Colección\ '\{coleccion\}'\ vacía.\ Creando\ estructura\ inicial..."{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00258}00258\ \ \ \ \ \ \ \ \ \ \ \ \ db.collection(coleccion).\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}(\textcolor{stringliteral}{"{}\_metadata"{}}).set(\{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00259}00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}creada\_el"{}}:\ datetime.now().isoformat(),}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00260}00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}proposito"{}}:\ \textcolor{stringliteral}{"{}Colección\ para\ sensores\ IoT"{}},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00261}00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}descripcion"{}}:\ \textcolor{stringliteral}{"{}Metadata\ -\/\ Este\ documento\ marca\ que\ la\ colección\ fue\ inicializada"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00262}00262\ \ \ \ \ \ \ \ \ \ \ \ \ \})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00263}00263\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Colección\ '\{coleccion\}'\ inicializada\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00264}00264\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00265}00265\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Colección\ '\{coleccion\}'\ ya\ existe\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00266}00266\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00267}00267\ \ \ \ \ \textcolor{keywordflow}{except}\ Exception\ \textcolor{keyword}{as}\ e:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00268}00268\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ Advertencia\ al\ verificar\ colecciones:\ \{e\}\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00269}00269\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00270}00270\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00271}00271\ \textcolor{comment}{\#\ EJECUCIÓN\ DE\ PRUEBA}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00272}00272\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00273}00273\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00274}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a6d630adb18a837132c20125b820bc2c5}{00274}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a6d630adb18a837132c20125b820bc2c5}{ejecutar\_prueba\_carga}}(db,\ num\_sensores=NUM\_SENSORES,\ num\_threads=NUM\_THREADS):}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00275}00275\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00276}00276\ \textcolor{stringliteral}{\ \ \ \ Ejecuta\ la\ prueba\ de\ carga\ con\ múltiples\ sensores\ en\ paralelo.}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00277}00277\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00278}00278\ \textcolor{stringliteral}{\ \ \ \ Args:}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00279}00279\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ db:\ Referencia\ a\ Firestore}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00280}00280\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ num\_sensores:\ Número\ de\ sensores\ a\ simular}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00281}00281\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ num\_threads:\ Número\ de\ threads\ concurrentes}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00282}00282\ \textcolor{stringliteral}{\ \ \ \ "{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00283}00283\ \ \ \ \ nombre\_coleccion\ =\ \textcolor{stringliteral}{"{}Sensores"{}}\ \textcolor{keywordflow}{if}\ MODO\ ==\ \textcolor{stringliteral}{"{}pruebas"{}}\ \textcolor{keywordflow}{else}\ \textcolor{stringliteral}{"{}sensores"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00284}00284\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00285}00285\ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00286}00286\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ PRUEBA\ DE\ CARGA\ -\/\ SENSORES\ IoT"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00287}00287\ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00288}00288\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Configuración:"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00289}00289\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ Modo:\ \{MODO.upper()\}"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00290}00290\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ Colección:\ '\{nombre\_coleccion\}'"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00291}00291\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ Sensores:\ \{num\_sensores\}"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00292}00292\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ Threads:\ \{num\_threads\}"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00293}00293\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ Timestamp:\ \{datetime.now().isoformat()\}"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00294}00294\ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00295}00295\ \ \ \ \ print()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00296}00296\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00297}00297\ \ \ \ \ timestamp\_base\ =\ datetime.now().isoformat()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00298}00298\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00299}00299\ \ \ \ \ resultados\ =\ \{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00300}00300\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}exitosos"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00301}00301\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fallos"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00302}00302\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}latencias"{}}:\ [],}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00303}00303\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}errores"{}}:\ []}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00304}00304\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00305}00305\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00306}00306\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Enviando\ datos\ a\ Firestore...\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00307}00307\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00308}00308\ \ \ \ \ \textcolor{keyword}{with}\ ThreadPoolExecutor(max\_workers=num\_threads)\ \textcolor{keyword}{as}\ executor:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00309}00309\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ MODO\ ==\ \textcolor{stringliteral}{"{}pruebas"{}}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00310}00310\ \ \ \ \ \ \ \ \ \ \ \ \ futures\ =\ \{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00311}00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ executor.submit(}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00312}00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enviar\_sensor\_a\_firebase,\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00313}00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ db,\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00314}00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}\{i:05d\}"{}},\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00315}00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}\{timestamp\_base\}\_sensor\_\{i:05d\}"{}}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00316}00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ):\ i\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00317}00317\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ i\ \textcolor{keywordflow}{in}\ range(1,\ num\_sensores\ +\ 1)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00318}00318\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00319}00319\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:\ \ \textcolor{comment}{\#\ produccion}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00320}00320\ \ \ \ \ \ \ \ \ \ \ \ \ futures\ =\ \{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00321}00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ executor.submit(}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00322}00322\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enviar\_sensor\_a\_firebase,\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00323}00323\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ db,\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00324}00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i,\ \ \textcolor{comment}{\#\ ID\ numérico}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00325}00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{None}\ \ \textcolor{comment}{\#\ No\ se\ usa\ timestamp\ en\ modo\ producción}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00326}00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ):\ i\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00327}00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ i\ \textcolor{keywordflow}{in}\ range(10000,\ 10000\ +\ num\_sensores)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00328}00328\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00329}00329\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00330}00330\ \ \ \ \ \ \ \ \ \textcolor{keyword}{with}\ tqdm(total=num\_sensores,\ desc=\textcolor{stringliteral}{"{}Progreso"{}},\ unit=\textcolor{stringliteral}{"{}sensores"{}})\ \textcolor{keyword}{as}\ pbar:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00331}00331\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ future\ \textcolor{keywordflow}{in}\ as\_completed(futures):}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00332}00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sensor\_id,\ exito,\ latencia,\ error\ =\ future.result()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00333}00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00334}00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ exito:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00335}00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultados[\textcolor{stringliteral}{"{}exitosos"{}}]\ +=\ 1}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00336}00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultados[\textcolor{stringliteral}{"{}latencias"{}}].append(latencia)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00337}00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00338}00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultados[\textcolor{stringliteral}{"{}fallos"{}}]\ +=\ 1}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00339}00339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resultados[\textcolor{stringliteral}{"{}errores"{}}].append(f\textcolor{stringliteral}{"{}\{sensor\_id\}:\ \{error\}"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00340}00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00341}00341\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pbar.update(1)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00342}00342\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00343}00343\ \ \ \ \ \textcolor{comment}{\#\ ========================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00344}00344\ \ \ \ \ \textcolor{comment}{\#\ MOSTRAR\ RESULTADOS}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00345}00345\ \ \ \ \ \textcolor{comment}{\#\ ========================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00346}00346\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00347}00347\ \ \ \ \ print(\textcolor{stringliteral}{"{}\(\backslash\)n"{}}\ +\ \textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00348}00348\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ RESULTADOS\ DE\ LA\ PRUEBA"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00349}00349\ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00350}00350\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00351}00351\ \ \ \ \ tasa\_exito\ =\ (resultados[\textcolor{stringliteral}{"{}exitosos"{}}]\ /\ num\_sensores)\ *\ 100}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00352}00352\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\(\backslash\)n\ Éxito:\ \{resultados['exitosos']\}/\{num\_sensores\}\ (\{tasa\_exito:.1f\}\%)"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00353}00353\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Fallos:\ \{resultados['fallos']\}/\{num\_sensores\}"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00354}00354\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00355}00355\ \ \ \ \ \textcolor{keywordflow}{if}\ resultados[\textcolor{stringliteral}{"{}latencias"{}}]:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00356}00356\ \ \ \ \ \ \ \ \ latencias\ =\ resultados[\textcolor{stringliteral}{"{}latencias"{}}]}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00357}00357\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\(\backslash\)n\ \ Latencia:"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00358}00358\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ Promedio:\ \{sum(latencias)/len(latencias):.2f\}\ ms"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00359}00359\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ Mínima:\ \{min(latencias):.2f\}\ ms"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00360}00360\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ Máxima:\ \{max(latencias):.2f\}\ ms"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00361}00361\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00362}00362\ \ \ \ \ velocidad\ =\ resultados[\textcolor{stringliteral}{"{}exitosos"{}}]\ /\ num\_threads}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00363}00363\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\(\backslash\)n\ Velocidad:\ \string~\{velocidad:.1f\}\ documentos/segundo"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00364}00364\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00365}00365\ \ \ \ \ \textcolor{keywordflow}{if}\ resultados[\textcolor{stringliteral}{"{}errores"{}}]:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00366}00366\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\(\backslash\)n\ \ Errores\ encontrados:"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00367}00367\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ error\ \textcolor{keywordflow}{in}\ resultados[\textcolor{stringliteral}{"{}errores"{}}][:5]:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00368}00368\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ \{error\}"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00369}00369\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ len(resultados[\textcolor{stringliteral}{"{}errores"{}}])\ >\ 5:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00370}00370\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ •\ ...\ y\ \{len(resultados['errores'])\ -\/\ 5\}\ más"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00371}00371\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00372}00372\ \ \ \ \ print(\textcolor{stringliteral}{"{}\(\backslash\)n"{}}\ +\ \textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00373}00373\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Prueba\ completada"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00374}00374\ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00375}00375\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\(\backslash\)n\ Documentos\ escritos\ en:\ \{nombre\_coleccion\}/"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00376}00376\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Verifica\ en\ Firebase\ Console\ >\ Firestore\ Database\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00377}00377\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00378}00378\ \ \ \ \ \textcolor{keywordflow}{return}\ resultados}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00379}00379\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00380}00380\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00381}00381\ \textcolor{comment}{\#\ PUNTO\ DE\ ENTRADA}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00382}00382\ \textcolor{comment}{\#\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00383}00383\ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00384}00384\ \textcolor{keywordflow}{if}\ \_\_name\_\_\ ==\ \textcolor{stringliteral}{"{}\_\_main\_\_"{}}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00385}00385\ \ \ \ \ \textcolor{comment}{\#\ Inicializar\ Firebase}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00386}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_af46ba888bcfff1336d1ed2a9720311f4}{00386}}\ \ \ \ \ db\ =\ \doxymbox{\hyperlink{namespaceprueba__carga__sensores_a94d36dc81bd1447ebbbe2c00c1a9678e}{inicializar\_firebase}}()}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00387}00387\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00388}00388\ \ \ \ \ \textcolor{comment}{\#\ Verificar/crear\ colecciones\ necesarias}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00389}00389\ \ \ \ \ \doxymbox{\hyperlink{namespaceprueba__carga__sensores_a7c355c1e229604aa490ea1f486a38120}{verificar\_crear\_colecciones}}(db)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00390}00390\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00391}00391\ \ \ \ \ \textcolor{comment}{\#\ Ejecutar\ prueba}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00392}00392\ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00393}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a5188fd497ae00e64f09a1e0046ded49d}{00393}}\ \ \ \ \ \ \ \ \ resultados\ =\ \doxymbox{\hyperlink{namespaceprueba__carga__sensores_a6d630adb18a837132c20125b820bc2c5}{ejecutar\_prueba\_carga}}(db,\ NUM\_SENSORES,\ NUM\_THREADS)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00394}00394\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00395}00395\ \ \ \ \ \ \ \ \ \textcolor{comment}{\#\ Guardar\ resultados\ en\ archivo}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00396}00396\ \ \ \ \ \ \ \ \ \textcolor{keyword}{with}\ open(\textcolor{stringliteral}{"{}resultados\_prueba\_carga.json"{}},\ \textcolor{stringliteral}{"{}w"{}})\ \textcolor{keyword}{as}\ f:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00397}00397\ \ \ \ \ \ \ \ \ \ \ \ \ json.dump(\{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00398}00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}timestamp"{}}:\ datetime.now().isoformat(),}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00399}00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}config"{}}:\ \{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00400}00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}num\_sensores"{}}:\ NUM\_SENSORES,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00401}00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}num\_threads"{}}:\ NUM\_THREADS}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00402}00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \},}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00403}00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}resultados"{}}:\ \{}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00404}00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}exitosos"{}}:\ resultados[\textcolor{stringliteral}{"{}exitosos"{}}],}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00405}00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fallos"{}}:\ resultados[\textcolor{stringliteral}{"{}fallos"{}}],}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00406}00406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}latencia\_promedio"{}}:\ sum(resultados[\textcolor{stringliteral}{"{}latencias"{}}])\ /\ len(resultados[\textcolor{stringliteral}{"{}latencias"{}}])\ \textcolor{keywordflow}{if}\ resultados[\textcolor{stringliteral}{"{}latencias"{}}]\ \textcolor{keywordflow}{else}\ 0,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00407}00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}latencia\_min"{}}:\ min(resultados[\textcolor{stringliteral}{"{}latencias"{}}])\ \textcolor{keywordflow}{if}\ resultados[\textcolor{stringliteral}{"{}latencias"{}}]\ \textcolor{keywordflow}{else}\ 0,}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00408}00408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}latencia\_max"{}}:\ max(resultados[\textcolor{stringliteral}{"{}latencias"{}}])\ \textcolor{keywordflow}{if}\ resultados[\textcolor{stringliteral}{"{}latencias"{}}]\ \textcolor{keywordflow}{else}\ 0}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00409}00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00410}\doxymbox{\hyperlink{namespaceprueba__carga__sensores_a0dbbee759b75d20ca5cf02349cd5afc5}{00410}}\ \ \ \ \ \ \ \ \ \ \ \ \ \},\ f,\ indent=2)}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00411}00411\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00412}00412\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Resultados\ guardados\ en:\ resultados\_prueba\_carga.json\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00413}00413\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00414}00414\ \ \ \ \ \textcolor{keywordflow}{except}\ KeyboardInterrupt:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00415}00415\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n\ Prueba\ interrumpida\ por\ el\ usuario"{}})}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00416}00416\ \ \ \ \ \textcolor{keywordflow}{except}\ Exception\ \textcolor{keyword}{as}\ e:}
+\DoxyCodeLine{\Hypertarget{prueba__carga__sensores_8py_source_l00417}00417\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\(\backslash\)n\ Error\ durante\ la\ prueba:\ \{e\}"{}})}
+
+\end{DoxyCode}

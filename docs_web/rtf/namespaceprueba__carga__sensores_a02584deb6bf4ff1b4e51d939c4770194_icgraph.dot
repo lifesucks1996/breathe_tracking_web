@@ -1,0 +1,15 @@
+digraph "prueba_carga_sensores.generar_coordenadas_sensor"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="RL";
+  Node1 [id="Node000001",label="prueba_carga_sensores.generar\l_coordenadas_sensor",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [id="edge7_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="prueba_carga_sensores.generar\l_datos_sensor_produccion",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$namespaceprueba__carga__sensores.html#a5a05ee521f9deb83085b0b2e06466b39",tooltip=" "];
+  Node1 -> Node3 [id="edge8_Node000001_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="prueba_carga_sensores.generar\l_datos_sensor_pruebas",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$namespaceprueba__carga__sensores.html#ab809cccc71f36e94d2c0bb35bbdb976f",tooltip=" "];
+  Node3 -> Node4 [id="edge9_Node000003_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node4 [id="Node000004",label="prueba_carga_sensores.enviar\l_sensor_a_firebase",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$namespaceprueba__carga__sensores.html#a43a65cdd50d671488ff508d40d64a002",tooltip=" "];
+}

@@ -1,0 +1,15 @@
+digraph "renderSensorsList"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="renderSensorsList",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Prepara la lista de sensores para la paginación."];
+  Node1 -> Node2 [id="edge7_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="renderPage",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#ad1e22ffa8f86b5476b709f435c2053c7",tooltip="Renderiza una página específica de sensores."];
+  Node2 -> Node3 [id="edge8_Node000002_Node000003",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="addPaginationControls",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#a8d7d179d1b95f9864940d43c0ab55acb",tooltip="Añade controles de paginación (Anterior, Siguiente, etc)."];
+  Node2 -> Node4 [id="edge9_Node000002_Node000004",color="steelblue1",style="solid",tooltip=" "];
+  Node4 [id="Node000004",label="getSensorStatus",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#ae9d7a0ad5c0ce2aabe40a91ee9e97bfc",tooltip="Determina el estado normalizado de un sensor."];
+}

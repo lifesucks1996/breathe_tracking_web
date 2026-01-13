@@ -1,0 +1,298 @@
+\doxysection{src/\+js/\+users\+\_\+map.js File Reference}
+\hypertarget{users__map_8js}{}\label{users__map_8js}\index{src/js/users\_map.js@{src/js/users\_map.js}}
+
+
+Interfaz visual del mapa de usuarios:\+ Heatmaps, Pines y Reportes PDF.  
+
+
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+HTMLCanvas\+Element prototype \doxymbox{\hyperlink{users__map_8js_ad033e0b3f63c9a0547daf52b7a5f03ec}{get\+Context}}
+\begin{DoxyCompactList}\small\item\em Patch para mejorar el rendimiento del canvas en navegadores modernos. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}} = null
+\begin{DoxyCompactList}\small\item\em Instancia principal del mapa Leaflet. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a280ecccad0add533d39ef85d116812c6}{capa\+Calor}} = null
+\begin{DoxyCompactList}\small\item\em Capa dinámica del heatmap (L.\+heat\+Layer). \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_abc283d32f88f05ce473aa57064550c34}{heatmap\+Congelado}} = null
+\begin{DoxyCompactList}\small\item\em Capa estática (Imagen) del heatmap congelado. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map_8js_aea3bdc78185a2977de3b9dee504117d2}{ZOOM\+\_\+\+CONGELADO}} = 14
+\begin{DoxyCompactList}\small\item\em Nivel de zoom óptimo para visualizar el heatmap congelado. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a0dea8237132f80014656b525fae3f695}{pines\+Guardados}} = \+[$\,$]\+
+\begin{DoxyCompactList}\small\item\em Array de pines guardados por el usuario. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a3b38c4ee7859319c24dcf1061bd63b4b}{id\+Pin\+Seleccionado}} = null
+\begin{DoxyCompactList}\small\item\em ID del pin actualmente seleccionado para ver detalles. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a1873d938d55153073a46edb2b24f1fca}{contador\+Pines}} = 0
+\begin{DoxyCompactList}\small\item\em Contador para generar IDs únicos de pines. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a186f2f184d48aed64628ea2d835ca287}{modo\+Agregar}} = false
+\begin{DoxyCompactList}\small\item\em Estado del modo "{}\+Agregar Pin"{} (true/\+false). \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a6c7ee4ed0727ffb36880b3929ecf83b8}{lat\+Lng\+Temporal}} = null
+\begin{DoxyCompactList}\small\item\em Almacena coordenadas temporales al hacer clic en el mapa. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a3469450cb4a818db8c1c16c4d35c5c55}{datos\+Puntos\+Actuales}} = \+[$\,$]\+
+\begin{DoxyCompactList}\small\item\em Cache de puntos de contaminación actuales para repintar. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map_8js_a8aa351e348cb9bc82267fafbc124ad59}{config\+Gas\+Actual}} = \{ unidad:\+ \textquotesingle{}ppm\textquotesingle{}, gradiente:\+ null, nombre:\+ \textquotesingle{}\textquotesingle{}, umbrales:\+ \+[$\,$]\+ \}
+\begin{DoxyCompactList}\small\item\em Configuración del gas seleccionado (unidad, umbrales, nombre). \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map_8js_a1157e7cc55019f210352ee1f1c4fd217}{loading}} = document.\+get\+Element\+By\+Id(\textquotesingle{}loading-\/indicator\textquotesingle{})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map_8js_ad4e879ed15c992bba9e335f368ed57ad}{btn\+Actualizar}} = document.\+get\+Element\+By\+Id(\textquotesingle{}btn-\/update-\/\doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}}\textquotesingle{})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map_8js_a72d8ed0e44896d34a0551947793c36da}{selector\+Gas}} = document.\+get\+Element\+By\+Id(\textquotesingle{}\doxymbox{\hyperlink{admin__sensors_8js_ae172687182f15c7324c5719bd953042f}{selector\+Contaminante}}\textquotesingle{})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map_8js_ae1b10eecda0dbe90af39281c03a55582}{COORDS}} = \+[38.\+9670, -\/0.\+1830]\+
+\begin{DoxyCompactList}\small\item\em Coordenadas iniciales del mapa (Gandía, España). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Interfaz visual del mapa de usuarios:\+ Heatmaps, Pines y Reportes PDF. 
+
+Gestiona la experiencia principal del usuario en la pantalla de mapa:\+
+\begin{DoxyEnumerate}
+\item Inicializa el mapa Leaflet centrado en Gandía.
+\item Carga datos de Firebase y renderiza el mapa de calor (Heatmap).
+\item Permite añadir "{}\+Pines"{} (marcadores personalizados) en el mapa.
+\item Muestra detalles de contaminación interpolados en la posición del pin.
+\item Genera informes PDF premium usando js\+PDF.
+\item Integra las estaciones oficiales de WAQI ({\ttfamily \doxylink{official__stations_8js}{official\+\_\+stations.\+js}}).
+\end{DoxyEnumerate}
+
+@requires \doxylink{users__map__data_8js}{users\+\_\+map\+\_\+data.\+js} -\/ Para los cálculos de contaminación. @requires \doxylink{official__stations_8js}{official\+\_\+stations.\+js} -\/ Para las estaciones oficiales. @requires Leaflet.\+js @requires js\+PDF
+
+\begin{DoxyVersion}{Version}
+2.\+5 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Breathe Tracking Team 
+\end{DoxyAuthor}
+
+
+Definition in file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{users__map_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{users__map_8js_ad4e879ed15c992bba9e335f368ed57ad}\index{users\_map.js@{users\_map.js}!btnActualizar@{btnActualizar}}
+\index{btnActualizar@{btnActualizar}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{btnActualizar}{btnActualizar}}
+{\footnotesize\ttfamily \label{users__map_8js_ad4e879ed15c992bba9e335f368ed57ad} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} btn\+Actualizar = document.\+get\+Element\+By\+Id(\textquotesingle{}btn-\/update-\/\doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}}\textquotesingle{})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00075}{75}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a280ecccad0add533d39ef85d116812c6}\index{users\_map.js@{users\_map.js}!capaCalor@{capaCalor}}
+\index{capaCalor@{capaCalor}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{capaCalor}{capaCalor}}
+{\footnotesize\ttfamily \label{users__map_8js_a280ecccad0add533d39ef85d116812c6} 
+let capa\+Calor = null}
+
+
+
+Capa dinámica del heatmap (L.\+heat\+Layer). 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00044}{44}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a8aa351e348cb9bc82267fafbc124ad59}\index{users\_map.js@{users\_map.js}!configGasActual@{configGasActual}}
+\index{configGasActual@{configGasActual}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{configGasActual}{configGasActual}}
+{\footnotesize\ttfamily \label{users__map_8js_a8aa351e348cb9bc82267fafbc124ad59} 
+let config\+Gas\+Actual = \{ unidad:\+ \textquotesingle{}ppm\textquotesingle{}, gradiente:\+ null, nombre:\+ \textquotesingle{}\textquotesingle{}, umbrales:\+ \+[$\,$]\+ \}}
+
+
+
+Configuración del gas seleccionado (unidad, umbrales, nombre). 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00071}{71}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a1873d938d55153073a46edb2b24f1fca}\index{users\_map.js@{users\_map.js}!contadorPines@{contadorPines}}
+\index{contadorPines@{contadorPines}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{contadorPines}{contadorPines}}
+{\footnotesize\ttfamily \label{users__map_8js_a1873d938d55153073a46edb2b24f1fca} 
+let contador\+Pines = 0}
+
+
+
+Contador para generar IDs únicos de pines. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00059}{59}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_ae1b10eecda0dbe90af39281c03a55582}\index{users\_map.js@{users\_map.js}!COORDS@{COORDS}}
+\index{COORDS@{COORDS}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{COORDS}{COORDS}}
+{\footnotesize\ttfamily \label{users__map_8js_ae1b10eecda0dbe90af39281c03a55582} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} COORDS = \+[38.\+9670, -\/0.\+1830]\+}
+
+
+
+Coordenadas iniciales del mapa (Gandía, España). 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00081}{81}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a3469450cb4a818db8c1c16c4d35c5c55}\index{users\_map.js@{users\_map.js}!datosPuntosActuales@{datosPuntosActuales}}
+\index{datosPuntosActuales@{datosPuntosActuales}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{datosPuntosActuales}{datosPuntosActuales}}
+{\footnotesize\ttfamily \label{users__map_8js_a3469450cb4a818db8c1c16c4d35c5c55} 
+let datos\+Puntos\+Actuales = \+[$\,$]\+}
+
+
+
+Cache de puntos de contaminación actuales para repintar. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00068}{68}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_ad033e0b3f63c9a0547daf52b7a5f03ec}\index{users\_map.js@{users\_map.js}!getContext@{getContext}}
+\index{getContext@{getContext}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{getContext}{getContext}}
+{\footnotesize\ttfamily \label{users__map_8js_ad033e0b3f63c9a0547daf52b7a5f03ec} 
+HTMLCanvas\+Element prototype get\+Context}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ (function(origFn)\ \{}
+\DoxyCodeLine{\ \ \textcolor{keywordflow}{return}\ function(type,\ attributes)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (type\ ===\ \textcolor{stringliteral}{'2d'})\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ attributes\ =\ Object.assign(\{\},\ attributes,\ \{\ willReadFrequently:\ \textcolor{keyword}{true}\ \});}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ origFn.call(\textcolor{keyword}{this},\ type,\ attributes);}
+\DoxyCodeLine{\ \ \};}
+\DoxyCodeLine{\})(HTMLCanvasElement.prototype.getContext)}
+
+\end{DoxyCode}
+
+
+Patch para mejorar el rendimiento del canvas en navegadores modernos. 
+
+Sobrescribe {\ttfamily \doxylink{users__map_8js_ad033e0b3f63c9a0547daf52b7a5f03ec}{get\+Context}} para forzar {\ttfamily will\+Read\+Frequently:\+ true}. Esto es necesario porque el heatmap se congela leyéndolo píxel a píxel con {\ttfamily to\+Data\+URL}. 
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00029}{29}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_abc283d32f88f05ce473aa57064550c34}\index{users\_map.js@{users\_map.js}!heatmapCongelado@{heatmapCongelado}}
+\index{heatmapCongelado@{heatmapCongelado}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{heatmapCongelado}{heatmapCongelado}}
+{\footnotesize\ttfamily \label{users__map_8js_abc283d32f88f05ce473aa57064550c34} 
+let heatmap\+Congelado = null}
+
+
+
+Capa estática (Imagen) del heatmap congelado. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00047}{47}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a3b38c4ee7859319c24dcf1061bd63b4b}\index{users\_map.js@{users\_map.js}!idPinSeleccionado@{idPinSeleccionado}}
+\index{idPinSeleccionado@{idPinSeleccionado}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{idPinSeleccionado}{idPinSeleccionado}}
+{\footnotesize\ttfamily \label{users__map_8js_a3b38c4ee7859319c24dcf1061bd63b4b} 
+let id\+Pin\+Seleccionado = null}
+
+
+
+ID del pin actualmente seleccionado para ver detalles. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00056}{56}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a6c7ee4ed0727ffb36880b3929ecf83b8}\index{users\_map.js@{users\_map.js}!latLngTemporal@{latLngTemporal}}
+\index{latLngTemporal@{latLngTemporal}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{latLngTemporal}{latLngTemporal}}
+{\footnotesize\ttfamily \label{users__map_8js_a6c7ee4ed0727ffb36880b3929ecf83b8} 
+let lat\+Lng\+Temporal = null}
+
+
+
+Almacena coordenadas temporales al hacer clic en el mapa. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00065}{65}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a1157e7cc55019f210352ee1f1c4fd217}\index{users\_map.js@{users\_map.js}!loading@{loading}}
+\index{loading@{loading}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{loading}{loading}}
+{\footnotesize\ttfamily \label{users__map_8js_a1157e7cc55019f210352ee1f1c4fd217} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} loading = document.\+get\+Element\+By\+Id(\textquotesingle{}loading-\/indicator\textquotesingle{})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00074}{74}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}\index{users\_map.js@{users\_map.js}!mapa@{mapa}}
+\index{mapa@{mapa}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{mapa}{mapa}}
+{\footnotesize\ttfamily \label{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0} 
+mapa = null}
+
+
+
+Instancia principal del mapa Leaflet. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00041}{41}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a186f2f184d48aed64628ea2d835ca287}\index{users\_map.js@{users\_map.js}!modoAgregar@{modoAgregar}}
+\index{modoAgregar@{modoAgregar}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{modoAgregar}{modoAgregar}}
+{\footnotesize\ttfamily \label{users__map_8js_a186f2f184d48aed64628ea2d835ca287} 
+let modo\+Agregar = false}
+
+
+
+Estado del modo "{}\+Agregar Pin"{} (true/\+false). 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00062}{62}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a0dea8237132f80014656b525fae3f695}\index{users\_map.js@{users\_map.js}!pinesGuardados@{pinesGuardados}}
+\index{pinesGuardados@{pinesGuardados}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{pinesGuardados}{pinesGuardados}}
+{\footnotesize\ttfamily \label{users__map_8js_a0dea8237132f80014656b525fae3f695} 
+let pines\+Guardados = \+[$\,$]\+}
+
+
+
+Array de pines guardados por el usuario. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00053}{53}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_a72d8ed0e44896d34a0551947793c36da}\index{users\_map.js@{users\_map.js}!selectorGas@{selectorGas}}
+\index{selectorGas@{selectorGas}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{selectorGas}{selectorGas}}
+{\footnotesize\ttfamily \label{users__map_8js_a72d8ed0e44896d34a0551947793c36da} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} selector\+Gas = document.\+get\+Element\+By\+Id(\textquotesingle{}\doxymbox{\hyperlink{admin__sensors_8js_ae172687182f15c7324c5719bd953042f}{selector\+Contaminante}}\textquotesingle{})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00076}{76}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+
+\Hypertarget{users__map_8js_aea3bdc78185a2977de3b9dee504117d2}\index{users\_map.js@{users\_map.js}!ZOOM\_CONGELADO@{ZOOM\_CONGELADO}}
+\index{ZOOM\_CONGELADO@{ZOOM\_CONGELADO}!users\_map.js@{users\_map.js}}
+\doxysubsubsection{\texorpdfstring{ZOOM\_CONGELADO}{ZOOM\_CONGELADO}}
+{\footnotesize\ttfamily \label{users__map_8js_aea3bdc78185a2977de3b9dee504117d2} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} ZOOM\+\_\+\+CONGELADO = 14}
+
+
+
+Nivel de zoom óptimo para visualizar el heatmap congelado. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map_8js_source_l00050}{50}} of file \doxymbox{\hyperlink{users__map_8js_source}{users\+\_\+map.\+js}}.
+

@@ -1,0 +1,201 @@
+\doxysection{login\+\_\+auth.\+js}
+\hypertarget{login__auth_8js_source}{}\label{login__auth_8js_source}\index{src/js/login\_auth.js@{src/js/login\_auth.js}}
+\doxymbox{\hyperlink{login__auth_8js}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00001}00001\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00002}00002\ \textcolor{comment}{\ *\ @file\ login\_auth.js}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00003}00003\ \textcolor{comment}{\ *\ @brief\ Gestión\ de\ autenticación,\ recuperación\ de\ roles\ y\ redirección\ de\ usuarios.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00004}00004\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00005}00005\ \textcolor{comment}{\ *\ Este\ módulo\ maneja\ todo\ el\ flujo\ de\ inicio\ de\ sesión:}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00006}00006\ \textcolor{comment}{\ *\ 1.\ Autenticación\ contra\ Firebase\ Authentication.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00007}00007\ \textcolor{comment}{\ *\ 2.\ Consulta\ adicional\ a\ Firestore\ para\ recuperar\ el\ rol\ del\ usuario\ (Admin\ vs\ Usuario).}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00008}00008\ \textcolor{comment}{\ *\ 3.\ Lógica\ de\ UI\ para\ mostrar/ocultar\ contraseñas.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00009}00009\ \textcolor{comment}{\ *\ 4.\ Redirección\ condicional\ basada\ en\ el\ rol\ recuperado.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00010}00010\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00012}00012\ \textcolor{comment}{//\ 1.\ Importaciones\ de\ Firebase\ SDK\ (vía\ CDN\ oficial)}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00013}00013\ \textcolor{keyword}{import}\ \{\ initializeApp,\ getApp,\ getApps\ \}\ from\ "{}https://www.gstatic.com/firebasejs/10.12.2/firebase-\/app.js"{};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00014}00014\ \textcolor{keyword}{import}\ \{\ getAuth,\ signInWithEmailAndPassword\ \}\ from\ "{}https://www.gstatic.com/firebasejs/10.12.2/firebase-\/auth.js"{};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00015}00015\ \textcolor{keyword}{import}\ \{\ getFirestore,\ doc,\ getDoc\ \}\ from\ "{}https://www.gstatic.com/firebasejs/10.12.2/firebase-\/firestore.js"{};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00017}00017\ \textcolor{comment}{//\ **********************************************}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00018}00018\ \textcolor{comment}{//\ Configuración\ y\ conexión}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00019}00019\ \textcolor{comment}{//\ **********************************************}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00020}\doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{00020}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebaseConfig}}\ =\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00021}00021\ \ \ apiKey:\ \textcolor{stringliteral}{"{}AIzaSyCbAVEYYdtSLmrH\_opCM72G\_G01QXPRZ48"{}},}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00022}00022\ \ \ authDomain:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebaseapp.com"{}},}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00023}00023\ \ \ databaseURL:\ \textcolor{stringliteral}{"{}https://biometria-\/g3-\/default-\/rtdb.europe-\/west1.firebasedatabase.app"{}},}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00024}00024\ \ \ projectId:\ \textcolor{stringliteral}{"{}biometria-\/g3"{}},}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00025}00025\ \ \ storageBucket:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebasestorage.app"{}},}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00026}00026\ \ \ messagingSenderId:\ \textcolor{stringliteral}{"{}817957103566"{}},}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00027}00027\ \ \ appId:\ \textcolor{stringliteral}{"{}1:817957103566:web:75c78a0a28f3380d092d9f"{}}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00028}00028\ \};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00030}00030\ \textcolor{comment}{//\ Inicializar\ o\ reutilizar\ Firebase\ (Patrón\ Singleton\ para\ evitar\ reinicializaciones)}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00031}\doxymbox{\hyperlink{login__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{00031}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensors_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}}\ =\ getApps().length\ ?\ getApp()\ :\ initializeApp(\doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebaseConfig}});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00032}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{00032}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}\ =\ getAuth(\doxymbox{\hyperlink{admin__sensors_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}});\ \textcolor{comment}{//\ Referencia\ a\ Authentication}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00033}\doxymbox{\hyperlink{login__auth_8js_a654025a65d621cdee9f702b15aaf71d2}{00033}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}\ =\ getFirestore(\doxymbox{\hyperlink{admin__sensors_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}});\ \textcolor{comment}{//\ Referencia\ a\ Firestore}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00035}00035\ \textcolor{comment}{//\ **********************************************}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00036}00036\ \textcolor{comment}{//\ **********************************************}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00037}00037\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00038}00038\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00039}00039\ \textcolor{comment}{\ *\ @brief\ Recupera\ el\ perfil\ extendido\ del\ usuario\ desde\ Firestore\ para\ determinar\ su\ rol.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00040}00040\ \textcolor{comment}{\ *\ userId:\ string\ -\/>\ fetchUserProfile()\ -\/>\ Promise<Object>}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00041}00041\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00042}00042\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00043}00043\ \textcolor{comment}{\ *\ Accede\ a\ la\ colección\ "{}Usuarios"{}\ utilizando\ el\ UID\ proporcionado\ por\ Authentication.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00044}00044\ \textcolor{comment}{\ *\ Extrae\ el\ campo\ 'Id\_rol'\ para\ normalizarlo\ y\ devolverlo\ junto\ con\ el\ resto\ de\ datos.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00045}00045\ \textcolor{comment}{\ *\ Si\ el\ documento\ no\ existe,\ asigna\ un\ rol\ por\ defecto\ ('usuario')\ para\ evitar\ bloqueos.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00046}00046\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00047}00047\ \textcolor{comment}{\ *\ @note\ Es\ crucial\ para\ la\ seguridad\ de\ la\ navegación,\ ya\ que\ el\ Auth\ de\ Firebase\ }}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00048}00048\ \textcolor{comment}{\ *\ por\ sí\ solo\ no\ almacena\ roles\ personalizados\ en\ este\ esquema.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00049}00049\ \textcolor{comment}{\ *\ *\ @param\ userId\ El\ identificador\ único\ (UID)\ del\ usuario\ autenticado.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00050}00050\ \textcolor{comment}{\ *\ @return\ Promesa\ que\ resuelve\ en\ un\ Objeto\ con\ los\ datos\ del\ usuario\ y\ la\ propiedad\ 'rol'.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00051}00051\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00052}\doxymbox{\hyperlink{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}{00052}}\ async\ function\ \doxymbox{\hyperlink{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}{fetchUserProfile}}(userId)\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00053}00053\ \ \ \ \ \textcolor{keyword}{const}\ docRef\ =\ doc(\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}},\ \textcolor{stringliteral}{"{}Usuarios"{}},\ userId);}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00054}00054\ \ \ \ \ \textcolor{keyword}{const}\ docSnap\ =\ await\ getDoc(docRef);}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00055}00055\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00056}00056\ \ \ \ \ \textcolor{keywordflow}{if}\ (docSnap.exists())\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00057}00057\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ userData\ =\ docSnap.data();}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00058}00058\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mapeamos\ Id\_rol\ a\ la\ variable\ 'rol'\ para\ la\ lógica\ de\ redirección}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00059}00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00060}00060\ \ \ \ \ \ \ \ \ \ \ \ \ ...userData,}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00061}00061\ \ \ \ \ \ \ \ \ \ \ \ \ rol:\ userData.Id\_rol\ ||\ \textcolor{stringliteral}{'usuario'}\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00062}00062\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00063}00063\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00064}00064\ \ \ \ \ \textcolor{comment}{//\ Fallback\ seguro\ en\ caso\ de\ inconsistencia\ en\ la\ base\ de\ datos}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00065}00065\ \ \ \ \ \textcolor{keywordflow}{return}\ \{\ rol:\ \textcolor{stringliteral}{'usuario'}\ \};\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00066}00066\ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00067}00067\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00068}\doxymbox{\hyperlink{login__auth_8js_a29a9fbbef51b0416d71b399a2a54cf88}{00068}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.addEventListener(\textcolor{stringliteral}{'DOMContentLoaded'},\ function()\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00069}00069\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00070}00070\ \ \ \ \ \textcolor{comment}{//\ ======================================================}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00071}00071\ \ \ \ \ \textcolor{comment}{//\ A)\ MOSTRAR\ /\ OCULTAR\ CONTRASEÑA}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00072}00072\ \ \ \ \ \textcolor{comment}{//\ ======================================================}\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00073}00073\ \textcolor{comment}{\ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00074}00074\ \textcolor{comment}{\ \ \ \ \ *\ @brief\ Lógica\ de\ UI\ para\ alternar\ la\ visibilidad\ del\ input\ de\ contraseña.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00075}00075\ \textcolor{comment}{\ \ \ \ \ *\ @details}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00076}00076\ \textcolor{comment}{\ \ \ \ \ *\ Busca\ todos\ los\ elementos\ con\ clase\ '.toggle-\/password'.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00077}00077\ \textcolor{comment}{\ \ \ \ \ *\ Alterna\ el\ atributo\ 'type'\ del\ input\ entre\ 'password'\ y\ 'text'.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00078}00078\ \textcolor{comment}{\ \ \ \ \ *\ Cambia\ el\ icono\ (ojo\ abierto/cerrado)\ correspondientemente.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00079}00079\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00080}00080\ \ \ \ \ \textcolor{keyword}{const}\ toggles\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.querySelectorAll(\textcolor{stringliteral}{'.toggle-\/password'});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00081}00081\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00082}00082\ \ \ \ \ toggles.forEach((toggle)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00083}00083\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ wrapper\ =\ toggle.closest(\textcolor{stringliteral}{'.password-\/input-\/wrapper'});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00084}00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!wrapper)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00085}00085\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00086}00086\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ passwordInput\ =\ wrapper.querySelector(\textcolor{stringliteral}{'input[type="{}password"{}],\ input[type="{}text"{}]'});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00087}00087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ eyeOpen\ =\ toggle.querySelector(\textcolor{stringliteral}{'.fas.fa-\/eye'});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00088}00088\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ eyeClosed\ =\ toggle.querySelector(\textcolor{stringliteral}{'.fas.fa-\/eye-\/slash'});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00090}00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (passwordInput\ \&\&\ eyeOpen\ \&\&\ eyeClosed)\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00091}00091\ \ \ \ \ \ \ \ \ \ \ \ \ toggle.addEventListener(\textcolor{stringliteral}{'click'},\ function()\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00092}00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ isPassword\ =\ passwordInput.getAttribute(\textcolor{stringliteral}{'type'})\ ===\ \textcolor{stringliteral}{'password'};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00093}00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cambio\ dinámico\ del\ tipo\ de\ input}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ passwordInput.setAttribute(\textcolor{stringliteral}{'type'},\ isPassword\ ?\ \textcolor{stringliteral}{'text'}\ :\ \textcolor{stringliteral}{'password'});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00095}00095\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00096}00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isPassword)\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00097}00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eyeOpen.style.display\ =\ \textcolor{stringliteral}{'none'};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00098}00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eyeClosed.style.display\ =\ \textcolor{stringliteral}{'inline-\/block'};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00099}00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00100}00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eyeOpen.style.display\ =\ \textcolor{stringliteral}{'inline-\/block'};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00101}00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eyeClosed.style.display\ =\ \textcolor{stringliteral}{'none'};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00102}00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00103}00103\ \ \ \ \ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00104}00104\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00105}00105\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00106}00106\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00107}00107\ \ \ \ \ \textcolor{comment}{//\ ======================================================}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00108}00108\ \ \ \ \ \textcolor{comment}{//\ B)\ LOGIN\ CON\ FIREBASE\ AUTH}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00109}00109\ \ \ \ \ \textcolor{comment}{//\ ======================================================}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00110}00110\ \ \ \ \ \textcolor{keyword}{const}\ loginForm\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{"{}loginForm"{}});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00111}00111\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00112}00112\ \ \ \ \ \textcolor{keywordflow}{if}\ (loginForm)\ \{\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00113}00113\ \textcolor{comment}{\ \ \ \ \ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00114}00114\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ @brief\ Manejador\ del\ evento\ de\ envío\ del\ formulario\ de\ login.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00115}00115\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ event:SubmitEvent\ -\/>\ (anon)\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00116}00116\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00117}00117\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ 1.\ Previene\ la\ recarga\ de\ la\ página.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00118}00118\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ 2.\ Autentica\ las\ credenciales\ contra\ Firebase\ Auth.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00119}00119\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ 3.\ Verifica\ el\ rol\ en\ Firestore.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00120}00120\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ 4.\ Redirige\ a\ la\ URL\ correspondiente\ según\ privilegios.}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00121}00121\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00122}00122\ \ \ \ \ \ \ \ \ loginForm.addEventListener(\textcolor{stringliteral}{"{}submit"{}},\ async\ (e)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ e.preventDefault();\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00124}00124\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00125}00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ email\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{"{}correo"{}}).value.trim();}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ password\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{"{}contrasena"{}}).value.trim();}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00127}00127\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00128}00128\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ msgEl\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{"{}loginMsg"{}});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00129}00129\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ errEl\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{"{}loginError"{}});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00130}00130\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00131}00131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Limpiar\ mensajes\ previos\ de\ intentos\ anteriores}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (msgEl)\ msgEl.textContent\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (errEl)\ errEl.textContent\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00136}00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1.\ Iniciar\ sesión\ en\ Firebase\ Authentication\ (Validación\ de\ credenciales)}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00137}00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ userCredential\ =\ await\ signInWithEmailAndPassword(\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}},\ email,\ password);}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00138}00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ user\ =\ userCredential.user;}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00139}00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2.\ Obtener\ datos\ de\ Firestore\ para\ verificar\ el\ rol\ (Id\_rol)}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00141}00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Esto\ es\ necesario\ para\ bifurcar\ la\ navegación}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ profile\ =\ await\ \doxymbox{\hyperlink{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}{fetchUserProfile}}(user.uid);}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00143}00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ userRole\ =\ profile.rol\ ||\ \textcolor{stringliteral}{'usuario'};\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00144}00144\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00145}00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 3.\ Feedback\ visual\ de\ éxito}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00146}00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (msgEl)\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00147}00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ msgEl.style.color\ =\ \textcolor{stringliteral}{"{}green"{}};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00148}00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ msgEl.textContent\ =\ \`{}Acceso\ concedido:\ \$\{userRole.toUpperCase()\}\`{};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00149}00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00150}00150\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00151}00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 4.\ Redirigir\ según\ el\ rol\ con\ un\ pequeño\ retardo\ para\ UX}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00152}00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setTimeout(()\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00153}00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lógica\ de\ bifurcación:\ Admin\ -\/>\ Dashboard\ sensores,\ Usuario\ -\/>\ Mapa}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00154}00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (userRole\ ===\ \textcolor{stringliteral}{'administrador'}\ ||\ userRole\ ===\ \textcolor{stringliteral}{'admin'})\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00155}00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.location.href\ =\ \textcolor{stringliteral}{"{}../admin\_sensors.html"{}};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00156}00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00157}00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Rol\ por\ defecto\ o\ 'usuario'\ redirige\ al\ mapa}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00158}00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.location.href\ =\ \textcolor{stringliteral}{"{}../users\_map.html"{}};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00159}00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00160}00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \},\ 1000);\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00161}00161\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00162}00162\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (error)\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00163}00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ console.error(\textcolor{stringliteral}{"{}Error\ de\ Firebase:"{}},\ error.code,\ error.message);}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00164}00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00165}00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mapeo\ de\ errores\ técnicos\ a\ mensajes\ amigables\ para\ el\ usuario}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00166}00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ let\ errorMessage;}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00167}00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (error.code)\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00168}00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'auth/invalid-\/email'}:}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00169}00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'auth/user-\/not-\/found'}:}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00170}00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'auth/wrong-\/password'}:}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00171}00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ errorMessage\ =\ \textcolor{stringliteral}{"{}Correo\ o\ contraseña\ incorrectos."{}};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00172}00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00173}00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'auth/too-\/many-\/requests'}:}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00174}00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ errorMessage\ =\ \textcolor{stringliteral}{"{}Acceso\ bloqueado\ temporalmente\ por\ demasiados\ intentos."{}};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00175}00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00176}00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00177}00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ errorMessage\ =\ \textcolor{stringliteral}{"{}Error\ de\ inicio\ de\ sesión.\ Inténtalo\ de\ nuevo."{}};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00178}00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00179}00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00180}00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00181}00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (errEl)\ errEl.textContent\ =\ errorMessage;}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00182}00182\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00183}00183\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00184}00184\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00185}00185\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00186}00186\ \ \ \ \ \textcolor{comment}{//\ =====\ Click\ en\ el\ logo\ -\/>\ ir\ al\ landing\ =====}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00187}00187\ \ \ \ \ \textcolor{keyword}{const}\ headerLogo\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.querySelector(\textcolor{stringliteral}{'.main-\/header\ .logo'});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00188}00188\ \ \ \ \ \textcolor{keywordflow}{if}\ (headerLogo)\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00189}00189\ \ \ \ \ \ \ \ \ headerLogo.style.cursor\ =\ \textcolor{stringliteral}{'pointer'};}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00190}00190\ \ \ \ \ \ \ \ \ headerLogo.addEventListener(\textcolor{stringliteral}{'click'},\ ()\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00191}00191\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.location.href\ =\ \textcolor{stringliteral}{'../index.html'};\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00192}00192\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00193}00193\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00194}00194\ }
+\DoxyCodeLine{\Hypertarget{login__auth_8js_source_l00195}00195\ \});}
+
+\end{DoxyCode}

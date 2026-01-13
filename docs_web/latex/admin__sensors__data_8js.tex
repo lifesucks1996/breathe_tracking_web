@@ -1,0 +1,255 @@
+\doxysection{src/\+js/\+admin\+\_\+sensors\+\_\+data.js File Reference}
+\hypertarget{admin__sensors__data_8js}{}\label{admin__sensors__data_8js}\index{src/js/admin\_sensors\_data.js@{src/js/admin\_sensors\_data.js}}
+
+
+Generación de datos simulados (Mock Data) para el Frontend.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+function \doxymbox{\hyperlink{admin__sensors__data_8js_a0275ca1eb77260ff0f87f713c9d8885a}{generar\+Coordenadas}} ()
+\begin{DoxyCompactList}\small\item\em Genera un par de coordenadas aleatorias alrededor del punto base. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{admin__sensors__data_8js_a9c5ce9f69f1867129715c197342cac73}{generar\+Fecha\+Pasada}} (dias\+Atras)
+\begin{DoxyCompactList}\small\item\em Genera una cadena de fecha ISO en el pasado. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{admin__sensors__data_8js_abddac875faa1676bfc7860d3bfe6e628}{generar\+Sensores\+Simulados}} ()
+\begin{DoxyCompactList}\small\item\em Genera el array masivo de sensores simulados. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensors__data_8js_a945de9609e9bf5092660c8d03edd41d3}{LAT\+\_\+\+BASE}} = 38.\+9660
+\begin{DoxyCompactList}\small\item\em Latitud base para la generación de coordenadas (Gandía, España). @const \{number\}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensors__data_8js_a8ebb8920ec3d5c420c39cc6e34dc1ec2}{LNG\+\_\+\+BASE}} = -\/0.\+1850
+\begin{DoxyCompactList}\small\item\em Longitud base para la generación de coordenadas (Gandía, España). @const \{number\}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensors__data_8js_a418d4c08f57b809aaa191890c5c7dd7c}{RADIO\+\_\+\+VARIACION}} = 0.\+05
+\begin{DoxyCompactList}\small\item\em Radio de dispersión en grados para los sensores aleatorios (\texorpdfstring{$\sim$}{\string~}5km). @const \{number\}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensors__data_8js_a23ce02ba522e99e5e077ee59c6ad9e52}{UBICACIONES\+\_\+\+GANDIA}}
+\begin{DoxyCompactList}\small\item\em Lista de ubicaciones textuales para asignar nombres realistas. @const \{Array$<$string$>$\}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensors__data_8js_a7f5093033bdd5afd0c1559a0721d695f}{admin\+Sensors\+Data}}
+\begin{DoxyCompactList}\small\item\em Array principal de datos de sensores. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensors__data_8js_a53db192432d40db71fd7e36065df0530}{sensor\+Detail\+Data}}
+\begin{DoxyCompactList}\small\item\em Datos Mock para la vista de detalle. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Generación de datos simulados (Mock Data) para el Frontend. 
+
+Este archivo simula la estructura de datos que normalmente vendría de Firebase. Se utiliza para desarrollo y pruebas de carga en la interfaz (UI).
+\begin{DoxyItemize}
+\item Contiene:\+
+\item 7 Sensores "{}\+Reales"{} estáticos.
+\item 200 Sensores simulados generados algorítmicamente.
+\item Lógica para simular estados (Conectado, Alerta, Desconectado) y fechas pasadas.
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+Este script replica el comportamiento del script de Python de carga masiva. 
+\end{DoxyNote}
+\begin{DoxyVersion}{Version}
+2.\+1 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Breathe Tracking Team 
+\end{DoxyAuthor}
+
+
+Definition in file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{admin__sensors__data_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{admin__sensors__data_8js_a0275ca1eb77260ff0f87f713c9d8885a}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!generarCoordenadas@{generarCoordenadas}}
+\index{generarCoordenadas@{generarCoordenadas}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{generarCoordenadas()}{generarCoordenadas()}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_a0275ca1eb77260ff0f87f713c9d8885a} 
+function generar\+Coordenadas (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Genera un par de coordenadas aleatorias alrededor del punto base. 
+
+\begin{DoxyReturn}{Returns}
+\{Array$<$number$>$\} Array \+[Latitud, Longitud]\+. 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00049}{49}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 0
+\Hypertarget{admin__sensors__data_8js_a9c5ce9f69f1867129715c197342cac73}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!generarFechaPasada@{generarFechaPasada}}
+\index{generarFechaPasada@{generarFechaPasada}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{generarFechaPasada()}{generarFechaPasada()}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_a9c5ce9f69f1867129715c197342cac73} 
+function generar\+Fecha\+Pasada (\begin{DoxyParamCaption}\item[{dias\+Atras}]{}{}\end{DoxyParamCaption})}
+
+
+
+Genera una cadena de fecha ISO en el pasado. 
+
+Útil para simular sensores que llevan tiempo desconectados y probar el ordenamiento. 
+\begin{DoxyParams}{Parameters}
+{\em \{number\}} & dias\+Atras -\/ Número de días a restar a la fecha actual. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{string\} Fecha en formato ISO 8601 (YYYY-\/\+MM-\/\+DDTHH:\+mm:\+ss). 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00061}{61}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 1
+\Hypertarget{admin__sensors__data_8js_abddac875faa1676bfc7860d3bfe6e628}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!generarSensoresSimulados@{generarSensoresSimulados}}
+\index{generarSensoresSimulados@{generarSensoresSimulados}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{generarSensoresSimulados()}{generarSensoresSimulados()}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_abddac875faa1676bfc7860d3bfe6e628} 
+function generar\+Sensores\+Simulados (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Genera el array masivo de sensores simulados. 
+
+Crea 200 sensores divididos en dos grupos:\+
+\begin{DoxyEnumerate}
+\item 180 Sensores Activos (Conectados o con Alerta).
+\item 20 Sensores Inactivos (Desconectados con fechas antiguas).
+\end{DoxyEnumerate}
+\begin{DoxyItemize}
+\item Asigna propiedades clave ({\ttfamily active}, {\ttfamily estado}, {\ttfamily has\+Incident}) compatibles con los filtros del admin. \begin{DoxyReturn}{Returns}
+\{Array$<$\+Object$>$\} Array de objetos sensor. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00077}{77}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 2
+
+
+\label{doc-var-members}
+\Hypertarget{admin__sensors__data_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{admin__sensors__data_8js_a7f5093033bdd5afd0c1559a0721d695f}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!adminSensorsData@{adminSensorsData}}
+\index{adminSensorsData@{adminSensorsData}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{adminSensorsData}{adminSensorsData}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_a7f5093033bdd5afd0c1559a0721d695f} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} admin\+Sensors\+Data}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ [}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \{\ id:\ \textcolor{stringliteral}{'ADS133'},\ name:\ \textcolor{stringliteral}{'Sensor\ ADS133'},\ location:\ \textcolor{stringliteral}{'C/\ Gandia'},\ lastConnection:\ \textcolor{stringliteral}{'14:32'},\ hasIncident:\ \textcolor{keyword}{false},\ active:\ \textcolor{keyword}{true},\ estado:\ \textcolor{stringliteral}{'Conectado'},\ coords:\ [38.9660,\ -\/0.1850]\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ id:\ \textcolor{stringliteral}{'AKMSF134'},\ name:\ \textcolor{stringliteral}{'Sensor\ AKMSF134'},\ location:\ \textcolor{stringliteral}{'Av.\ del\ Cid'},\ lastConnection:\ \textcolor{stringliteral}{'13:23'},\ hasIncident:\ \textcolor{keyword}{true},\ active:\ \textcolor{keyword}{true},\ estado:\ \textcolor{stringliteral}{'Alerta'},\ coords:\ [38.9700,\ -\/0.1800]\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ id:\ \textcolor{stringliteral}{'LMN789'},\ name:\ \textcolor{stringliteral}{'Sensor\ LMN789'},\ location:\ \textcolor{stringliteral}{'Plaza\ Mayor\ 1'},\ lastConnection:\ \textcolor{stringliteral}{'10:05'},\ hasIncident:\ \textcolor{keyword}{false},\ active:\ \textcolor{keyword}{true},\ estado:\ \textcolor{stringliteral}{'Conectado'},\ coords:\ [38.9680,\ -\/0.1760]\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ id:\ \textcolor{stringliteral}{'XYZ001'},\ name:\ \textcolor{stringliteral}{'Sensor\ XYZ001'},\ location:\ \textcolor{stringliteral}{'Polígono\ Industrial'},\ lastConnection:\ \textcolor{stringliteral}{'09:10'},\ hasIncident:\ \textcolor{keyword}{true},\ active:\ \textcolor{keyword}{true},\ estado:\ \textcolor{stringliteral}{'Peligro'},\ coords:\ [38.9550,\ -\/0.1950]\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ id:\ \textcolor{stringliteral}{'BTH202'},\ name:\ \textcolor{stringliteral}{'Sensor\ BTH202'},\ location:\ \textcolor{stringliteral}{'Puerto\ de\ Gandia'},\ lastConnection:\ \textcolor{stringliteral}{'15:10'},\ hasIncident:\ \textcolor{keyword}{false},\ active:\ \textcolor{keyword}{true},\ estado:\ \textcolor{stringliteral}{'Conectado'},\ coords:\ [38.9900,\ -\/0.1600]\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ id:\ \textcolor{stringliteral}{'OFF\_99'},\ name:\ \textcolor{stringliteral}{'Sensor\ OFF\_99'},\ location:\ \textcolor{stringliteral}{'Almacén\ Municipal'},\ lastConnection:\ \textcolor{stringliteral}{'2025-\/11-\/15T09:00:00'},\ hasIncident:\ \textcolor{keyword}{false},\ active:\ \textcolor{keyword}{false},\ estado:\ \textcolor{stringliteral}{'Desconectado'},\ coords:\ [38.9600,\ -\/0.1900]\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ id:\ \textcolor{stringliteral}{'OLD\_00'},\ name:\ \textcolor{stringliteral}{'Sensor\ OLD\_00'},\ location:\ \textcolor{stringliteral}{'Grao\ Zona\ Norte'},\ lastConnection:\ \textcolor{stringliteral}{'2025-\/08-\/20T10:00:00'},\ hasIncident:\ \textcolor{keyword}{false},\ active:\ \textcolor{keyword}{false},\ estado:\ \textcolor{stringliteral}{'Baja'},\ coords:\ [38.9950,\ -\/0.1550]\ \},}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ ...generarSensoresSimulados()}
+\DoxyCodeLine{]}
+
+\end{DoxyCode}
+
+
+Array principal de datos de sensores. 
+
+Combina los sensores estáticos "{}reales"{} con los generados dinámicamente. Es la fuente de verdad si no hay conexión a Firebase. @type \{Array$<$\+Object$>$\} 
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00126}{126}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+\Hypertarget{admin__sensors__data_8js_a945de9609e9bf5092660c8d03edd41d3}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!LAT\_BASE@{LAT\_BASE}}
+\index{LAT\_BASE@{LAT\_BASE}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{LAT\_BASE}{LAT\_BASE}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_a945de9609e9bf5092660c8d03edd41d3} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} LAT\+\_\+\+BASE = 38.\+9660}
+
+
+
+Latitud base para la generación de coordenadas (Gandía, España). @const \{number\}. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00021}{21}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+\Hypertarget{admin__sensors__data_8js_a8ebb8920ec3d5c420c39cc6e34dc1ec2}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!LNG\_BASE@{LNG\_BASE}}
+\index{LNG\_BASE@{LNG\_BASE}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{LNG\_BASE}{LNG\_BASE}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_a8ebb8920ec3d5c420c39cc6e34dc1ec2} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} LNG\+\_\+\+BASE = -\/0.\+1850}
+
+
+
+Longitud base para la generación de coordenadas (Gandía, España). @const \{number\}. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00027}{27}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+\Hypertarget{admin__sensors__data_8js_a418d4c08f57b809aaa191890c5c7dd7c}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!RADIO\_VARIACION@{RADIO\_VARIACION}}
+\index{RADIO\_VARIACION@{RADIO\_VARIACION}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{RADIO\_VARIACION}{RADIO\_VARIACION}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_a418d4c08f57b809aaa191890c5c7dd7c} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} RADIO\+\_\+\+VARIACION = 0.\+05}
+
+
+
+Radio de dispersión en grados para los sensores aleatorios (\texorpdfstring{$\sim$}{\string~}5km). @const \{number\}. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00033}{33}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+\Hypertarget{admin__sensors__data_8js_a53db192432d40db71fd7e36065df0530}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!sensorDetailData@{sensorDetailData}}
+\index{sensorDetailData@{sensorDetailData}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{sensorDetailData}{sensorDetailData}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_a53db192432d40db71fd7e36065df0530} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} sensor\+Detail\+Data}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \{\ }
+\DoxyCodeLine{\ \ \ \ id:\ \textcolor{stringliteral}{"{}AKMSF134"{}},\ name:\ \textcolor{stringliteral}{"{}Sensor\ AKMSF134"{}},\ lastConnection:\ \textcolor{stringliteral}{"{}14:35"{}},\ }
+\DoxyCodeLine{\ \ \ \ battery:\ \textcolor{stringliteral}{"{}20\%"{}},\ currentLocation:\ \textcolor{stringliteral}{"{}Gandia"{}},\ }
+\DoxyCodeLine{\ \ \ \ pathCoords:\ [[38.966,\ -\/0.185]],\ point4:\ \{\ time:\ \textcolor{stringliteral}{"{}14:35"{}}\ \}\ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Datos Mock para la vista de detalle. 
+
+Se utiliza como fallback en \doxylink{admin__sensor__detail_8js}{admin\+\_\+sensor\+\_\+detail.\+js} si no se encuentra el sensor específico. @type \{Object\} 
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00145}{145}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+
+\Hypertarget{admin__sensors__data_8js_a23ce02ba522e99e5e077ee59c6ad9e52}\index{admin\_sensors\_data.js@{admin\_sensors\_data.js}!UBICACIONES\_GANDIA@{UBICACIONES\_GANDIA}}
+\index{UBICACIONES\_GANDIA@{UBICACIONES\_GANDIA}!admin\_sensors\_data.js@{admin\_sensors\_data.js}}
+\doxysubsubsection{\texorpdfstring{UBICACIONES\_GANDIA}{UBICACIONES\_GANDIA}}
+{\footnotesize\ttfamily \label{admin__sensors__data_8js_a23ce02ba522e99e5e077ee59c6ad9e52} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} UBICACIONES\+\_\+\+GANDIA}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ [\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}C/\ Gandia,\ Centro"{}},\ \textcolor{stringliteral}{"{}Av.\ del\ Cid,\ Gandia"{}},\ \textcolor{stringliteral}{"{}Plaza\ Mayor,\ Gandia"{}},\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}Polígono\ Industrial,\ Gandia"{}},\ \textcolor{stringliteral}{"{}Puerto\ de\ Gandia"{}},\ \textcolor{stringliteral}{"{}Grao\ de\ Gandia"{}},\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}Playa\ de\ Gandia"{}},\ \textcolor{stringliteral}{"{}Parque\ de\ la\ Estación"{}},\ \textcolor{stringliteral}{"{}C/\ San\ Francisco\ de\ Borja"{}}\ }
+\DoxyCodeLine{]}
+
+\end{DoxyCode}
+
+
+Lista de ubicaciones textuales para asignar nombres realistas. @const \{Array$<$string$>$\}. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensors__data_8js_source_l00039}{39}} of file \doxymbox{\hyperlink{admin__sensors__data_8js_source}{admin\+\_\+sensors\+\_\+data.\+js}}.
+

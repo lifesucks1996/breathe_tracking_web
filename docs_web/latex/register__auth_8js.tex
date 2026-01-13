@@ -1,0 +1,157 @@
+\doxysection{src/\+js/\+register\+\_\+auth.js File Reference}
+\hypertarget{register__auth_8js}{}\label{register__auth_8js}\index{src/js/register\_auth.js@{src/js/register\_auth.js}}
+
+
+Módulo de registro de nuevos usuarios en la plataforma.  
+
+
+{\ttfamily import initialize\+App;}\newline
+{\ttfamily import get\+App;}\newline
+{\ttfamily import get\+Apps;}\newline
+{\ttfamily import from;}\newline
+{\ttfamily import get\+Auth;}\newline
+{\ttfamily import create\+User\+With\+Email\+And\+Password;}\newline
+{\ttfamily import get\+Firestore;}\newline
+{\ttfamily import doc;}\newline
+{\ttfamily import set\+Doc;}\newline
+{\ttfamily import "{}https:\+/\+/\+www.\+gstatic.\+com/\+firebasejs/\+10.\+12.\+2/\+firebase-\/app.\+js"{};}\newline
+{\ttfamily import "{}https:\+/\+/\+www.\+gstatic.\+com/\+firebasejs/\+10.\+12.\+2/\+firebase-\/auth.\+js"{};}\newline
+{\ttfamily import "{}https:\+/\+/\+www.\+gstatic.\+com/\+firebasejs/\+10.\+12.\+2/\+firebase-\/firestore.\+js"{};}\newline
+Include dependency graph for register\+\_\+auth.\+js:\+
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+function \doxymbox{\hyperlink{register__auth_8js_a99b73afe6b75609531075307f4a1bb6f}{es\+Email\+Valido}} (email)
+\begin{DoxyCompactList}\small\item\em Valida el formato de un correo electrónico mediante Expresiones Regulares (Regex). email:\+string -\/\texorpdfstring{$>$}{>} \doxylink{register__auth_8js_a99b73afe6b75609531075307f4a1bb6f}{es\+Email\+Valido()} -\/\texorpdfstring{$>$}{>} boolean. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} \doxymbox{\hyperlink{register__auth_8js_ab46e86184985124c9579ae25ceaf0364}{add\+Event\+Listener}} (\textquotesingle{}DOMContent\+Loaded\textquotesingle{}, function() \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} toggles=document.\+query\+Selector\+All(\textquotesingle{}.toggle-\/password\textquotesingle{});toggles.\+for\+Each((toggle)=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} wrapper=toggle.\+closest(\textquotesingle{}.password-\/input-\/wrapper\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!wrapper) return;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} password\+Input=wrapper.\+query\+Selector(\textquotesingle{}input\+[type="{}password"{}]\+, input\+[type="{}text"{}]\+\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} eye\+Open=toggle.\+query\+Selector(\textquotesingle{}.fas.\+fa-\/eye\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} eye\+Closed=toggle.\+query\+Selector(\textquotesingle{}.fas.\+fa-\/eye-\/slash\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(password\+Input \&\&eye\+Open \&\&eye\+Closed) \{ toggle.\+add\+Event\+Listener(\textquotesingle{}click\textquotesingle{}, function() \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} is\+Password=password\+Input.\+get\+Attribute(\textquotesingle{}type\textquotesingle{})===\textquotesingle{}password\textquotesingle{};password\+Input.\+set\+Attribute(\textquotesingle{}type\textquotesingle{}, is\+Password ? \textquotesingle{}text\textquotesingle{} :\+\textquotesingle{}password\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(is\+Password) \{ eye\+Open.\+style.\+display=\textquotesingle{}none\textquotesingle{};eye\+Closed.\+style.\+display=\textquotesingle{}inline-\/block\textquotesingle{};\} else \{ eye\+Open.\+style.\+display=\textquotesingle{}inline-\/block\textquotesingle{};eye\+Closed.\+style.\+display=\textquotesingle{}none\textquotesingle{};\} \});\} \});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} register\+Form=document.\+get\+Element\+By\+Id("{}register\+Form"{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(register\+Form) \{ register\+Form.\+add\+Event\+Listener("{}submit"{}, async(e)=$>$ \{ e.\+prevent\+Default();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} nombre\+Completo=document.\+get\+Element\+By\+Id("{}nombre"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} email=document.\+get\+Element\+By\+Id("{}correo"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} password=document.\+get\+Element\+By\+Id("{}contrasena"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} repetir=document.\+get\+Element\+By\+Id("{}repetir\+Contrasena"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} codigo\+Postal\+Input=document.\+get\+Element\+By\+Id("{}codigo\+Postal"{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} codigo\+Postal=codigo\+Postal\+Input ? codigo\+Postal\+Input.\+value.\+trim() :\+"{}"{};\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} privacy\+Policy=document.\+get\+Element\+By\+Id("{}privacy\+Policy"{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} msg\+El=document.\+get\+Element\+By\+Id("{}register\+Msg"{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} err\+El=document.\+get\+Element\+By\+Id("{}register\+Error"{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(msg\+El) msg\+El.\+text\+Content="{}"{};\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}"{};\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!privacy\+Policy\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}!privacy\+Policy.\+checked) \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}Debes aceptar la política de privacidad para registrarte."{};return;\} \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!\doxymbox{\hyperlink{register__auth_8js_a99b73afe6b75609531075307f4a1bb6f}{es\+Email\+Valido}}(email)) \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}El formato del correo electrónico no es válido."{};return;\} \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(password !==repetir) \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}Las contraseñas no coinciden."{};return;\} \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} tiene\+Numero=/\+\textbackslash{}d/\+.test(password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} tiene\+Mayuscula=/\+\+[A-\/Z]\+/\+.test(password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} tiene\+Especial=/\+\+[\textbackslash{}W\+\_\+]\+/\+.test(password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} tiene\+Longitud=password.\+length $>$=8;\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!tiene\+Numero\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}!tiene\+Mayuscula\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}!tiene\+Especial\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}!tiene\+Longitud) \{ let error\+Msg="{}La contraseña no es segura. Debe contener al menos:\+ "{};if(!tiene\+Longitud) error\+Msg+="{}8 caracteres, "{};if(!tiene\+Numero) error\+Msg+="{}un número, "{};if(!tiene\+Mayuscula) error\+Msg+="{}una mayúscula, "{};if(!tiene\+Especial) error\+Msg+="{}un carácter especial, "{};if(err\+El) err\+El.\+text\+Content=error\+Msg.\+slice(0, -\/2)+"{}."{};return;\} \doxymbox{\hyperlink{admin__sensor__detail_8js_abe4cc9788f52e49485473dc699537388}{try}} \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Credential=await create\+User\+With\+Email\+And\+Password(\doxymbox{\hyperlink{register__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}, email, password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user=user\+Credential.\+user;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Id=user.\+uid;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} name\+Parts=nombre\+Completo.\+split(\textquotesingle{} \textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} nombre=name\+Parts\+[0]\+\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}\textquotesingle{}\textquotesingle{};\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} apellidos=name\+Parts.\+slice(1).join(\textquotesingle{} \textquotesingle{})\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}\textquotesingle{}\textquotesingle{};\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Doc\+Payload=\{ nombre:\+nombre, apellidos:\+apellidos, email:\+email, cp:\+codigo\+Postal, Id\+\_\+rol:\+\textquotesingle{}usuario\textquotesingle{}, uid:\+user\+Id, updated\+\_\+at:\+new Date(), \};await set\+Doc(doc(\doxymbox{\hyperlink{register__auth_8js_a654025a65d621cdee9f702b15aaf71d2}{db}}, "{}Usuarios"{}, user\+Id), user\+Doc\+Payload, \{ merge:\+true \});await set\+Doc(doc(\doxymbox{\hyperlink{register__auth_8js_a654025a65d621cdee9f702b15aaf71d2}{db}}, "{}Usuarios"{}, email.\+to\+Lower\+Case()), user\+Doc\+Payload, \{ merge:\+true \});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(msg\+El) msg\+El.\+text\+Content="{}¡\+Registro completado! Has iniciado sesión."{};set\+Timeout(()=$>$ window.\+location.\+href="{}../\+users\+\_\+map.\+html"{}, 1500);\} \doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}}(error) \{ console.\+error("{}Error de Firebase:\+"{}, error.\+code, error.\+message);let error\+Message;switch(error.\+code) \{ case \textquotesingle{}\doxymbox{\hyperlink{register__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+email-\/already-\/in-\/use\textquotesingle{}:\+error\+Message="{}El correo ya está registrado. Intenta iniciar sesión."{};break;case \textquotesingle{}\doxymbox{\hyperlink{register__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+invalid-\/email\textquotesingle{}:\+error\+Message="{}El formato de correo es inválido."{};break;default:\+error\+Message="{}Error desconocido al registrar:\+ "{}+(error.\+message\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}error.\+code);break;\} \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content=error\+Message;\} \});\} \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} header\+Logo=document.\+query\+Selector(\textquotesingle{}.main-\/header .logo,.logo img,.logo\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(header\+Logo) \{ header\+Logo.\+style.\+cursor=\textquotesingle{}pointer\textquotesingle{};header\+Logo.\+add\+Event\+Listener(\textquotesingle{}click\textquotesingle{},()=$>$ \{ window.\+location.\+href=\textquotesingle{}../\+index.\+html\textquotesingle{};\});\} \})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{register__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebase\+Config}}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{register__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}} = get\+Apps().length ? get\+App() :\+ initialize\+App(\doxymbox{\hyperlink{register__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebase\+Config}})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{register__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}} = get\+Auth(\doxymbox{\hyperlink{register__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{register__auth_8js_a654025a65d621cdee9f702b15aaf71d2}{db}} = get\+Firestore(\doxymbox{\hyperlink{register__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Módulo de registro de nuevos usuarios en la plataforma. 
+
+Gestiona todo el proceso de alta de usuario:\+
+\begin{DoxyEnumerate}
+\item Validación estricta de formularios (formato email, coincidencia de contraseñas, complejidad).
+\item Creación de credenciales en Firebase Authentication.
+\item Creación del perfil de usuario extendido en Firestore Database.
+\item Manejo de errores comunes (email duplicado, red, etc.). 
+\end{DoxyEnumerate}
+
+Definition in file \doxymbox{\hyperlink{register__auth_8js_source}{register\+\_\+auth.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{register__auth_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{register__auth_8js_ab46e86184985124c9579ae25ceaf0364}\index{register\_auth.js@{register\_auth.js}!addEventListener@{addEventListener}}
+\index{addEventListener@{addEventListener}!register\_auth.js@{register\_auth.js}}
+\doxysubsubsection{\texorpdfstring{addEventListener()}{addEventListener()}}
+{\footnotesize\ttfamily \label{register__auth_8js_ab46e86184985124c9579ae25ceaf0364} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} add\+Event\+Listener (\begin{DoxyParamCaption}\item[{\textquotesingle{}DOMContent\+Loaded\textquotesingle{}}]{}{, }\item[{function() \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} toggles=document.\+query\+Selector\+All(\textquotesingle{}.toggle-\/password\textquotesingle{});toggles.\+for\+Each((toggle)=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} wrapper=toggle.\+closest(\textquotesingle{}.password-\/input-\/wrapper\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!wrapper) return;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} password\+Input=wrapper.\+query\+Selector(\textquotesingle{}input\+[type="{}password"{}]\+, input\+[type="{}text"{}]\+\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} eye\+Open=toggle.\+query\+Selector(\textquotesingle{}.fas.\+fa-\/eye\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} eye\+Closed=toggle.\+query\+Selector(\textquotesingle{}.fas.\+fa-\/eye-\/slash\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(password\+Input \&\&eye\+Open \&\&eye\+Closed) \{ toggle.\+add\+Event\+Listener(\textquotesingle{}click\textquotesingle{}, function() \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} is\+Password=password\+Input.\+get\+Attribute(\textquotesingle{}type\textquotesingle{})===\textquotesingle{}password\textquotesingle{};password\+Input.\+set\+Attribute(\textquotesingle{}type\textquotesingle{}, is\+Password ? \textquotesingle{}text\textquotesingle{} :\+\textquotesingle{}password\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(is\+Password) \{ eye\+Open.\+style.\+display=\textquotesingle{}none\textquotesingle{};eye\+Closed.\+style.\+display=\textquotesingle{}inline-\/block\textquotesingle{};\} else \{ eye\+Open.\+style.\+display=\textquotesingle{}inline-\/block\textquotesingle{};eye\+Closed.\+style.\+display=\textquotesingle{}none\textquotesingle{};\} \});\} \});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} register\+Form=document.\+get\+Element\+By\+Id("{}register\+Form"{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(register\+Form) \{ register\+Form.\+add\+Event\+Listener("{}submit"{}, async(e)=$>$ \{ e.\+prevent\+Default();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} nombre\+Completo=document.\+get\+Element\+By\+Id("{}nombre"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} email=document.\+get\+Element\+By\+Id("{}correo"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} password=document.\+get\+Element\+By\+Id("{}contrasena"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} repetir=document.\+get\+Element\+By\+Id("{}repetir\+Contrasena"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} codigo\+Postal\+Input=document.\+get\+Element\+By\+Id("{}codigo\+Postal"{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} codigo\+Postal=codigo\+Postal\+Input ? codigo\+Postal\+Input.\+value.\+trim() :\+"{}"{};\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} privacy\+Policy=document.\+get\+Element\+By\+Id("{}privacy\+Policy"{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} msg\+El=document.\+get\+Element\+By\+Id("{}register\+Msg"{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} err\+El=document.\+get\+Element\+By\+Id("{}register\+Error"{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(msg\+El) msg\+El.\+text\+Content="{}"{};\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}"{};\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!privacy\+Policy\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}!privacy\+Policy.\+checked) \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}Debes aceptar la política de privacidad para registrarte."{};return;\} \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!\doxymbox{\hyperlink{register__auth_8js_a99b73afe6b75609531075307f4a1bb6f}{es\+Email\+Valido}}(email)) \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}El formato del correo electrónico no es válido."{};return;\} \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(password !==repetir) \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}Las contraseñas no coinciden."{};return;\} \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} tiene\+Numero=/\+\textbackslash{}d/\+.test(password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} tiene\+Mayuscula=/\+\+[A-\/Z]\+/\+.test(password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} tiene\+Especial=/\+\+[\textbackslash{}W\+\_\+]\+/\+.test(password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} tiene\+Longitud=password.\+length $>$=8;\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!tiene\+Numero\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}!tiene\+Mayuscula\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}!tiene\+Especial\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}!tiene\+Longitud) \{ let error\+Msg="{}La contraseña no es segura. Debe contener al menos:\+ "{};if(!tiene\+Longitud) error\+Msg+="{}8 caracteres, "{};if(!tiene\+Numero) error\+Msg+="{}un número, "{};if(!tiene\+Mayuscula) error\+Msg+="{}una mayúscula, "{};if(!tiene\+Especial) error\+Msg+="{}un carácter especial, "{};if(err\+El) err\+El.\+text\+Content=error\+Msg.\+slice(0, -\/2)+"{}."{};return;\} \doxymbox{\hyperlink{admin__sensor__detail_8js_abe4cc9788f52e49485473dc699537388}{try}} \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Credential=await create\+User\+With\+Email\+And\+Password(\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}, email, password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user=user\+Credential.\+user;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Id=user.\+uid;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} name\+Parts=nombre\+Completo.\+split(\textquotesingle{} \textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} nombre=name\+Parts\+[0]\+\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}\textquotesingle{}\textquotesingle{};\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} apellidos=name\+Parts.\+slice(1).join(\textquotesingle{} \textquotesingle{})\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}\textquotesingle{}\textquotesingle{};\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Doc\+Payload=\{ nombre:\+nombre, apellidos:\+apellidos, email:\+email, cp:\+codigo\+Postal, Id\+\_\+rol:\+\textquotesingle{}usuario\textquotesingle{}, uid:\+user\+Id, updated\+\_\+at:\+new Date(), \};await set\+Doc(doc(\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}, "{}Usuarios"{}, user\+Id), user\+Doc\+Payload, \{ merge:\+true \});await set\+Doc(doc(\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}, "{}Usuarios"{}, email.\+to\+Lower\+Case()), user\+Doc\+Payload, \{ merge:\+true \});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(msg\+El) msg\+El.\+text\+Content="{}¡\+Registro completado! Has iniciado sesión."{};set\+Timeout(()=$>$ window.\+location.\+href="{}../\+users\+\_\+map.\+html"{}, 1500);\} \doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}}(error) \{ console.\+error("{}Error de Firebase:\+"{}, error.\+code, error.\+message);let error\+Message;switch(error.\+code) \{ case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+email-\/already-\/in-\/use\textquotesingle{}:\+error\+Message="{}El correo ya está registrado. Intenta iniciar sesión."{};break;case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+invalid-\/email\textquotesingle{}:\+error\+Message="{}El formato de correo es inválido."{};break;default:\+error\+Message="{}Error desconocido al registrar:\+ "{}+(error.\+message\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}error.\+code);break;\} \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content=error\+Message;\} \});\} \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} header\+Logo=document.\+query\+Selector(\textquotesingle{}.main-\/header .logo,.logo img,.logo\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(header\+Logo) \{ header\+Logo.\+style.\+cursor=\textquotesingle{}pointer\textquotesingle{};header\+Logo.\+add\+Event\+Listener(\textquotesingle{}click\textquotesingle{},()=$>$ \{ window.\+location.\+href=\textquotesingle{}../\+index.\+html\textquotesingle{};\});\} \}}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+% FIG 1
+\Hypertarget{register__auth_8js_a99b73afe6b75609531075307f4a1bb6f}\index{register\_auth.js@{register\_auth.js}!esEmailValido@{esEmailValido}}
+\index{esEmailValido@{esEmailValido}!register\_auth.js@{register\_auth.js}}
+\doxysubsubsection{\texorpdfstring{esEmailValido()}{esEmailValido()}}
+{\footnotesize\ttfamily \label{register__auth_8js_a99b73afe6b75609531075307f4a1bb6f} 
+function es\+Email\+Valido (\begin{DoxyParamCaption}\item[{email}]{}{}\end{DoxyParamCaption})}
+
+
+
+Valida el formato de un correo electrónico mediante Expresiones Regulares (Regex). email:\+string -\/\texorpdfstring{$>$}{>} \doxylink{register__auth_8js_a99b73afe6b75609531075307f4a1bb6f}{es\+Email\+Valido()} -\/\texorpdfstring{$>$}{>} boolean. 
+
+
+\begin{DoxyItemize}
+\item 
+\end{DoxyItemize}
+
+Comprueba si la cadena de entrada cumple con el patrón estándar de un email:\+ caracteres + @ + caracteres + . + extensión.
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em email} & La cadena de texto a validar. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true si el formato es correcto, false en caso contrario. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Definition at line \doxymbox{\hyperlink{register__auth_8js_source_l00047}{47}} of file \doxymbox{\hyperlink{register__auth_8js_source}{register\+\_\+auth.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 2
+
+
+\label{doc-var-members}
+\Hypertarget{register__auth_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{register__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}\index{register\_auth.js@{register\_auth.js}!app@{app}}
+\index{app@{app}!register\_auth.js@{register\_auth.js}}
+\doxysubsubsection{\texorpdfstring{app}{app}}
+{\footnotesize\ttfamily \label{register__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} app = get\+Apps().length ? get\+App() :\+ initialize\+App(\doxymbox{\hyperlink{register__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebase\+Config}})}
+
+
+
+Definition at line \doxymbox{\hyperlink{register__auth_8js_source_l00031}{31}} of file \doxymbox{\hyperlink{register__auth_8js_source}{register\+\_\+auth.\+js}}.
+
+\Hypertarget{register__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}\index{register\_auth.js@{register\_auth.js}!auth@{auth}}
+\index{auth@{auth}!register\_auth.js@{register\_auth.js}}
+\doxysubsubsection{\texorpdfstring{auth}{auth}}
+{\footnotesize\ttfamily \label{register__auth_8js_ae24006db5a243dcdeeb58c174e0bba64} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} auth = get\+Auth(\doxymbox{\hyperlink{register__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}})}
+
+
+
+Definition at line \doxymbox{\hyperlink{register__auth_8js_source_l00032}{32}} of file \doxymbox{\hyperlink{register__auth_8js_source}{register\+\_\+auth.\+js}}.
+
+\Hypertarget{register__auth_8js_a654025a65d621cdee9f702b15aaf71d2}\index{register\_auth.js@{register\_auth.js}!db@{db}}
+\index{db@{db}!register\_auth.js@{register\_auth.js}}
+\doxysubsubsection{\texorpdfstring{db}{db}}
+{\footnotesize\ttfamily \label{register__auth_8js_a654025a65d621cdee9f702b15aaf71d2} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} db = get\+Firestore(\doxymbox{\hyperlink{register__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}})}
+
+
+
+Definition at line \doxymbox{\hyperlink{register__auth_8js_source_l00033}{33}} of file \doxymbox{\hyperlink{register__auth_8js_source}{register\+\_\+auth.\+js}}.
+
+\Hypertarget{register__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}\index{register\_auth.js@{register\_auth.js}!firebaseConfig@{firebaseConfig}}
+\index{firebaseConfig@{firebaseConfig}!register\_auth.js@{register\_auth.js}}
+\doxysubsubsection{\texorpdfstring{firebaseConfig}{firebaseConfig}}
+{\footnotesize\ttfamily \label{register__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} firebase\+Config}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \{}
+\DoxyCodeLine{\ \ \ \ apiKey:\ \textcolor{stringliteral}{"{}AIzaSyCbAVEYYdtSLmrH\_opCM72G\_G01QXPRZ48"{}},}
+\DoxyCodeLine{\ \ \ \ authDomain:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebaseapp.com"{}},}
+\DoxyCodeLine{\ \ \ \ databaseURL:\ \textcolor{stringliteral}{"{}https://biometria-\/g3-\/default-\/rtdb.europe-\/west1.firebasedatabase.app"{}},}
+\DoxyCodeLine{\ \ \ \ projectId:\ \textcolor{stringliteral}{"{}biometria-\/g3"{}},}
+\DoxyCodeLine{\ \ \ \ storageBucket:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebasestorage.app"{}},}
+\DoxyCodeLine{\ \ \ \ messagingSenderId:\ \textcolor{stringliteral}{"{}817957103566"{}},}
+\DoxyCodeLine{\ \ \ \ appId:\ \textcolor{stringliteral}{"{}1:817957103566:web:75c78a0a28f3380d092d9f"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line \doxymbox{\hyperlink{register__auth_8js_source_l00020}{20}} of file \doxymbox{\hyperlink{register__auth_8js_source}{register\+\_\+auth.\+js}}.
+

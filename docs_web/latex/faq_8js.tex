@@ -1,0 +1,305 @@
+\doxysection{src/\+js/\+faq.js File Reference}
+\hypertarget{faq_8js}{}\label{faq_8js}\index{src/js/faq.js@{src/js/faq.js}}
+
+
+Módulo de Preguntas Frecuentes (FAQ) con interactividad completa.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} \doxymbox{\hyperlink{faq_8js_a1c8d70983aae4e9ab023f3f90accb068}{add\+Event\+Listener}} (\textquotesingle{}DOMContent\+Loaded\textquotesingle{}, function() \{ \doxymbox{\hyperlink{faq_8js_a04614f58763e2b1687dcf2ff549a5d6e}{inicializar\+FAQ}}();\doxymbox{\hyperlink{faq_8js_a56d748ffed9980e840d91120848586cb}{inicializar\+Scroll\+Navegacion}}();\})
+\item 
+function \doxymbox{\hyperlink{faq_8js_a04614f58763e2b1687dcf2ff549a5d6e}{inicializar\+FAQ}} ()
+\begin{DoxyCompactList}\small\item\em Inicializa todos los elementos FAQ y asigna listeners de eventos. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc}{abrir\+Cerrar\+Respuesta}} (elemento)
+\begin{DoxyCompactList}\small\item\em Alterna la apertura/\+cierre de una respuesta FAQ con animación suave. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{faq_8js_a62f10544b3cef2cf404d923985762a8c}{cerrar\+Todas}} ()
+\begin{DoxyCompactList}\small\item\em Cierra todas las respuestas FAQ visibles en la página. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{faq_8js_a56d748ffed9980e840d91120848586cb}{inicializar\+Scroll\+Navegacion}} ()
+\begin{DoxyCompactList}\small\item\em Inicializa la navegación desde la tabla de contenidos con scroll suave. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{faq_8js_a000b16dddb5d547135f34687a9045f81}{abrir\+Primer\+FAQDela\+Sección}} (seccion)
+\begin{DoxyCompactList}\small\item\em Abre el primer item FAQ de una sección específica. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{faq_8js_a0e95767122058af28757d7187edf8e18}{buscar\+Preguntas}} (termino)
+\begin{DoxyCompactList}\small\item\em Busca preguntas FAQ según un término de búsqueda. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} \doxymbox{\hyperlink{faq_8js_adfec76c8f215c3d02da1caac66d1342f}{add\+Event\+Listener}} (\textquotesingle{}keydown\textquotesingle{}, function(event) \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(event.\+key===\textquotesingle{}Enter\textquotesingle{}) \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} elemento=document.\+active\+Element;\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(elemento.\+class\+List.\+contains(\textquotesingle{}faq-\/question\textquotesingle{})) \{ event.\+prevent\+Default();\doxymbox{\hyperlink{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc}{abrir\+Cerrar\+Respuesta}}(elemento);\} \} \})
+\begin{DoxyCompactList}\small\item\em Listener de teclado para navegar FAQ con Tab + Enter (accesibilidad). \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{faq_8js_a867b2df531ce2f83ba9233a5fcda526c}{abrir\+Todos\+De\+La\+Sección}} (id\+Seccion)
+\begin{DoxyCompactList}\small\item\em Abre todos los items FAQ de una sección específica. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{faq_8js_a643ac3b3e7a4f1acebf2e046464826c6}{cerrar\+Todos\+De\+La\+Sección}} (id\+Seccion)
+\begin{DoxyCompactList}\small\item\em Cierra todos los items FAQ de una sección específica. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{faq_8js_a0c16a52c68b5aee6db910e22d5fbab46}{imprimir\+FAQ}} ()
+\begin{DoxyCompactList}\small\item\em Abre el diálogo de impresión del navegador para imprimir la página FAQ. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}} (typeof module !==\textquotesingle{}undefined\textquotesingle{} \&\&module.\+exports)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Módulo de Preguntas Frecuentes (FAQ) con interactividad completa. 
+
+Gestiona la funcionalidad de la página de FAQ incluyendo:\+
+\begin{DoxyItemize}
+\item Apertura/\+cierre de respuestas con animación suave
+\item Navegación desde tabla de contenidos con scroll suave
+\item Soporte de accesibilidad (ARIA, navegación por teclado)
+\item Búsqueda de preguntas (función disponible)
+\item Gestión de secciones (abrir/\+cerrar múltiples items)
+\item Impresión de FAQ
+\end{DoxyItemize}
+
+\begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Breathe Tracking Team 
+\end{DoxyAuthor}
+
+
+Definition in file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{faq_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc}\index{faq.js@{faq.js}!abrirCerrarRespuesta@{abrirCerrarRespuesta}}
+\index{abrirCerrarRespuesta@{abrirCerrarRespuesta}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{abrirCerrarRespuesta()}{abrirCerrarRespuesta()}}
+{\footnotesize\ttfamily \label{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc} 
+function abrir\+Cerrar\+Respuesta (\begin{DoxyParamCaption}\item[{elemento}]{}{}\end{DoxyParamCaption})}
+
+
+
+Alterna la apertura/\+cierre de una respuesta FAQ con animación suave. 
+
+Si la pregunta está cerrada, la abre y hace scroll suave hacia ella. Si está abierta, simplemente la cierra. Actualiza el atributo aria-\/expanded para accesibilidad.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{\+Element\}} & elemento -\/ El botón .faq-\/question clickeado \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00051}{51}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 0
+\Hypertarget{faq_8js_a000b16dddb5d547135f34687a9045f81}\index{faq.js@{faq.js}!abrirPrimerFAQDelaSección@{abrirPrimerFAQDelaSección}}
+\index{abrirPrimerFAQDelaSección@{abrirPrimerFAQDelaSección}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{abrirPrimerFAQDelaSección()}{abrirPrimerFAQDelaSección()}}
+{\footnotesize\ttfamily \label{faq_8js_a000b16dddb5d547135f34687a9045f81} 
+function abrir\+Primer\+FAQDela\+Sección (\begin{DoxyParamCaption}\item[{seccion}]{}{}\end{DoxyParamCaption})}
+
+
+
+Abre el primer item FAQ de una sección específica. 
+
+Busca el primer elemento .faq-\/item dentro de la sección proporcionada. Si existe y no está activo, lo activa y actualiza aria-\/expanded.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{\+Element\}} & seccion -\/ La sección (elemento DOM) a procesar \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00132}{132}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 1
+\Hypertarget{faq_8js_a867b2df531ce2f83ba9233a5fcda526c}\index{faq.js@{faq.js}!abrirTodosDeLaSección@{abrirTodosDeLaSección}}
+\index{abrirTodosDeLaSección@{abrirTodosDeLaSección}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{abrirTodosDeLaSección()}{abrirTodosDeLaSección()}}
+{\footnotesize\ttfamily \label{faq_8js_a867b2df531ce2f83ba9233a5fcda526c} 
+function abrir\+Todos\+De\+La\+Sección (\begin{DoxyParamCaption}\item[{id\+Seccion}]{}{}\end{DoxyParamCaption})}
+
+
+
+Abre todos los items FAQ de una sección específica. 
+
+Busca la sección por su ID y abre todos los .faq-\/item dentro. Actualiza los atributos aria-\/expanded para accesibilidad.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{string\}} & id\+Seccion -\/ El ID HTML de la sección a expandir \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00198}{198}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+\Hypertarget{faq_8js_a1c8d70983aae4e9ab023f3f90accb068}\index{faq.js@{faq.js}!addEventListener@{addEventListener}}
+\index{addEventListener@{addEventListener}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{addEventListener()}{addEventListener()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{faq_8js_a1c8d70983aae4e9ab023f3f90accb068} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} add\+Event\+Listener (\begin{DoxyParamCaption}\item[{\textquotesingle{}DOMContent\+Loaded\textquotesingle{}}]{}{, }\item[{function() \{ \doxymbox{\hyperlink{faq_8js_a04614f58763e2b1687dcf2ff549a5d6e}{inicializar\+FAQ}}();\doxymbox{\hyperlink{faq_8js_a56d748ffed9980e840d91120848586cb}{inicializar\+Scroll\+Navegacion}}();\}}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+% FIG 2
+\Hypertarget{faq_8js_adfec76c8f215c3d02da1caac66d1342f}\index{faq.js@{faq.js}!addEventListener@{addEventListener}}
+\index{addEventListener@{addEventListener}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{addEventListener()}{addEventListener()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{faq_8js_adfec76c8f215c3d02da1caac66d1342f} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} add\+Event\+Listener (\begin{DoxyParamCaption}\item[{\textquotesingle{}keydown\textquotesingle{}}]{}{, }\item[{function(event) \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(event.\+key===\textquotesingle{}Enter\textquotesingle{}) \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} elemento=document.\+active\+Element;\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(elemento.\+class\+List.\+contains(\textquotesingle{}faq-\/question\textquotesingle{})) \{ event.\+prevent\+Default();\doxymbox{\hyperlink{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc}{abrir\+Cerrar\+Respuesta}}(elemento);\} \} \}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Listener de teclado para navegar FAQ con Tab + Enter (accesibilidad). 
+
+Permite a usuarios navegar el FAQ usando solo teclado. Enter abre/\+cierra la pregunta enfocada. Previene el comportamiento por defecto de Enter cuando se enfoca un .faq-\/question.
+
+@event keydown -\/ Se dispara cuando se presiona una tecla \begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+Here is the call graph for this function:\+
+% FIG 3
+\Hypertarget{faq_8js_a0e95767122058af28757d7187edf8e18}\index{faq.js@{faq.js}!buscarPreguntas@{buscarPreguntas}}
+\index{buscarPreguntas@{buscarPreguntas}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{buscarPreguntas()}{buscarPreguntas()}}
+{\footnotesize\ttfamily \label{faq_8js_a0e95767122058af28757d7187edf8e18} 
+function buscar\+Preguntas (\begin{DoxyParamCaption}\item[{termino}]{}{}\end{DoxyParamCaption})}
+
+
+
+Busca preguntas FAQ según un término de búsqueda. 
+
+Filtra los items FAQ mostrando solo aquellos cuya pregunta o respuesta contenga el término buscado (case-\/insensitive). Oculta el resto mediante display:\+ \textquotesingle{}none\textquotesingle{}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{string\}} & termino -\/ El término a buscar en preguntas y respuestas \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00151}{151}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+\Hypertarget{faq_8js_a62f10544b3cef2cf404d923985762a8c}\index{faq.js@{faq.js}!cerrarTodas@{cerrarTodas}}
+\index{cerrarTodas@{cerrarTodas}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{cerrarTodas()}{cerrarTodas()}}
+{\footnotesize\ttfamily \label{faq_8js_a62f10544b3cef2cf404d923985762a8c} 
+function cerrar\+Todas (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Cierra todas las respuestas FAQ visibles en la página. 
+
+Elimina la clase \textquotesingle{}active\textquotesingle{} de todos los items .faq-\/item y actualiza los atributos aria-\/expanded para accesibilidad. Útil para implementar modo acordeón.
+
+void -\/\texorpdfstring{$>$}{>} void \begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00083}{83}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+\Hypertarget{faq_8js_a643ac3b3e7a4f1acebf2e046464826c6}\index{faq.js@{faq.js}!cerrarTodosDeLaSección@{cerrarTodosDeLaSección}}
+\index{cerrarTodosDeLaSección@{cerrarTodosDeLaSección}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{cerrarTodosDeLaSección()}{cerrarTodosDeLaSección()}}
+{\footnotesize\ttfamily \label{faq_8js_a643ac3b3e7a4f1acebf2e046464826c6} 
+function cerrar\+Todos\+De\+La\+Sección (\begin{DoxyParamCaption}\item[{id\+Seccion}]{}{}\end{DoxyParamCaption})}
+
+
+
+Cierra todos los items FAQ de una sección específica. 
+
+Busca la sección por su ID y cierra todos los .faq-\/item dentro. Actualiza los atributos aria-\/expanded para accesibilidad.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{string\}} & id\+Seccion -\/ El ID HTML de la sección a contraer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00219}{219}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+\Hypertarget{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}\index{faq.js@{faq.js}!if@{if}}
+\index{if@{if}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{if()}{if()}}
+{\footnotesize\ttfamily \label{faq_8js_a055563d333ba4a61b84ebe56ced06d6b} 
+if (\begin{DoxyParamCaption}\item[{typeof module !}]{}{ = {\ttfamily =~\textquotesingle{}undefined\textquotesingle{}~\&\&~module.exports}}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00245}{245}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+\Hypertarget{faq_8js_a0c16a52c68b5aee6db910e22d5fbab46}\index{faq.js@{faq.js}!imprimirFAQ@{imprimirFAQ}}
+\index{imprimirFAQ@{imprimirFAQ}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{imprimirFAQ()}{imprimirFAQ()}}
+{\footnotesize\ttfamily \label{faq_8js_a0c16a52c68b5aee6db910e22d5fbab46} 
+function imprimir\+FAQ (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Abre el diálogo de impresión del navegador para imprimir la página FAQ. 
+
+Invoca window.\+print() para abrir el cuadro de diálogo de impresión. El CSS @media print puede personalizar la salida de impresión.
+
+void -\/\texorpdfstring{$>$}{>} void \begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00240}{240}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+\Hypertarget{faq_8js_a04614f58763e2b1687dcf2ff549a5d6e}\index{faq.js@{faq.js}!inicializarFAQ@{inicializarFAQ}}
+\index{inicializarFAQ@{inicializarFAQ}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{inicializarFAQ()}{inicializarFAQ()}}
+{\footnotesize\ttfamily \label{faq_8js_a04614f58763e2b1687dcf2ff549a5d6e} 
+function inicializar\+FAQ (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Inicializa todos los elementos FAQ y asigna listeners de eventos. 
+
+Selecciona todos los elementos con clase \textquotesingle{}faq-\/question\textquotesingle{} y añade un listener de clic a cada uno para abrir/\+cerrar su respuesta correspondiente. void -\/\texorpdfstring{$>$}{>} void \begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00031}{31}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 4
+Here is the caller graph for this function:\+
+% FIG 5
+\Hypertarget{faq_8js_a56d748ffed9980e840d91120848586cb}\index{faq.js@{faq.js}!inicializarScrollNavegacion@{inicializarScrollNavegacion}}
+\index{inicializarScrollNavegacion@{inicializarScrollNavegacion}!faq.js@{faq.js}}
+\doxysubsubsection{\texorpdfstring{inicializarScrollNavegacion()}{inicializarScrollNavegacion()}}
+{\footnotesize\ttfamily \label{faq_8js_a56d748ffed9980e840d91120848586cb} 
+function inicializar\+Scroll\+Navegacion (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Inicializa la navegación desde la tabla de contenidos con scroll suave. 
+
+Asigna listeners a todos los enlaces de la tabla de contenidos. Cuando se hace clic, realiza un scroll suave hacia la sección destino y abre automáticamente el primer FAQ de esa sección.
+
+void -\/\texorpdfstring{$>$}{>} void \begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{faq_8js_source_l00102}{102}} of file \doxymbox{\hyperlink{faq_8js_source}{faq.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 6
+Here is the caller graph for this function:\+
+% FIG 7

@@ -1,0 +1,209 @@
+\doxysection{generar\+\_\+semana\+\_\+datos Namespace Reference}
+\hypertarget{namespacegenerar__semana__datos}{}\label{namespacegenerar__semana__datos}\index{generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacegenerar__semana__datos_a6c962077654f13b535db1d19ce1c0b6a}{generar\+\_\+clusters}} (lat\+\_\+centro, lng\+\_\+centro, num\+\_\+clusters=3)
+\item 
+\doxymbox{\hyperlink{namespacegenerar__semana__datos_a1efa95d5b792ee30e3c77ead15a1f994}{generar\+\_\+puntos\+\_\+alrededor\+\_\+cluster}} (lat\+\_\+cluster, lng\+\_\+cluster, num\+\_\+puntos, radio\+\_\+cluster)
+\item 
+\doxymbox{\hyperlink{namespacegenerar__semana__datos_aeedd2da0f6744acf0c19a8d6e53966b4}{generar\+\_\+semana}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{namespacegenerar__semana__datos_a6c764c95ab3a6c0b026d81b11e92c991}{cred}} = credentials.\+Certificate("{}service\+Account\+Key.\+json"{})
+\item 
+\doxymbox{\hyperlink{namespacegenerar__semana__datos_a7c8d4b02078e15bed39714bbab027a5c}{db}} = firestore.\+client()
+\item 
+\doxymbox{\hyperlink{namespacegenerar__semana__datos_a3f9ac93aed96b87ba68f751ee26c159e}{FECHA\+\_\+\+INICIO}} = datetime(2025, 12, 1)
+\item 
+int \doxymbox{\hyperlink{namespacegenerar__semana__datos_a0ad45270d83de223ef7ec1fc81a584c4}{NUM\+\_\+\+DIAS}} = 7
+\item 
+float \doxymbox{\hyperlink{namespacegenerar__semana__datos_a7546d89fda7088358c2f5f4e726ca362}{LAT\+\_\+\+BASE}} = 38.\+9660
+\item 
+float \doxymbox{\hyperlink{namespacegenerar__semana__datos_aa23d44bb5a8a5fde3af47e066ccb00bd}{LNG\+\_\+\+BASE}} = -\/0.\+1850
+\item 
+float \doxymbox{\hyperlink{namespacegenerar__semana__datos_a012823ec3fa30a7f4aed8158fffaf5a8}{RADIO\+\_\+\+VARIACION}} = 0.\+008
+\item 
+list \doxymbox{\hyperlink{namespacegenerar__semana__datos_a28d87a97821f8a6fc62775cdb7467032}{GASES}} = \+["{}O3"{}, "{}CO"{}, "{}NO2"{}, "{}SO2"{}, "{}CO2"{}]\+
+\item 
+dict \doxymbox{\hyperlink{namespacegenerar__semana__datos_a4e33abf27bcc02664d4ac24a3d337cc7}{RANGOS}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}@file generar_semana_datos.py
+@brief Script de generación masiva de datos históricos para una semana completa.
+@details
+Versión optimizada con:
+- Mayor densidad de puntos (40-60 por gas)
+- Puntos más concentrados (radio reducido)
+- Valores ajustados para mayor variedad visual
+- Clusters de contaminación realistas
+\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{namespacegenerar__semana__datos_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacegenerar__semana__datos_a6c962077654f13b535db1d19ce1c0b6a}\index{generar\_semana\_datos@{generar\_semana\_datos}!generar\_clusters@{generar\_clusters}}
+\index{generar\_clusters@{generar\_clusters}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{generar\_clusters()}{generar\_clusters()}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a6c962077654f13b535db1d19ce1c0b6a} 
+generar\+\_\+semana\+\_\+datos.\+generar\+\_\+clusters (\begin{DoxyParamCaption}\item[{}]{lat\+\_\+centro}{, }\item[{}]{lng\+\_\+centro}{, }\item[{}]{num\+\_\+clusters}{ = {\ttfamily 3}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}@brief Genera centros de clusters de contaminación
+@param lat_centro Centro base latitud
+@param lng_centro Centro base longitud
+@param num_clusters Número de focos de contaminación
+@return Lista de tuplas (lat, lng) con los centros
+\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00047}{47}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+Here is the caller graph for this function:\+
+% FIG 0
+\Hypertarget{namespacegenerar__semana__datos_a1efa95d5b792ee30e3c77ead15a1f994}\index{generar\_semana\_datos@{generar\_semana\_datos}!generar\_puntos\_alrededor\_cluster@{generar\_puntos\_alrededor\_cluster}}
+\index{generar\_puntos\_alrededor\_cluster@{generar\_puntos\_alrededor\_cluster}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{generar\_puntos\_alrededor\_cluster()}{generar\_puntos\_alrededor\_cluster()}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a1efa95d5b792ee30e3c77ead15a1f994} 
+generar\+\_\+semana\+\_\+datos.\+generar\+\_\+puntos\+\_\+alrededor\+\_\+cluster (\begin{DoxyParamCaption}\item[{}]{lat\+\_\+cluster}{, }\item[{}]{lng\+\_\+cluster}{, }\item[{}]{num\+\_\+puntos}{, }\item[{}]{radio\+\_\+cluster}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}@brief Genera puntos concentrados alrededor de un cluster
+@param lat_cluster Centro del cluster
+@param lng_cluster Centro del cluster
+@param num_puntos Número de puntos a generar
+@param radio_cluster Radio de dispersión del cluster
+@return Lista de tuplas (lat, lng)
+\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00063}{63}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+Here is the caller graph for this function:\+
+% FIG 1
+\Hypertarget{namespacegenerar__semana__datos_aeedd2da0f6744acf0c19a8d6e53966b4}\index{generar\_semana\_datos@{generar\_semana\_datos}!generar\_semana@{generar\_semana}}
+\index{generar\_semana@{generar\_semana}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{generar\_semana()}{generar\_semana()}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_aeedd2da0f6744acf0c19a8d6e53966b4} 
+generar\+\_\+semana\+\_\+datos.\+generar\+\_\+semana (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}@brief Ejecuta la simulación y carga de datos para el periodo definido.
+OPTIMIZADO para mayor densidad y continuidad visual.
+\end{DoxyVerb}
+ 
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00085}{85}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+Here is the call graph for this function:\+
+% FIG 2
+Here is the caller graph for this function:\+
+% FIG 3
+
+
+\label{doc-var-members}
+\Hypertarget{namespacegenerar__semana__datos_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{namespacegenerar__semana__datos_a6c764c95ab3a6c0b026d81b11e92c991}\index{generar\_semana\_datos@{generar\_semana\_datos}!cred@{cred}}
+\index{cred@{cred}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{cred}{cred}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a6c764c95ab3a6c0b026d81b11e92c991} 
+generar\+\_\+semana\+\_\+datos.\+cred = credentials.\+Certificate("{}service\+Account\+Key.\+json"{})}
+
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00019}{19}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+\Hypertarget{namespacegenerar__semana__datos_a7c8d4b02078e15bed39714bbab027a5c}\index{generar\_semana\_datos@{generar\_semana\_datos}!db@{db}}
+\index{db@{db}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{db}{db}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a7c8d4b02078e15bed39714bbab027a5c} 
+generar\+\_\+semana\+\_\+datos.\+db = firestore.\+client()}
+
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00022}{22}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+\Hypertarget{namespacegenerar__semana__datos_a3f9ac93aed96b87ba68f751ee26c159e}\index{generar\_semana\_datos@{generar\_semana\_datos}!FECHA\_INICIO@{FECHA\_INICIO}}
+\index{FECHA\_INICIO@{FECHA\_INICIO}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{FECHA\_INICIO}{FECHA\_INICIO}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a3f9ac93aed96b87ba68f751ee26c159e} 
+generar\+\_\+semana\+\_\+datos.\+FECHA\+\_\+\+INICIO = datetime(2025, 12, 1)}
+
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00025}{25}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+\Hypertarget{namespacegenerar__semana__datos_a28d87a97821f8a6fc62775cdb7467032}\index{generar\_semana\_datos@{generar\_semana\_datos}!GASES@{GASES}}
+\index{GASES@{GASES}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{GASES}{GASES}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a28d87a97821f8a6fc62775cdb7467032} 
+list generar\+\_\+semana\+\_\+datos.\+GASES = \+["{}O3"{}, "{}CO"{}, "{}NO2"{}, "{}SO2"{}, "{}CO2"{}]\+}
+
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00036}{36}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+\Hypertarget{namespacegenerar__semana__datos_a7546d89fda7088358c2f5f4e726ca362}\index{generar\_semana\_datos@{generar\_semana\_datos}!LAT\_BASE@{LAT\_BASE}}
+\index{LAT\_BASE@{LAT\_BASE}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{LAT\_BASE}{LAT\_BASE}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a7546d89fda7088358c2f5f4e726ca362} 
+float generar\+\_\+semana\+\_\+datos.\+LAT\+\_\+\+BASE = 38.\+9660}
+
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00029}{29}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+\Hypertarget{namespacegenerar__semana__datos_aa23d44bb5a8a5fde3af47e066ccb00bd}\index{generar\_semana\_datos@{generar\_semana\_datos}!LNG\_BASE@{LNG\_BASE}}
+\index{LNG\_BASE@{LNG\_BASE}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{LNG\_BASE}{LNG\_BASE}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_aa23d44bb5a8a5fde3af47e066ccb00bd} 
+float generar\+\_\+semana\+\_\+datos.\+LNG\+\_\+\+BASE = -\/0.\+1850}
+
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00030}{30}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+\Hypertarget{namespacegenerar__semana__datos_a0ad45270d83de223ef7ec1fc81a584c4}\index{generar\_semana\_datos@{generar\_semana\_datos}!NUM\_DIAS@{NUM\_DIAS}}
+\index{NUM\_DIAS@{NUM\_DIAS}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{NUM\_DIAS}{NUM\_DIAS}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a0ad45270d83de223ef7ec1fc81a584c4} 
+int generar\+\_\+semana\+\_\+datos.\+NUM\+\_\+\+DIAS = 7}
+
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00026}{26}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+\Hypertarget{namespacegenerar__semana__datos_a012823ec3fa30a7f4aed8158fffaf5a8}\index{generar\_semana\_datos@{generar\_semana\_datos}!RADIO\_VARIACION@{RADIO\_VARIACION}}
+\index{RADIO\_VARIACION@{RADIO\_VARIACION}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{RADIO\_VARIACION}{RADIO\_VARIACION}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a012823ec3fa30a7f4aed8158fffaf5a8} 
+float generar\+\_\+semana\+\_\+datos.\+RADIO\+\_\+\+VARIACION = 0.\+008}
+
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00033}{33}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+
+\Hypertarget{namespacegenerar__semana__datos_a4e33abf27bcc02664d4ac24a3d337cc7}\index{generar\_semana\_datos@{generar\_semana\_datos}!RANGOS@{RANGOS}}
+\index{RANGOS@{RANGOS}!generar\_semana\_datos@{generar\_semana\_datos}}
+\doxysubsubsection{\texorpdfstring{RANGOS}{RANGOS}}
+{\footnotesize\ttfamily \label{namespacegenerar__semana__datos_a4e33abf27bcc02664d4ac24a3d337cc7} 
+dict generar\+\_\+semana\+\_\+datos.\+RANGOS}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ =\ \ \{}
+\DoxyCodeLine{00002\ \ \ \ \ \textcolor{stringliteral}{"{}O3"{}}:\ \ (0.015,\ 0.085),\ \ \textcolor{comment}{\#\ Más\ valores\ en\ zona\ verde/amarilla}}
+\DoxyCodeLine{00003\ \ \ \ \ \textcolor{stringliteral}{"{}CO"{}}:\ \ (1.0,\ 25.0),\ \ \ \ \ \textcolor{comment}{\#\ Mayor\ dispersión}}
+\DoxyCodeLine{00004\ \ \ \ \ \textcolor{stringliteral}{"{}NO2"{}}:\ (10,\ 320),\ \ \ \ \ \ \ \textcolor{comment}{\#\ Rango\ amplio}}
+\DoxyCodeLine{00005\ \ \ \ \ \textcolor{stringliteral}{"{}SO2"{}}:\ (5,\ 420),\ \ \ \ \ \ \ \ \textcolor{comment}{\#\ Incluye\ todos\ los\ niveles}}
+\DoxyCodeLine{00006\ \ \ \ \ \textcolor{stringliteral}{"{}CO2"{}}:\ (250,\ 1800)\ \ \ \ \ \ \textcolor{comment}{\#\ Más\ variedad\ verde-\/amarillo}}
+\DoxyCodeLine{00007\ \}}
+
+\end{DoxyCode}
+
+
+Definition at line \doxymbox{\hyperlink{generar__semana__datos_8py_source_l00039}{39}} of file \doxymbox{\hyperlink{generar__semana__datos_8py_source}{generar\+\_\+semana\+\_\+datos.\+py}}.
+

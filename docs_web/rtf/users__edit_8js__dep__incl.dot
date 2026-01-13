@@ -1,0 +1,10 @@
+digraph "src/js/users_edit.js"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [id="Node000001",label="src/js/users_edit.js",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Módulo de utilidades para la gestión del modal de edición de perfil."];
+  Node1 -> Node2 [id="edge3_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="C:/Users/Marc/Desktop\l/GIT/breathe_tracking\l_web/src/js/users_profile.js",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$users__profile_8js.html",tooltip="Gestor de sesión de usuario y manipulación de datos de perfil (CRUD)."];
+}

@@ -1,0 +1,354 @@
+\doxysection{src/\+js/\+admin\+\_\+sensor\+\_\+detail.js File Reference}
+\hypertarget{admin__sensor__detail_8js}{}\label{admin__sensor__detail_8js}\index{src/js/admin\_sensor\_detail.js@{src/js/admin\_sensor\_detail.js}}
+
+
+Controlador de la vista de detalle de un sensor específico.  
+
+
+{\ttfamily import initialize\+App;}\newline
+{\ttfamily import from;}\newline
+{\ttfamily import get\+Firestore;}\newline
+{\ttfamily import doc;}\newline
+{\ttfamily import get\+Doc;}\newline
+{\ttfamily import "{}https:\+/\+/\+www.\+gstatic.\+com/\+firebasejs/\+10.\+12.\+2/\+firebase-\/app.\+js"{};}\newline
+{\ttfamily import "{}https:\+/\+/\+www.\+gstatic.\+com/\+firebasejs/\+10.\+12.\+2/\+firebase-\/firestore.\+js"{};}\newline
+Include dependency graph for admin\+\_\+sensor\+\_\+detail.\+js:\+
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}} (error)
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} \doxymbox{\hyperlink{admin__sensor__detail_8js_a146e31ab1c4b197a3de721e1831416d6}{add\+Event\+Listener}} (\textquotesingle{}DOMContent\+Loaded\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{admin__sensor__detail_8js_aceb928723b4003a742024adde13af0e1}{load\+Sensor\+Data}}();\doxymbox{\hyperlink{admin__sensor__detail_8js_acdba096f722c64b579ef4d0be97178a3}{init\+Detail\+Map}}();\doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{render\+Chart}}(\textquotesingle{}Ozono\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} select=document.\+get\+Element\+By\+Id(\textquotesingle{}activity-\/contaminant-\/select\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(select) \{ select.\+add\+Event\+Listener(\textquotesingle{}change\textquotesingle{},(e)=$>$ \{ \doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{render\+Chart}}(e.\+target.\+value);\});\} \})
+\begin{DoxyCompactList}\small\item\em Listener principal:\+ Se ejecuta cuando el DOM está listo. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{admin__sensor__detail_8js_acdba096f722c64b579ef4d0be97178a3}{init\+Detail\+Map}} ()
+\begin{DoxyCompactList}\small\item\em Inicializa el mapa Leaflet centrado en el sensor. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_afab0519bf46982ee64f37d5cc517f4ba}{add\+To}} (\doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}})
+\item 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_a1dda34ff3da093bf8e352c4990beaa0b}{current\+Marker}} \doxymbox{\hyperlink{admin__sensor__detail_8js_a152590cf9271726c7179a0cc7a7c7ec2}{bind\+Popup}} (\`{}$<$ b $>$\$\{window.\+sensor\+Detail\+Data.\+name\}$<$/\+b $>$$<$ br $>$\$\{window.\+sensor\+Detail\+Data.\+current\+Location\}\`{}).open\+Popup()
+\item 
+function \doxymbox{\hyperlink{admin__sensor__detail_8js_aceb928723b4003a742024adde13af0e1}{load\+Sensor\+Data}} ()
+\begin{DoxyCompactList}\small\item\em Carga los datos del sensor basándose en la URL. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{admin__sensor__detail_8js_a25bff4571a90916e07aa17e48516c2e4}{map\+Contaminant\+To\+Id}} (ui\+Name)
+\begin{DoxyCompactList}\small\item\em Mapea el nombre del contaminante en la UI al ID de la base de datos. \end{DoxyCompactList}\item 
+async function \doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{render\+Chart}} (contaminant\+Type)
+\begin{DoxyCompactList}\small\item\em Renderiza o actualiza el gráfico de actividad. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensor__detail_8js_aa88b1dd8299dc3696cc95a756df6b4fc}{FIREBASE\+\_\+\+CONFIG}}
+\begin{DoxyCompactList}\small\item\em Configuración de conexión a Firebase. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}{firebase\+App}}
+\begin{DoxyCompactList}\small\item\em Instancia de la aplicación Firebase. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}} = get\+Firestore(\doxymbox{\hyperlink{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}{firebase\+App}})
+\begin{DoxyCompactList}\small\item\em Instancia de la base de datos Firestore. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{admin__sensor__detail_8js_aca8548466adf3e53c3105e852b10aefc}{sensor\+Chart}} = null
+\begin{DoxyCompactList}\small\item\em Instancia del gráfico Chart.\+js para poder destruirlo y recrearlo. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_abe4cc9788f52e49485473dc699537388}{try}}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensor__detail_8js_abd94df48ff980029b30a27befa72b96c}{HOURLY\+\_\+\+LABELS}}
+\begin{DoxyCompactList}\small\item\em Etiquetas horarias para el eje X del gráfico (00:\+00 a 23:\+00). @const \{Array$<$string$>$\}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensor__detail_8js_a80fde05b71aca2241241f67a046642ce}{sensor\+Icon}}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{admin__sensor__detail_8js_a1dda34ff3da093bf8e352c4990beaa0b}{current\+Marker}} = L.\+marker(center, \{ icon:\+ \doxymbox{\hyperlink{admin__sensor__detail_8js_a80fde05b71aca2241241f67a046642ce}{sensor\+Icon}}, draggable:\+ true \}).\doxymbox{\hyperlink{admin__sensor__detail_8js_afab0519bf46982ee64f37d5cc517f4ba}{add\+To}}(\doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Controlador de la vista de detalle de un sensor específico. 
+
+Este archivo gestiona la visualización detallada de un sensor seleccionado. Realiza las siguientes tareas:\+
+\begin{DoxyItemize}
+\item Lee el ID del sensor de la URL (parametro ?id=...).
+\item Busca los datos del sensor (simulados o reales) para mostrarlos.
+\item Renderiza un mapa Leaflet centrado en la ubicación del sensor.
+\item Muestra métricas clave:\+ Batería, Última conexión, Ubicación.
+\item Genera gráficos de actividad (Chart.\+js) para diferentes gases.
+\item @requires \doxylink{admin__sensors__data_8js}{admin\+\_\+sensors\+\_\+data.\+js} -\/ Para buscar los datos del sensor si no hay backend activo. @requires Chart.\+js -\/ Para la visualización de gráficos. @requires Leaflet.\+js -\/ Para el mapa de detalle. @requires Firebase -\/ Para datos en tiempo real (opcional).
+\item \begin{DoxyVersion}{Version}
+2.\+0 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Breathe Tracking Team 
+\end{DoxyAuthor}
+
+\end{DoxyItemize}
+
+Definition in file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{admin__sensor__detail_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{admin__sensor__detail_8js_a146e31ab1c4b197a3de721e1831416d6}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!addEventListener@{addEventListener}}
+\index{addEventListener@{addEventListener}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{addEventListener()}{addEventListener()}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_a146e31ab1c4b197a3de721e1831416d6} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} add\+Event\+Listener (\begin{DoxyParamCaption}\item[{\textquotesingle{}DOMContent\+Loaded\textquotesingle{}}]{}{, }\item[{()}]{}{, }\item[{\{ \doxymbox{\hyperlink{admin__sensor__detail_8js_aceb928723b4003a742024adde13af0e1}{load\+Sensor\+Data}}();\doxymbox{\hyperlink{admin__sensor__detail_8js_acdba096f722c64b579ef4d0be97178a3}{init\+Detail\+Map}}();\doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{render\+Chart}}(\textquotesingle{}Ozono\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} select=document.\+get\+Element\+By\+Id(\textquotesingle{}activity-\/contaminant-\/select\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(select) \{ select.\+add\+Event\+Listener(\textquotesingle{}change\textquotesingle{},(e)=$>$ \{ \doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{render\+Chart}}(e.\+target.\+value);\});\} \}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Listener principal:\+ Se ejecuta cuando el DOM está listo. 
+
+
+\begin{DoxyEnumerate}
+\item Carga los datos del sensor (leyendo ID de URL).
+\item Inicializa el mapa de detalle.
+\item Renderiza el gráfico inicial (Ozono).
+\item Configura el selector de gases para actualizar el gráfico. 
+\end{DoxyEnumerate}Here is the call graph for this function:\+
+% FIG 1
+\Hypertarget{admin__sensor__detail_8js_afab0519bf46982ee64f37d5cc517f4ba}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!addTo@{addTo}}
+\index{addTo@{addTo}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{addTo()}{addTo()}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_afab0519bf46982ee64f37d5cc517f4ba} 
+add\+To (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}}}]{}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function:\+
+% FIG 2
+\Hypertarget{admin__sensor__detail_8js_a152590cf9271726c7179a0cc7a7c7ec2}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!bindPopup@{bindPopup}}
+\index{bindPopup@{bindPopup}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{bindPopup()}{bindPopup()}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_a152590cf9271726c7179a0cc7a7c7ec2} 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_a1dda34ff3da093bf8e352c4990beaa0b}{current\+Marker}} bind\+Popup (\begin{DoxyParamCaption}\item[{\`{}$<$ b $>$\$\{window.\+sensor\+Detail\+Data.\+name\}$<$/\+b $>$$<$ br $>$\$\{window.\+sensor\+Detail\+Data.\+current\+Location\}\`{}}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!catch@{catch}}
+\index{catch@{catch}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{catch()}{catch()}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55} 
+catch (\begin{DoxyParamCaption}\item[{error}]{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00047}{47}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+\Hypertarget{admin__sensor__detail_8js_acdba096f722c64b579ef4d0be97178a3}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!initDetailMap@{initDetailMap}}
+\index{initDetailMap@{initDetailMap}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{initDetailMap()}{initDetailMap()}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_acdba096f722c64b579ef4d0be97178a3} 
+function init\+Detail\+Map (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Inicializa el mapa Leaflet centrado en el sensor. 
+
+Usa {\ttfamily window.\+sensor\+Detail\+Data} para obtener las coordenadas. Dibuja un marcador personalizado en la ubicación del sensor. 
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00086}{86}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 3
+\Hypertarget{admin__sensor__detail_8js_aceb928723b4003a742024adde13af0e1}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!loadSensorData@{loadSensorData}}
+\index{loadSensorData@{loadSensorData}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{loadSensorData()}{loadSensorData()}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_aceb928723b4003a742024adde13af0e1} 
+function load\+Sensor\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Carga los datos del sensor basándose en la URL. 
+
+
+\begin{DoxyEnumerate}
+\item Lee el parámetro {\ttfamily ?id=} de la URL.
+\item Busca ese ID en {\ttfamily \doxylink{admin__sensors__data_8js_a7f5093033bdd5afd0c1559a0721d695f}{admin\+Sensors\+Data}} (cargado desde \doxylink{admin__sensors__data_8js}{admin\+\_\+sensors\+\_\+data.\+js}).
+\item Actualiza el objeto {\ttfamily window.\+sensor\+Detail\+Data} con la información real.
+\item Actualiza el DOM (Título, Batería, Ubicación, Última Conexión). 
+\end{DoxyEnumerate}
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00120}{120}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 4
+\Hypertarget{admin__sensor__detail_8js_a25bff4571a90916e07aa17e48516c2e4}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!mapContaminantToId@{mapContaminantToId}}
+\index{mapContaminantToId@{mapContaminantToId}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{mapContaminantToId()}{mapContaminantToId()}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_a25bff4571a90916e07aa17e48516c2e4} 
+function map\+Contaminant\+To\+Id (\begin{DoxyParamCaption}\item[{ui\+Name}]{}{}\end{DoxyParamCaption})}
+
+
+
+Mapea el nombre del contaminante en la UI al ID de la base de datos. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{string\}} & ui\+Name -\/ Nombre seleccionado en el dropdown (ej:\+ "{}\+Ozono"{}). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{string\} ID del documento en Firestore (ej:\+ "{}ozono"{}). 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00199}{199}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 5
+\Hypertarget{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!renderChart@{renderChart}}
+\index{renderChart@{renderChart}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{renderChart()}{renderChart()}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f} 
+async function render\+Chart (\begin{DoxyParamCaption}\item[{contaminant\+Type}]{}{}\end{DoxyParamCaption})}
+
+
+
+Renderiza o actualiza el gráfico de actividad. 
+
+Obtiene datos históricos de Firestore (colección "{}datos\+\_\+grafico"{}) y los pinta usando Chart.\+js.
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em \{string\}} & contaminant\+Type -\/ Tipo de contaminante a visualizar. @async \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00218}{218}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 6
+Here is the caller graph for this function:\+
+% FIG 7
+
+
+\label{doc-var-members}
+\Hypertarget{admin__sensor__detail_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{admin__sensor__detail_8js_a1dda34ff3da093bf8e352c4990beaa0b}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!currentMarker@{currentMarker}}
+\index{currentMarker@{currentMarker}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{currentMarker}{currentMarker}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_a1dda34ff3da093bf8e352c4990beaa0b} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} current\+Marker = L.\+marker(center, \{ icon:\+ \doxymbox{\hyperlink{admin__sensor__detail_8js_a80fde05b71aca2241241f67a046642ce}{sensor\+Icon}}, draggable:\+ true \}).\doxymbox{\hyperlink{admin__sensor__detail_8js_afab0519bf46982ee64f37d5cc517f4ba}{add\+To}}(\doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}})}
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00108}{108}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+\Hypertarget{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!db@{db}}
+\index{db@{db}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{db}{db}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891} 
+db = get\+Firestore(\doxymbox{\hyperlink{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}{firebase\+App}})}
+
+
+
+Instancia de la base de datos Firestore. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00039}{39}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+\Hypertarget{admin__sensor__detail_8js_aa88b1dd8299dc3696cc95a756df6b4fc}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!FIREBASE\_CONFIG@{FIREBASE\_CONFIG}}
+\index{FIREBASE\_CONFIG@{FIREBASE\_CONFIG}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{FIREBASE\_CONFIG}{FIREBASE\_CONFIG}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_aa88b1dd8299dc3696cc95a756df6b4fc} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} FIREBASE\+\_\+\+CONFIG}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \{}
+\DoxyCodeLine{\ \ \ \ apiKey:\ \textcolor{stringliteral}{"{}AIzaSyCbAVEYYdtSLmrH\_opCM72G\_G01QXPRZ48"{}},}
+\DoxyCodeLine{\ \ \ \ authDomain:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebaseapp.com"{}},}
+\DoxyCodeLine{\ \ \ \ databaseURL:\ \textcolor{stringliteral}{"{}https://biometria-\/g3-\/default-\/rtdb.europe-\/west1.firebasedatabase.app"{}},}
+\DoxyCodeLine{\ \ \ \ projectId:\ \textcolor{stringliteral}{"{}biometria-\/g3"{}},}
+\DoxyCodeLine{\ \ \ \ storageBucket:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebasestorage.app"{}},}
+\DoxyCodeLine{\ \ \ \ messagingSenderId:\ \textcolor{stringliteral}{"{}817957103566"{}},}
+\DoxyCodeLine{\ \ \ \ appId:\ \textcolor{stringliteral}{"{}1:817957103566:web:75c78a0a28f3380d092d9f"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Configuración de conexión a Firebase. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00026}{26}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+\Hypertarget{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!firebaseApp@{firebaseApp}}
+\index{firebaseApp@{firebaseApp}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{firebaseApp}{firebaseApp}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821} 
+let firebase\+App}
+
+
+
+Instancia de la aplicación Firebase. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00037}{37}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+\Hypertarget{admin__sensor__detail_8js_abd94df48ff980029b30a27befa72b96c}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!HOURLY\_LABELS@{HOURLY\_LABELS}}
+\index{HOURLY\_LABELS@{HOURLY\_LABELS}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{HOURLY\_LABELS}{HOURLY\_LABELS}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_abd94df48ff980029b30a27befa72b96c} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} HOURLY\+\_\+\+LABELS}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ Array.from(\{\ length:\ 24\ \},\ (\_,\ i)\ =>\ }
+\DoxyCodeLine{\ \ \ \ \`{}\$\{i.toString().padStart(2,\ \textcolor{charliteral}{'0'})\}:00\`{}}
+\DoxyCodeLine{)}
+
+\end{DoxyCode}
+
+
+Etiquetas horarias para el eje X del gráfico (00:\+00 a 23:\+00). @const \{Array$<$string$>$\}. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00055}{55}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+\Hypertarget{admin__sensor__detail_8js_aca8548466adf3e53c3105e852b10aefc}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!sensorChart@{sensorChart}}
+\index{sensorChart@{sensorChart}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{sensorChart}{sensorChart}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_aca8548466adf3e53c3105e852b10aefc} 
+let sensor\+Chart = null}
+
+
+
+Instancia del gráfico Chart.\+js para poder destruirlo y recrearlo. 
+
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00041}{41}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+\Hypertarget{admin__sensor__detail_8js_a80fde05b71aca2241241f67a046642ce}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!sensorIcon@{sensorIcon}}
+\index{sensorIcon@{sensorIcon}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{sensorIcon}{sensorIcon}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_a80fde05b71aca2241241f67a046642ce} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} sensor\+Icon}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ L.divIcon(\{}
+\DoxyCodeLine{\ \ \ \ className:\ \textcolor{stringliteral}{'custom-\/div-\/icon'},}
+\DoxyCodeLine{\ \ \ \ html:\ \`{}<div\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}leaflet-\/marker-\/icon\ sensor-\/marker"{}}\ style=\textcolor{stringliteral}{"{}background-\/color:\ var(-\/-\/primary-\/dark-\/blue,\ \#003366);\ color:\ white;\ width:\ 40px;\ height:\ 40px;\ border-\/radius:\ 50\%;\ display:\ flex;\ justify-\/content:\ center;\ align-\/items:\ center;\ border:\ 3px\ solid\ white;\ box-\/shadow:\ 0\ 2px\ 5px\ rgba(0,0,0,0.3);\ font-\/size:\ 1.2em;"{}}><i\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}fas\ fa-\/microchip"{}}></i></div>\`{},}
+\DoxyCodeLine{\ \ \ \ iconSize:\ [40,\ 40],}
+\DoxyCodeLine{\ \ \ \ iconAnchor:\ [20,\ 20]}
+\DoxyCodeLine{\})}
+
+\end{DoxyCode}
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00101}{101}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+
+\Hypertarget{admin__sensor__detail_8js_abe4cc9788f52e49485473dc699537388}\index{admin\_sensor\_detail.js@{admin\_sensor\_detail.js}!try@{try}}
+\index{try@{try}!admin\_sensor\_detail.js@{admin\_sensor\_detail.js}}
+\doxysubsubsection{\texorpdfstring{try}{try}}
+{\footnotesize\ttfamily \label{admin__sensor__detail_8js_abe4cc9788f52e49485473dc699537388} 
+try}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}{firebaseApp}}\ =\ initializeApp(\doxymbox{\hyperlink{admin__sensor__detail_8js_aa88b1dd8299dc3696cc95a756df6b4fc}{FIREBASE\_CONFIG}})}
+
+\end{DoxyCode}
+
+
+Definition at line \doxymbox{\hyperlink{admin__sensor__detail_8js_source_l00044}{44}} of file \doxymbox{\hyperlink{admin__sensor__detail_8js_source}{admin\+\_\+sensor\+\_\+detail.\+js}}.
+

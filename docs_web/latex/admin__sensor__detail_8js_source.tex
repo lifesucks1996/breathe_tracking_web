@@ -1,0 +1,298 @@
+\doxysection{admin\+\_\+sensor\+\_\+detail.\+js}
+\hypertarget{admin__sensor__detail_8js_source}{}\label{admin__sensor__detail_8js_source}\index{src/js/admin\_sensor\_detail.js@{src/js/admin\_sensor\_detail.js}}
+\doxymbox{\hyperlink{admin__sensor__detail_8js}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00001}00001\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00002}00002\ \textcolor{comment}{\ *\ @file\ admin\_sensor\_detail.js}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00003}00003\ \textcolor{comment}{\ *\ @brief\ Controlador\ de\ la\ vista\ de\ detalle\ de\ un\ sensor\ específico.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00004}00004\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00005}00005\ \textcolor{comment}{\ *\ Este\ archivo\ gestiona\ la\ visualización\ detallada\ de\ un\ sensor\ seleccionado.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00006}00006\ \textcolor{comment}{\ *\ Realiza\ las\ siguientes\ tareas:}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00007}00007\ \textcolor{comment}{\ *\ -\/\ Lee\ el\ ID\ del\ sensor\ de\ la\ URL\ (parametro\ ?id=...).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00008}00008\ \textcolor{comment}{\ *\ -\/\ Busca\ los\ datos\ del\ sensor\ (simulados\ o\ reales)\ para\ mostrarlos.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00009}00009\ \textcolor{comment}{\ *\ -\/\ Renderiza\ un\ mapa\ Leaflet\ centrado\ en\ la\ ubicación\ del\ sensor.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00010}00010\ \textcolor{comment}{\ *\ -\/\ Muestra\ métricas\ clave:\ Batería,\ Última\ conexión,\ Ubicación.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00011}00011\ \textcolor{comment}{\ *\ -\/\ Genera\ gráficos\ de\ actividad\ (Chart.js)\ para\ diferentes\ gases.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00012}00012\ \textcolor{comment}{\ *\ *\ @requires\ admin\_sensors\_data.js\ -\/\ Para\ buscar\ los\ datos\ del\ sensor\ si\ no\ hay\ backend\ activo.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00013}00013\ \textcolor{comment}{\ *\ @requires\ Chart.js\ -\/\ Para\ la\ visualización\ de\ gráficos.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00014}00014\ \textcolor{comment}{\ *\ @requires\ Leaflet.js\ -\/\ Para\ el\ mapa\ de\ detalle.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00015}00015\ \textcolor{comment}{\ *\ @requires\ Firebase\ -\/\ Para\ datos\ en\ tiempo\ real\ (opcional).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00016}00016\ \textcolor{comment}{\ *\ *\ @version\ 2.0}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00017}00017\ \textcolor{comment}{\ *\ @author\ Breathe\ Tracking\ Team}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00018}00018\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00020}00020\ \textcolor{keyword}{import}\ \{\ initializeApp\ \}\ from\ "{}https://www.gstatic.com/firebasejs/10.12.2/firebase-\/app.js"{};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00021}00021\ \textcolor{keyword}{import}\ \{\ getFirestore,\ doc,\ getDoc\ \}\ from\ "{}https://www.gstatic.com/firebasejs/10.12.2/firebase-\/firestore.js"{};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00022}00022\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00023}00023\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00024}00024\ \textcolor{comment}{\ *\ @brief\ Configuración\ de\ conexión\ a\ Firebase.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00025}00025\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00026}\doxymbox{\hyperlink{admin__sensor__detail_8js_aa88b1dd8299dc3696cc95a756df6b4fc}{00026}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensor__detail_8js_aa88b1dd8299dc3696cc95a756df6b4fc}{FIREBASE\_CONFIG}}\ =\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00027}00027\ \ \ \ \ apiKey:\ \textcolor{stringliteral}{"{}AIzaSyCbAVEYYdtSLmrH\_opCM72G\_G01QXPRZ48"{}},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00028}00028\ \ \ \ \ authDomain:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebaseapp.com"{}},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00029}00029\ \ \ \ \ databaseURL:\ \textcolor{stringliteral}{"{}https://biometria-\/g3-\/default-\/rtdb.europe-\/west1.firebasedatabase.app"{}},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00030}00030\ \ \ \ \ projectId:\ \textcolor{stringliteral}{"{}biometria-\/g3"{}},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00031}00031\ \ \ \ \ storageBucket:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebasestorage.app"{}},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00032}00032\ \ \ \ \ messagingSenderId:\ \textcolor{stringliteral}{"{}817957103566"{}},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00033}00033\ \ \ \ \ appId:\ \textcolor{stringliteral}{"{}1:817957103566:web:75c78a0a28f3380d092d9f"{}}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00034}00034\ \};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00035}00035\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00036}00036\ \textcolor{comment}{/**\ @brief\ Instancia\ de\ la\ aplicación\ Firebase.\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00037}\doxymbox{\hyperlink{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}{00037}}\ let\ \doxymbox{\hyperlink{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}{firebaseApp}};\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00038}00038\ \textcolor{comment}{/**\ @brief\ Instancia\ de\ la\ base\ de\ datos\ Firestore.\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00039}\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{00039}}\ let\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}};\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00040}00040\ \textcolor{comment}{/**\ @brief\ Instancia\ del\ gráfico\ Chart.js\ para\ poder\ destruirlo\ y\ recrearlo.\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00041}\doxymbox{\hyperlink{admin__sensor__detail_8js_aca8548466adf3e53c3105e852b10aefc}{00041}}\ let\ \doxymbox{\hyperlink{admin__sensor__detail_8js_aca8548466adf3e53c3105e852b10aefc}{sensorChart}}\ =\ null;}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00043}00043\ \textcolor{comment}{//\ Inicialización\ segura\ de\ Firebase}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00044}\doxymbox{\hyperlink{admin__sensor__detail_8js_abe4cc9788f52e49485473dc699537388}{00044}}\ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00045}00045\ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}{firebaseApp}}\ =\ initializeApp(\doxymbox{\hyperlink{admin__sensor__detail_8js_aa88b1dd8299dc3696cc95a756df6b4fc}{FIREBASE\_CONFIG}});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00046}00046\ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}\ =\ getFirestore(\doxymbox{\hyperlink{admin__sensor__detail_8js_ae16bf2f3e59a75ee13816c470e192821}{firebaseApp}});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00047}\doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{00047}}\ \}\ \textcolor{keywordflow}{catch}\ (error)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00048}00048\ \ \ \ \ console.error(\textcolor{stringliteral}{"{}Error\ al\ inicializar\ Firebase."{}},\ error);}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00049}00049\ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00050}00050\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00051}00051\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00052}00052\ \textcolor{comment}{\ *\ @brief\ Etiquetas\ horarias\ para\ el\ eje\ X\ del\ gráfico\ (00:00\ a\ 23:00).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00053}00053\ \textcolor{comment}{\ *\ @const\ \{Array<string>\}}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00054}00054\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00055}\doxymbox{\hyperlink{admin__sensor__detail_8js_abd94df48ff980029b30a27befa72b96c}{00055}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensor__detail_8js_abd94df48ff980029b30a27befa72b96c}{HOURLY\_LABELS}}\ =\ Array.from(\{\ length:\ 24\ \},\ (\_,\ i)\ =>\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00056}00056\ \ \ \ \ \`{}\$\{i.toString().padStart(2,\ \textcolor{charliteral}{'0'})\}:00\`{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00057}00057\ );}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00058}00058\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00059}00059\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00060}00060\ \textcolor{comment}{\ *\ @brief\ Listener\ principal:\ Se\ ejecuta\ cuando\ el\ DOM\ está\ listo.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00061}00061\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00062}00062\ \textcolor{comment}{\ *\ 1.\ Carga\ los\ datos\ del\ sensor\ (leyendo\ ID\ de\ URL).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00063}00063\ \textcolor{comment}{\ *\ 2.\ Inicializa\ el\ mapa\ de\ detalle.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00064}00064\ \textcolor{comment}{\ *\ 3.\ Renderiza\ el\ gráfico\ inicial\ (Ozono).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00065}00065\ \textcolor{comment}{\ *\ 4.\ Configura\ el\ selector\ de\ gases\ para\ actualizar\ el\ gráfico.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00066}00066\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00067}\doxymbox{\hyperlink{admin__sensor__detail_8js_a146e31ab1c4b197a3de721e1831416d6}{00067}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.addEventListener(\textcolor{stringliteral}{'DOMContentLoaded'},\ ()\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00068}00068\ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_aceb928723b4003a742024adde13af0e1}{loadSensorData}}();\ \textcolor{comment}{//\ Carga\ dinámica\ basada\ en\ URL}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00069}00069\ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_acdba096f722c64b579ef4d0be97178a3}{initDetailMap}}();}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00070}00070\ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{renderChart}}(\textcolor{stringliteral}{'Ozono'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00071}00071\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00072}00072\ \ \ \ \ \textcolor{keyword}{const}\ select\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'activity-\/contaminant-\/select'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00073}00073\ \ \ \ \ \textcolor{keywordflow}{if}\ (select)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00074}00074\ \ \ \ \ \ \ \ \ select.addEventListener(\textcolor{stringliteral}{'change'},\ (e)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{renderChart}}(e.target.value);}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00076}00076\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00077}00077\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00078}00078\ \});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00079}00079\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00080}00080\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00081}00081\ \textcolor{comment}{\ *\ @brief\ Inicializa\ el\ mapa\ Leaflet\ centrado\ en\ el\ sensor.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00082}00082\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00083}00083\ \textcolor{comment}{\ *\ Usa\ \`{}window.sensorDetailData`\ para\ obtener\ las\ coordenadas.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00084}00084\ \textcolor{comment}{\ *\ Dibuja\ un\ marcador\ personalizado\ en\ la\ ubicación\ del\ sensor.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00085}00085\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00086}\doxymbox{\hyperlink{admin__sensor__detail_8js_acdba096f722c64b579ef4d0be97178a3}{00086}}\ function\ \doxymbox{\hyperlink{admin__sensor__detail_8js_acdba096f722c64b579ef4d0be97178a3}{initDetailMap}}()\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00087}00087\ \ \ \ \ \textcolor{comment}{//\ Verificamos\ si\ hay\ datos\ cargados\ en\ la\ variable\ global}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00088}00088\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.sensorDetailData\ ||\ !\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.sensorDetailData.pathCoords)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00089}00089\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00090}00090\ \ \ \ \ \textcolor{comment}{//\ Centramos\ el\ mapa\ en\ la\ última\ coordenada\ disponible}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00091}00091\ \ \ \ \ \textcolor{keyword}{const}\ center\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.sensorDetailData.pathCoords[\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.sensorDetailData.pathCoords.length\ -\/\ 1];}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00092}00092\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00093}00093\ \ \ \ \ \textcolor{comment}{//\ Inicializamos\ Leaflet}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00094}00094\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}}\ =\ L.map(\textcolor{stringliteral}{'detail-\/map'}).setView(center,\ 15);}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00095}00095\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00096}00096\ \ \ \ \ L.tileLayer(\textcolor{stringliteral}{'https://\{s\}.tile.openstreetmap.org/\{z\}/\{x\}/\{y\}.png'},\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00097}00097\ \ \ \ \ \ \ \ \ attribution:\ \textcolor{stringliteral}{'©\ OpenStreetMap\ contributors'}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00098}\doxymbox{\hyperlink{admin__sensor__detail_8js_afab0519bf46982ee64f37d5cc517f4ba}{00098}}\ \ \ \ \ \}).\doxymbox{\hyperlink{admin__sensor__detail_8js_afab0519bf46982ee64f37d5cc517f4ba}{addTo}}(\doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00099}00099\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00100}00100\ \ \ \ \ \textcolor{comment}{//\ Icono\ personalizado\ (Estilo\ Chip\ Azul)}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00101}\doxymbox{\hyperlink{admin__sensor__detail_8js_a80fde05b71aca2241241f67a046642ce}{00101}}\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a80fde05b71aca2241241f67a046642ce}{sensorIcon}}\ =\ L.divIcon(\{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00102}00102\ \ \ \ \ \ \ \ \ className:\ \textcolor{stringliteral}{'custom-\/div-\/icon'},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00103}00103\ \ \ \ \ \ \ \ \ html:\ \`{}<div\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}leaflet-\/marker-\/icon\ sensor-\/marker"{}}\ style=\textcolor{stringliteral}{"{}background-\/color:\ var(-\/-\/primary-\/dark-\/blue,\ \#003366);\ color:\ white;\ width:\ 40px;\ height:\ 40px;\ border-\/radius:\ 50\%;\ display:\ flex;\ justify-\/content:\ center;\ align-\/items:\ center;\ border:\ 3px\ solid\ white;\ box-\/shadow:\ 0\ 2px\ 5px\ rgba(0,0,0,0.3);\ font-\/size:\ 1.2em;"{}}><i\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}fas\ fa-\/microchip"{}}></i></div>\`{},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00104}00104\ \ \ \ \ \ \ \ \ iconSize:\ [40,\ 40],}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00105}00105\ \ \ \ \ \ \ \ \ iconAnchor:\ [20,\ 20]}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00106}00106\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00107}00107\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00108}\doxymbox{\hyperlink{admin__sensor__detail_8js_a1dda34ff3da093bf8e352c4990beaa0b}{00108}}\ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a1dda34ff3da093bf8e352c4990beaa0b}{currentMarker}}\ =\ L.marker(center,\ \{\ icon:\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a80fde05b71aca2241241f67a046642ce}{sensorIcon}},\ draggable:\ \textcolor{keyword}{true}\ \}).\doxymbox{\hyperlink{admin__sensor__detail_8js_afab0519bf46982ee64f37d5cc517f4ba}{addTo}}(\doxymbox{\hyperlink{admin__sensors_8js_a635db1498ba1801947602d36c08a85f2}{map}});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00109}\doxymbox{\hyperlink{admin__sensor__detail_8js_a152590cf9271726c7179a0cc7a7c7ec2}{00109}}\ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_a1dda34ff3da093bf8e352c4990beaa0b}{currentMarker}}.bindPopup(\`{}<b>\$\{\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.sensorDetailData.name\}</b><br>\$\{\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.sensorDetailData.currentLocation\}\`{}).openPopup();}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00110}00110\ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00111}00111\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00112}00112\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00113}00113\ \textcolor{comment}{\ *\ @brief\ Carga\ los\ datos\ del\ sensor\ basándose\ en\ la\ URL.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00114}00114\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00115}00115\ \textcolor{comment}{\ *\ 1.\ Lee\ el\ parámetro\ \`{}?id=`\ de\ la\ URL.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00116}00116\ \textcolor{comment}{\ *\ 2.\ Busca\ ese\ ID\ en\ \`{}adminSensorsData`\ (cargado\ desde\ admin\_sensors\_data.js).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00117}00117\ \textcolor{comment}{\ *\ 3.\ Actualiza\ el\ objeto\ \`{}window.sensorDetailData`\ con\ la\ información\ real.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00118}00118\ \textcolor{comment}{\ *\ 4.\ Actualiza\ el\ DOM\ (Título,\ Batería,\ Ubicación,\ Última\ Conexión).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00119}00119\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00120}\doxymbox{\hyperlink{admin__sensor__detail_8js_aceb928723b4003a742024adde13af0e1}{00120}}\ function\ \doxymbox{\hyperlink{admin__sensor__detail_8js_aceb928723b4003a742024adde13af0e1}{loadSensorData}}()\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00121}00121\ \ \ \ \ \textcolor{comment}{//\ 1.\ LEER\ EL\ ID\ DE\ LA\ URL}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00122}00122\ \ \ \ \ \textcolor{keyword}{const}\ params\ =\ \textcolor{keyword}{new}\ URLSearchParams(\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.location.search);}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00123}00123\ \ \ \ \ \textcolor{keyword}{const}\ sensorId\ =\ params.get(\textcolor{stringliteral}{'id'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00124}00124\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00125}00125\ \ \ \ \ \textcolor{comment}{//\ 2.\ BUSCAR\ EL\ SENSOR\ EN\ LA\ LISTA\ GLOBAL}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00126}00126\ \ \ \ \ \textcolor{comment}{//\ Por\ defecto\ usamos\ el\ mock\ que\ ya\ existía}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00127}00127\ \ \ \ \ let\ sensor\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.sensorDetailData;\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00128}00128\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00129}00129\ \ \ \ \ \textcolor{comment}{//\ Si\ tenemos\ la\ lista\ de\ sensores\ cargada\ y\ hay\ un\ ID\ en\ la\ URL,\ buscamos\ el\ real}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00130}00130\ \ \ \ \ \textcolor{keywordflow}{if}\ (sensorId\ \&\&\ typeof\ \doxymbox{\hyperlink{admin__sensors__data_8js_a7f5093033bdd5afd0c1559a0721d695f}{adminSensorsData}}\ !==\ \textcolor{stringliteral}{'undefined'})\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00131}00131\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ sensorEncontrado\ =\ \doxymbox{\hyperlink{admin__sensors__data_8js_a7f5093033bdd5afd0c1559a0721d695f}{adminSensorsData}}.find(s\ =>\ s.id\ ===\ sensorId);}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00132}00132\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00133}00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sensorEncontrado)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Construimos\ el\ objeto\ de\ detalle\ con\ los\ datos\ del\ sensor\ encontrado}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \ \ sensor\ =\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00136}00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ...window.sensorDetailData,\ \textcolor{comment}{//\ Mantenemos\ datos\ dummy\ (batería,\ path)\ si\ faltan}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00137}00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ id:\ sensorEncontrado.id,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00138}00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ name:\ sensorEncontrado.name\ ||\ sensorEncontrado.nombre,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00139}00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ currentLocation:\ sensorEncontrado.location\ ||\ sensorEncontrado.ubicacion,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lastConnection:\ sensorEncontrado.lastConnection,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00141}00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pathCoords:\ [sensorEncontrado.coords]\ \textcolor{comment}{//\ Centrar\ mapa\ en\ este\ sensor}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00143}00143\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Actualizamos\ la\ variable\ global\ para\ que\ initDetailMap\ la\ use}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00144}00144\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.sensorDetailData\ =\ sensor;\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00145}00145\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00146}00146\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00147}00147\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00148}00148\ \ \ \ \ \textcolor{keyword}{const}\ data\ =\ sensor;}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00149}00149\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00150}00150\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ RENDERIZADO\ EN\ EL\ DOM\ -\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00151}00151\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00152}00152\ \ \ \ \ \textcolor{comment}{//\ Título}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00153}00153\ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'sensor-\/detail-\/title'}).textContent\ =\ data.name;}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00154}00154\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00155}00155\ \ \ \ \ \textcolor{comment}{//\ Última\ conexión}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00156}00156\ \ \ \ \ \textcolor{keyword}{const}\ lastConnInfo\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'last-\/connection-\/info'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00157}00157\ \ \ \ \ \textcolor{keywordflow}{if}(lastConnInfo)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00158}00158\ \ \ \ \ \ \ \ \ lastConnInfo.innerHTML\ =\ \`{}Última\ conex:\ <span\ style=\textcolor{stringliteral}{"{}color:\#e74c3c"{}}>\$\{data.lastConnection\}</span>\`{};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00159}00159\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00160}00160\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00161}00161\ \ \ \ \ \textcolor{comment}{//\ Batería}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00162}00162\ \ \ \ \ \textcolor{keyword}{const}\ battElem\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'battery-\/status-\/text'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00163}00163\ \ \ \ \ \textcolor{keywordflow}{if}(battElem)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00164}00164\ \ \ \ \ \ \ \ \ battElem.textContent\ =\ \`{}Batería\ \$\{data.battery\}\`{};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00165}00165\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(parseInt(data.battery)\ <\ 20)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00166}00166\ \ \ \ \ \ \ \ \ \ \ \ \ battElem.innerHTML\ +=\ \textcolor{stringliteral}{'\ <i\ class="{}fas\ fa-\/battery-\/quarter"{}\ style="{}color:red"{}></i>'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00167}00167\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00168}00168\ \ \ \ \ \ \ \ \ \ \ \ \ battElem.innerHTML\ +=\ \textcolor{stringliteral}{'\ <i\ class="{}fas\ fa-\/battery-\/three-\/quarters"{}\ style="{}color:green"{}></i>'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00169}00169\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00170}00170\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00171}00171\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00172}00172\ \ \ \ \ \textcolor{comment}{//\ Ubicación}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00173}00173\ \ \ \ \ \textcolor{keyword}{const}\ curLoc\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'current-\/location'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00174}00174\ \ \ \ \ \textcolor{keywordflow}{if}(curLoc)\ curLoc.textContent\ =\ data.currentLocation;}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00175}00175\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00176}00176\ \ \ \ \ \textcolor{comment}{//\ Ocultar\ segunda\ línea\ de\ ubicación\ para\ limpieza\ visual}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00177}00177\ \ \ \ \ \textcolor{keyword}{const}\ avgLoc\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'avg-\/location'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00178}00178\ \ \ \ \ \textcolor{keywordflow}{if}(avgLoc)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00179}00179\ \ \ \ \ \ \ \ \ avgLoc.style.display\ =\ \textcolor{stringliteral}{'none'};\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00180}00180\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00181}00181\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00182}00182\ \ \ \ \ \textcolor{comment}{//\ Datos\ del\ punto\ inferior\ (Métricas\ actuales)}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00183}00183\ \ \ \ \ \textcolor{keyword}{const}\ pLoc\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'point-\/location-\/text'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00184}00184\ \ \ \ \ \textcolor{keywordflow}{if}(pLoc\ \&\&\ data.point4)\ pLoc.textContent\ =\ data.currentLocation;}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00185}00185\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00186}00186\ \ \ \ \ \textcolor{keyword}{const}\ pTime\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'point-\/time'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00187}00187\ \ \ \ \ \textcolor{keywordflow}{if}(pTime)\ pTime.textContent\ =\ \`{}Hora:\ \$\{data.lastConnection\}\`{};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00188}00188\ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00189}00189\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00190}00190\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00191}00191\ \textcolor{comment}{//\ LÓGICA\ DE\ GRÁFICOS\ (Chart.js)}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00192}00192\ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00193}00193\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00194}00194\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00195}00195\ \textcolor{comment}{\ *\ @brief\ Mapea\ el\ nombre\ del\ contaminante\ en\ la\ UI\ al\ ID\ de\ la\ base\ de\ datos.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00196}00196\ \textcolor{comment}{\ *\ @param\ \{string\}\ uiName\ -\/\ Nombre\ seleccionado\ en\ el\ dropdown\ (ej:\ "{}Ozono"{}).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00197}00197\ \textcolor{comment}{\ *\ @return\ \{string\}\ ID\ del\ documento\ en\ Firestore\ (ej:\ "{}ozono"{}).}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00198}00198\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00199}\doxymbox{\hyperlink{admin__sensor__detail_8js_a25bff4571a90916e07aa17e48516c2e4}{00199}}\ function\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a25bff4571a90916e07aa17e48516c2e4}{mapContaminantToId}}(uiName)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00200}00200\ \ \ \ \ \textcolor{keywordflow}{switch}\ (uiName)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00201}00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'Ozono'}:\ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'ozono'}:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{'ozono'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00202}00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'CO2'}:\ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'co2'}:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{'co2'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00203}00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'CO'}:\ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'co'}:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{'co'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00204}00204\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'NO2'}:\ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'no2'}:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{'no2'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00205}00205\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'SO2'}:\ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'so2'}:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{'so2'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00206}00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{''};\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00207}00207\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00208}00208\ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00209}00209\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00210}00210\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00211}00211\ \textcolor{comment}{\ *\ @brief\ Renderiza\ o\ actualiza\ el\ gráfico\ de\ actividad.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00212}00212\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00213}00213\ \textcolor{comment}{\ *\ Obtiene\ datos\ históricos\ de\ Firestore\ (colección\ "{}datos\_grafico"{})\ }}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00214}00214\ \textcolor{comment}{\ *\ y\ los\ pinta\ usando\ Chart.js.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00215}00215\ \textcolor{comment}{\ *\ *\ @param\ \{string\}\ contaminantType\ -\/\ Tipo\ de\ contaminante\ a\ visualizar.}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00216}00216\ \textcolor{comment}{\ *\ @async}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00217}00217\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00218}\doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{00218}}\ async\ function\ \doxymbox{\hyperlink{admin__sensor__detail_8js_aef01df1580946005a49f262886bfcc8f}{renderChart}}(contaminantType)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00219}00219\ \ \ \ \ \textcolor{keyword}{const}\ ctx\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'activityChart'})?.getContext(\textcolor{stringliteral}{'2d'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00220}00220\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ctx)\ \textcolor{keywordflow}{return};\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00221}00221\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00222}00222\ \ \ \ \ let\ dataValues\ =\ [];}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00223}00223\ \ \ \ \ let\ unit\ =\ \textcolor{stringliteral}{''};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00224}00224\ \ \ \ \ let\ labelText\ =\ \`{}Nivel\ de\ \$\{contaminantType\}\`{};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00225}00225\ \ \ \ \ let\ borderColor\ =\ \textcolor{stringliteral}{'\#95a5a6'};\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00226}00226\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00227}00227\ \ \ \ \ \textcolor{keyword}{const}\ queryType\ =\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a25bff4571a90916e07aa17e48516c2e4}{mapContaminantToId}}(contaminantType);}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00228}00228\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00229}00229\ \ \ \ \ \textcolor{comment}{//\ Configuración\ de\ colores\ y\ unidades\ según\ el\ gas}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00230}00230\ \ \ \ \ \textcolor{keywordflow}{switch}\ (queryType)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00231}00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'ozono'}:\ borderColor\ =\ \textcolor{stringliteral}{'\#8A2BE2'};\ unit\ =\ \textcolor{stringliteral}{'ppm'};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00232}00232\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'co2'}:\ \ \ borderColor\ =\ \textcolor{stringliteral}{'\#32CD32'};\ unit\ =\ \textcolor{stringliteral}{'ppm'};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00233}00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'co'}:\ \ \ \ borderColor\ =\ \textcolor{stringliteral}{'\#FF8C00'};\ unit\ =\ \textcolor{stringliteral}{'mg/m³'};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00234}00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'no2'}:\ \ \ borderColor\ =\ \textcolor{stringliteral}{'\#E6A100'};\ unit\ =\ \textcolor{stringliteral}{'µg/m³'};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00235}00235\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{stringliteral}{'so2'}:\ \ \ borderColor\ =\ \textcolor{stringliteral}{'\#00BFFF'};\ unit\ =\ \textcolor{stringliteral}{'µg/m³'};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00236}00236\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:\ \ \ \ \ \ borderColor\ =\ \textcolor{stringliteral}{'\#95a5a6'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00237}00237\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00238}00238\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00239}00239\ \ \ \ \ let\ bgColor\ =\ borderColor.replace(\textcolor{stringliteral}{'rgb'},\ \textcolor{stringliteral}{'rgba'}).replace(\textcolor{charliteral}{')'},\ \textcolor{stringliteral}{',\ 0.2)'});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00240}00240\ \ \ \ \ \textcolor{keywordflow}{if}\ (bgColor.startsWith(\textcolor{charliteral}{'\#'}))\ bgColor\ =\ \textcolor{stringliteral}{'rgba(100,\ 100,\ 100,\ 0.2)'};}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00241}00241\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00242}00242\ \ \ \ \ \textcolor{comment}{//\ Obtención\ de\ datos\ desde\ Firestore}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00243}00243\ \ \ \ \ \textcolor{keywordflow}{if}\ (\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}\ \&\&\ queryType)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00244}00244\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00245}00245\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ docRef\ =\ doc(\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}},\ \textcolor{stringliteral}{"{}datos\_grafico"{}},\ queryType);\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00246}00246\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ docSnap\ =\ await\ getDoc(docRef);}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00247}00247\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00248}00248\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (docSnap.exists())\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00249}00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ data\ =\ docSnap.data();}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00250}00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dataValues\ =\ data.valor\ ||\ [];\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00251}00251\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00252}00252\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (e)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00253}00253\ \ \ \ \ \ \ \ \ \ \ \ \ console.error(\textcolor{stringliteral}{"{}Error\ FB:"{}},\ e);}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00254}00254\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00255}00255\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00256}00256\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00257}00257\ \ \ \ \ \textcolor{comment}{//\ Relleno\ de\ seguridad\ si\ no\ hay\ datos}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00258}00258\ \ \ \ \ \textcolor{keywordflow}{if}\ (dataValues.length\ !==\ \doxymbox{\hyperlink{admin__sensor__detail_8js_abd94df48ff980029b30a27befa72b96c}{HOURLY\_LABELS}}.length)\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00259}00259\ \ \ \ \ \ \ \ \ dataValues\ =\ \doxymbox{\hyperlink{admin__sensor__detail_8js_abd94df48ff980029b30a27befa72b96c}{HOURLY\_LABELS}}.map(()\ =>\ null);\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00260}00260\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00261}00261\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00262}00262\ \ \ \ \ \textcolor{comment}{//\ Destruir\ gráfico\ previo\ si\ existe\ para\ evitar\ superposiciones}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00263}00263\ \ \ \ \ \textcolor{keywordflow}{if}\ (\doxymbox{\hyperlink{admin__sensor__detail_8js_aca8548466adf3e53c3105e852b10aefc}{sensorChart}})\ \doxymbox{\hyperlink{admin__sensor__detail_8js_aca8548466adf3e53c3105e852b10aefc}{sensorChart}}.destroy();}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00264}00264\ }
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00265}00265\ \ \ \ \ \textcolor{comment}{//\ Crear\ nuevo\ gráfico}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00266}00266\ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_aca8548466adf3e53c3105e852b10aefc}{sensorChart}}\ =\ \textcolor{keyword}{new}\ Chart(ctx,\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00267}00267\ \ \ \ \ \ \ \ \ type:\ \textcolor{stringliteral}{'line'},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00268}00268\ \ \ \ \ \ \ \ \ data:\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00269}00269\ \ \ \ \ \ \ \ \ \ \ \ \ labels:\ \doxymbox{\hyperlink{admin__sensor__detail_8js_abd94df48ff980029b30a27befa72b96c}{HOURLY\_LABELS}},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00270}00270\ \ \ \ \ \ \ \ \ \ \ \ \ datasets:\ [\{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00271}00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ label:\ labelText,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00272}00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data:\ dataValues,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00273}00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ borderColor:\ borderColor,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00274}00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ backgroundColor:\ bgColor,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00275}00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ borderWidth:\ 2,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00276}00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tension:\ 0.4,}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00277}00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fill:\ \textcolor{keyword}{false},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00278}00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pointRadius:\ 3}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00279}00279\ \ \ \ \ \ \ \ \ \ \ \ \ \}]}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00280}00280\ \ \ \ \ \ \ \ \ \},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00281}00281\ \ \ \ \ \ \ \ \ options:\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00282}00282\ \ \ \ \ \ \ \ \ \ \ \ \ responsive:\ \textcolor{keyword}{true},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00283}00283\ \ \ \ \ \ \ \ \ \ \ \ \ maintainAspectRatio:\ \textcolor{keyword}{false},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00284}00284\ \ \ \ \ \ \ \ \ \ \ \ \ plugins:\ \{\ legend:\ \{\ display:\ \textcolor{keyword}{false}\ \}\ \},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00285}00285\ \ \ \ \ \ \ \ \ \ \ \ \ interaction:\ \{\ mode:\ \textcolor{stringliteral}{'nearest'},\ axis:\ \textcolor{charliteral}{'x'},\ intersect:\ \textcolor{keyword}{false}\ \},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00286}00286\ \ \ \ \ \ \ \ \ \ \ \ \ scales:\ \{}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00287}00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y:\ \{\ beginAtZero:\ \textcolor{keyword}{true},\ title:\ \{\ display:\ \textcolor{keyword}{true},\ text:\ unit\ \}\ \},}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00288}00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x:\ \{\ grid:\ \{\ display:\ \textcolor{keyword}{false}\ \}\ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00289}00289\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00290}00290\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00291}00291\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{admin__sensor__detail_8js_source_l00292}00292\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,157 @@
+\doxysection{src/\+js/\+login\+\_\+auth.js File Reference}
+\hypertarget{login__auth_8js}{}\label{login__auth_8js}\index{src/js/login\_auth.js@{src/js/login\_auth.js}}
+
+
+Gestión de autenticación, recuperación de roles y redirección de usuarios.  
+
+
+{\ttfamily import initialize\+App;}\newline
+{\ttfamily import get\+App;}\newline
+{\ttfamily import get\+Apps;}\newline
+{\ttfamily import from;}\newline
+{\ttfamily import get\+Auth;}\newline
+{\ttfamily import sign\+In\+With\+Email\+And\+Password;}\newline
+{\ttfamily import get\+Firestore;}\newline
+{\ttfamily import doc;}\newline
+{\ttfamily import get\+Doc;}\newline
+{\ttfamily import "{}https:\+/\+/\+www.\+gstatic.\+com/\+firebasejs/\+10.\+12.\+2/\+firebase-\/app.\+js"{};}\newline
+{\ttfamily import "{}https:\+/\+/\+www.\+gstatic.\+com/\+firebasejs/\+10.\+12.\+2/\+firebase-\/auth.\+js"{};}\newline
+{\ttfamily import "{}https:\+/\+/\+www.\+gstatic.\+com/\+firebasejs/\+10.\+12.\+2/\+firebase-\/firestore.\+js"{};}\newline
+Include dependency graph for login\+\_\+auth.\+js:\+
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+async function \doxymbox{\hyperlink{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}{fetch\+User\+Profile}} (user\+Id)
+\begin{DoxyCompactList}\small\item\em Recupera el perfil extendido del usuario desde Firestore para determinar su rol. user\+Id:\+ string -\/\texorpdfstring{$>$}{>} \doxylink{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}{fetch\+User\+Profile()} -\/\texorpdfstring{$>$}{>} Promise$<$\+Object$>$. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} \doxymbox{\hyperlink{login__auth_8js_a29a9fbbef51b0416d71b399a2a54cf88}{add\+Event\+Listener}} (\textquotesingle{}DOMContent\+Loaded\textquotesingle{}, function() \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} toggles=document.\+query\+Selector\+All(\textquotesingle{}.toggle-\/password\textquotesingle{});toggles.\+for\+Each((toggle)=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} wrapper=toggle.\+closest(\textquotesingle{}.password-\/input-\/wrapper\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!wrapper) return;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} password\+Input=wrapper.\+query\+Selector(\textquotesingle{}input\+[type="{}password"{}]\+, input\+[type="{}text"{}]\+\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} eye\+Open=toggle.\+query\+Selector(\textquotesingle{}.fas.\+fa-\/eye\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} eye\+Closed=toggle.\+query\+Selector(\textquotesingle{}.fas.\+fa-\/eye-\/slash\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(password\+Input \&\&eye\+Open \&\&eye\+Closed) \{ toggle.\+add\+Event\+Listener(\textquotesingle{}click\textquotesingle{}, function() \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} is\+Password=password\+Input.\+get\+Attribute(\textquotesingle{}type\textquotesingle{})===\textquotesingle{}password\textquotesingle{};password\+Input.\+set\+Attribute(\textquotesingle{}type\textquotesingle{}, is\+Password ? \textquotesingle{}text\textquotesingle{} :\+\textquotesingle{}password\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(is\+Password) \{ eye\+Open.\+style.\+display=\textquotesingle{}none\textquotesingle{};eye\+Closed.\+style.\+display=\textquotesingle{}inline-\/block\textquotesingle{};\} else \{ eye\+Open.\+style.\+display=\textquotesingle{}inline-\/block\textquotesingle{};eye\+Closed.\+style.\+display=\textquotesingle{}none\textquotesingle{};\} \});\} \});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} login\+Form=document.\+get\+Element\+By\+Id("{}login\+Form"{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(login\+Form) \{ login\+Form.\+add\+Event\+Listener("{}submit"{}, async(e)=$>$ \{ e.\+prevent\+Default();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} email=document.\+get\+Element\+By\+Id("{}correo"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} password=document.\+get\+Element\+By\+Id("{}contrasena"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} msg\+El=document.\+get\+Element\+By\+Id("{}login\+Msg"{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} err\+El=document.\+get\+Element\+By\+Id("{}login\+Error"{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(msg\+El) msg\+El.\+text\+Content="{}"{};\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}"{};\doxymbox{\hyperlink{admin__sensor__detail_8js_abe4cc9788f52e49485473dc699537388}{try}} \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Credential=await sign\+In\+With\+Email\+And\+Password(\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}, email, password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user=user\+Credential.\+user;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} profile=await \doxymbox{\hyperlink{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}{fetch\+User\+Profile}}(user.\+uid);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Role=profile.\+rol\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} \textquotesingle{}usuario\textquotesingle{};\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(msg\+El) \{ msg\+El.\+style.\+color="{}green"{};msg\+El.\+text\+Content=\`{}Acceso concedido:\+\$\{user\+Role.\+to\+Upper\+Case()\}\`{};\} set\+Timeout(()=$>$ \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(user\+Role===\textquotesingle{}administrador\textquotesingle{}\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}user\+Role===\textquotesingle{}admin\textquotesingle{}) \{ window.\+location.\+href="{}../\+admin\+\_\+sensors.\+html"{};\} else \{ window.\+location.\+href="{}../\+users\+\_\+map.\+html"{};\} \}, 1000);\} \doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}}(error) \{ console.\+error("{}Error de Firebase:\+"{}, error.\+code, error.\+message);let error\+Message;switch(error.\+code) \{ case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+invalid-\/email\textquotesingle{}:\+case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+user-\/not-\/found\textquotesingle{}:\+case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+wrong-\/password\textquotesingle{}:\+error\+Message="{}Correo o contraseña incorrectos."{};break;case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+too-\/many-\/requests\textquotesingle{}:\+error\+Message="{}Acceso bloqueado temporalmente por demasiados intentos."{};break;default:\+error\+Message="{}Error de inicio de sesión. Inténtalo de nuevo."{};break;\} \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content=error\+Message;\} \});\} \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} header\+Logo=document.\+query\+Selector(\textquotesingle{}.main-\/header .logo\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(header\+Logo) \{ header\+Logo.\+style.\+cursor=\textquotesingle{}pointer\textquotesingle{};header\+Logo.\+add\+Event\+Listener(\textquotesingle{}click\textquotesingle{},()=$>$ \{ window.\+location.\+href=\textquotesingle{}../\+index.\+html\textquotesingle{};\});\} \})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebase\+Config}}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{login__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}} = get\+Apps().length ? get\+App() :\+ initialize\+App(\doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebase\+Config}})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}} = get\+Auth(\doxymbox{\hyperlink{login__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{login__auth_8js_a654025a65d621cdee9f702b15aaf71d2}{db}} = get\+Firestore(\doxymbox{\hyperlink{login__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Gestión de autenticación, recuperación de roles y redirección de usuarios. 
+
+Este módulo maneja todo el flujo de inicio de sesión:\+
+\begin{DoxyEnumerate}
+\item Autenticación contra Firebase Authentication.
+\item Consulta adicional a Firestore para recuperar el rol del usuario (Admin vs Usuario).
+\item Lógica de UI para mostrar/\+ocultar contraseñas.
+\item Redirección condicional basada en el rol recuperado. 
+\end{DoxyEnumerate}
+
+Definition in file \doxymbox{\hyperlink{login__auth_8js_source}{login\+\_\+auth.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{login__auth_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{login__auth_8js_a29a9fbbef51b0416d71b399a2a54cf88}\index{login\_auth.js@{login\_auth.js}!addEventListener@{addEventListener}}
+\index{addEventListener@{addEventListener}!login\_auth.js@{login\_auth.js}}
+\doxysubsubsection{\texorpdfstring{addEventListener()}{addEventListener()}}
+{\footnotesize\ttfamily \label{login__auth_8js_a29a9fbbef51b0416d71b399a2a54cf88} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}} add\+Event\+Listener (\begin{DoxyParamCaption}\item[{\textquotesingle{}DOMContent\+Loaded\textquotesingle{}}]{}{, }\item[{function() \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} toggles=document.\+query\+Selector\+All(\textquotesingle{}.toggle-\/password\textquotesingle{});toggles.\+for\+Each((toggle)=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} wrapper=toggle.\+closest(\textquotesingle{}.password-\/input-\/wrapper\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(!wrapper) return;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} password\+Input=wrapper.\+query\+Selector(\textquotesingle{}input\+[type="{}password"{}]\+, input\+[type="{}text"{}]\+\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} eye\+Open=toggle.\+query\+Selector(\textquotesingle{}.fas.\+fa-\/eye\textquotesingle{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} eye\+Closed=toggle.\+query\+Selector(\textquotesingle{}.fas.\+fa-\/eye-\/slash\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(password\+Input \&\&eye\+Open \&\&eye\+Closed) \{ toggle.\+add\+Event\+Listener(\textquotesingle{}click\textquotesingle{}, function() \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} is\+Password=password\+Input.\+get\+Attribute(\textquotesingle{}type\textquotesingle{})===\textquotesingle{}password\textquotesingle{};password\+Input.\+set\+Attribute(\textquotesingle{}type\textquotesingle{}, is\+Password ? \textquotesingle{}text\textquotesingle{} :\+\textquotesingle{}password\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(is\+Password) \{ eye\+Open.\+style.\+display=\textquotesingle{}none\textquotesingle{};eye\+Closed.\+style.\+display=\textquotesingle{}inline-\/block\textquotesingle{};\} else \{ eye\+Open.\+style.\+display=\textquotesingle{}inline-\/block\textquotesingle{};eye\+Closed.\+style.\+display=\textquotesingle{}none\textquotesingle{};\} \});\} \});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} login\+Form=document.\+get\+Element\+By\+Id("{}login\+Form"{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(login\+Form) \{ login\+Form.\+add\+Event\+Listener("{}submit"{}, async(e)=$>$ \{ e.\+prevent\+Default();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} email=document.\+get\+Element\+By\+Id("{}correo"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} password=document.\+get\+Element\+By\+Id("{}contrasena"{}).value.\+trim();\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} msg\+El=document.\+get\+Element\+By\+Id("{}login\+Msg"{});\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} err\+El=document.\+get\+Element\+By\+Id("{}login\+Error"{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(msg\+El) msg\+El.\+text\+Content="{}"{};\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content="{}"{};\doxymbox{\hyperlink{admin__sensor__detail_8js_abe4cc9788f52e49485473dc699537388}{try}} \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Credential=await sign\+In\+With\+Email\+And\+Password(\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}, email, password);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user=user\+Credential.\+user;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} profile=await \doxymbox{\hyperlink{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}{fetch\+User\+Profile}}(user.\+uid);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} user\+Role=profile.\+rol\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} \textquotesingle{}usuario\textquotesingle{};\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(msg\+El) \{ msg\+El.\+style.\+color="{}green"{};msg\+El.\+text\+Content=\`{}Acceso concedido:\+\$\{user\+Role.\+to\+Upper\+Case()\}\`{};\} set\+Timeout(()=$>$ \{ \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(user\+Role===\textquotesingle{}administrador\textquotesingle{}\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}user\+Role===\textquotesingle{}admin\textquotesingle{}) \{ window.\+location.\+href="{}../\+admin\+\_\+sensors.\+html"{};\} else \{ window.\+location.\+href="{}../\+users\+\_\+map.\+html"{};\} \}, 1000);\} \doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}}(error) \{ console.\+error("{}Error de Firebase:\+"{}, error.\+code, error.\+message);let error\+Message;switch(error.\+code) \{ case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+invalid-\/email\textquotesingle{}:\+case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+user-\/not-\/found\textquotesingle{}:\+case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+wrong-\/password\textquotesingle{}:\+error\+Message="{}Correo o contraseña incorrectos."{};break;case \textquotesingle{}\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}/\+too-\/many-\/requests\textquotesingle{}:\+error\+Message="{}Acceso bloqueado temporalmente por demasiados intentos."{};break;default:\+error\+Message="{}Error de inicio de sesión. Inténtalo de nuevo."{};break;\} \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(err\+El) err\+El.\+text\+Content=error\+Message;\} \});\} \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} header\+Logo=document.\+query\+Selector(\textquotesingle{}.main-\/header .logo\textquotesingle{});\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(header\+Logo) \{ header\+Logo.\+style.\+cursor=\textquotesingle{}pointer\textquotesingle{};header\+Logo.\+add\+Event\+Listener(\textquotesingle{}click\textquotesingle{},()=$>$ \{ window.\+location.\+href=\textquotesingle{}../\+index.\+html\textquotesingle{};\});\} \}}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+% FIG 1
+\Hypertarget{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}\index{login\_auth.js@{login\_auth.js}!fetchUserProfile@{fetchUserProfile}}
+\index{fetchUserProfile@{fetchUserProfile}!login\_auth.js@{login\_auth.js}}
+\doxysubsubsection{\texorpdfstring{fetchUserProfile()}{fetchUserProfile()}}
+{\footnotesize\ttfamily \label{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2} 
+async function fetch\+User\+Profile (\begin{DoxyParamCaption}\item[{user\+Id}]{}{}\end{DoxyParamCaption})}
+
+
+
+Recupera el perfil extendido del usuario desde Firestore para determinar su rol. user\+Id:\+ string -\/\texorpdfstring{$>$}{>} \doxylink{login__auth_8js_aac55c057bcb0c71ea3558930a9ebc2c2}{fetch\+User\+Profile()} -\/\texorpdfstring{$>$}{>} Promise$<$\+Object$>$. 
+
+Accede a la colección "{}\+Usuarios"{} utilizando el UID proporcionado por Authentication. Extrae el campo \textquotesingle{}Id\+\_\+rol\textquotesingle{} para normalizarlo y devolverlo junto con el resto de datos. Si el documento no existe, asigna un rol por defecto (\textquotesingle{}usuario\textquotesingle{}) para evitar bloqueos.
+
+\begin{DoxyNote}{Note}
+Es crucial para la seguridad de la navegación, ya que el Auth de Firebase por sí solo no almacena roles personalizados en este esquema.
+\begin{DoxyItemize}
+\item 
+\end{DoxyItemize}
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em user\+Id} & El identificador único (UID) del usuario autenticado. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Promesa que resuelve en un Objeto con los datos del usuario y la propiedad \textquotesingle{}rol\textquotesingle{}. 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{login__auth_8js_source_l00052}{52}} of file \doxymbox{\hyperlink{login__auth_8js_source}{login\+\_\+auth.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 2
+
+
+\label{doc-var-members}
+\Hypertarget{login__auth_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{login__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}\index{login\_auth.js@{login\_auth.js}!app@{app}}
+\index{app@{app}!login\_auth.js@{login\_auth.js}}
+\doxysubsubsection{\texorpdfstring{app}{app}}
+{\footnotesize\ttfamily \label{login__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} app = get\+Apps().length ? get\+App() :\+ initialize\+App(\doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebase\+Config}})}
+
+
+
+Definition at line \doxymbox{\hyperlink{login__auth_8js_source_l00031}{31}} of file \doxymbox{\hyperlink{login__auth_8js_source}{login\+\_\+auth.\+js}}.
+
+\Hypertarget{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}\index{login\_auth.js@{login\_auth.js}!auth@{auth}}
+\index{auth@{auth}!login\_auth.js@{login\_auth.js}}
+\doxysubsubsection{\texorpdfstring{auth}{auth}}
+{\footnotesize\ttfamily \label{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} auth = get\+Auth(\doxymbox{\hyperlink{login__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}})}
+
+
+
+Definition at line \doxymbox{\hyperlink{login__auth_8js_source_l00032}{32}} of file \doxymbox{\hyperlink{login__auth_8js_source}{login\+\_\+auth.\+js}}.
+
+\Hypertarget{login__auth_8js_a654025a65d621cdee9f702b15aaf71d2}\index{login\_auth.js@{login\_auth.js}!db@{db}}
+\index{db@{db}!login\_auth.js@{login\_auth.js}}
+\doxysubsubsection{\texorpdfstring{db}{db}}
+{\footnotesize\ttfamily \label{login__auth_8js_a654025a65d621cdee9f702b15aaf71d2} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} db = get\+Firestore(\doxymbox{\hyperlink{login__auth_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}})}
+
+
+
+Definition at line \doxymbox{\hyperlink{login__auth_8js_source_l00033}{33}} of file \doxymbox{\hyperlink{login__auth_8js_source}{login\+\_\+auth.\+js}}.
+
+\Hypertarget{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}\index{login\_auth.js@{login\_auth.js}!firebaseConfig@{firebaseConfig}}
+\index{firebaseConfig@{firebaseConfig}!login\_auth.js@{login\_auth.js}}
+\doxysubsubsection{\texorpdfstring{firebaseConfig}{firebaseConfig}}
+{\footnotesize\ttfamily \label{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} firebase\+Config}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \{}
+\DoxyCodeLine{\ \ apiKey:\ \textcolor{stringliteral}{"{}AIzaSyCbAVEYYdtSLmrH\_opCM72G\_G01QXPRZ48"{}},}
+\DoxyCodeLine{\ \ authDomain:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebaseapp.com"{}},}
+\DoxyCodeLine{\ \ databaseURL:\ \textcolor{stringliteral}{"{}https://biometria-\/g3-\/default-\/rtdb.europe-\/west1.firebasedatabase.app"{}},}
+\DoxyCodeLine{\ \ projectId:\ \textcolor{stringliteral}{"{}biometria-\/g3"{}},}
+\DoxyCodeLine{\ \ storageBucket:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebasestorage.app"{}},}
+\DoxyCodeLine{\ \ messagingSenderId:\ \textcolor{stringliteral}{"{}817957103566"{}},}
+\DoxyCodeLine{\ \ appId:\ \textcolor{stringliteral}{"{}1:817957103566:web:75c78a0a28f3380d092d9f"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line \doxymbox{\hyperlink{login__auth_8js_source_l00020}{20}} of file \doxymbox{\hyperlink{login__auth_8js_source}{login\+\_\+auth.\+js}}.
+

@@ -1,0 +1,11 @@
+digraph "renderChart"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="renderChart",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Renderiza o actualiza el gráfico de actividad."];
+  Node1 -> Node2 [id="edge2_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="mapContaminantToId",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensor__detail_8js.html#a25bff4571a90916e07aa17e48516c2e4",tooltip="Mapea el nombre del contaminante en la UI al ID de la base de datos."];
+}

@@ -1,0 +1,302 @@
+\doxysection{src/\+verificar\+\_\+usuario.php File Reference}
+\hypertarget{verificar__usuario_8php}{}\label{verificar__usuario_8php}\index{src/verificar\_usuario.php@{src/verificar\_usuario.php}}
+
+
+Script de backend (PHP) para la verificación de cuentas vía correo electrónico.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}}(Exception \$e) \doxymbox{\hyperlink{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86}{decodificar\+\_\+parametro}} (\$input)
+\begin{DoxyCompactList}\small\item\em Decodifica una cadena Base64 URL-\/\+Safe recibida por GET. input:\+string -\/\texorpdfstring{$>$}{>} \doxylink{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86}{decodificar\+\_\+parametro()} -\/\texorpdfstring{$>$}{>} string. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_a781d4b8a0eeb8d8fbc4b06bd1b918d3c}{generar\+\_\+html\+\_\+respuesta}} (\$titulo, \$mensaje, \$exito)
+\begin{DoxyCompactList}\small\item\em Genera una página HTML completa con el resultado de la operación. titulo:\+string, mensaje:\+string, exito:\+boolean -\/\texorpdfstring{$>$}{>} \doxylink{verificar__usuario_8php_a781d4b8a0eeb8d8fbc4b06bd1b918d3c}{generar\+\_\+html\+\_\+respuesta()} -\/\texorpdfstring{$>$}{>} string (HTML). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_adb77079abf076b575f8057bbd127fa30}{\$key\+File\+Path}} = \textquotesingle{}/\+p/\+vhosts/\+mrmenaya.\+upv.\+edu.\+es/\+service\+Account\+Key.\+json\textquotesingle{}
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_abd3456b4e729909d1b123ae303302391}{\$project\+Id}} = \textquotesingle{}proyecto-\/biometria-\/2025\textquotesingle{}
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_abe4cc9788f52e49485473dc699537388}{try}}
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_a8baed7a102464be73da09ebb12abb081}{\$p1\+\_\+hash}} = \$\+\_\+\+GET\+[\textquotesingle{}p1\textquotesingle{}]\+ ?? \textquotesingle{}\textquotesingle{}
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_ad47a61421d2a63f20b3723fbf4f134cd}{\$p2\+\_\+hash}} = \$\+\_\+\+GET\+[\textquotesingle{}p2\textquotesingle{}]\+ ?? \textquotesingle{}\textquotesingle{}
+\item 
+\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(empty(\$p1\+\_\+hash)\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}empty(\$p2\+\_\+hash)) \doxymbox{\hyperlink{verificar__usuario_8php_a1fcba776a4a1e1f9b08542497aa6cf35}{\$email}} = \doxymbox{\hyperlink{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86}{decodificar\+\_\+parametro}}(\$p1\+\_\+hash)
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_a56bb9b0f7b47971e6129fd85f1471030}{\$token\+\_\+url}} = \doxymbox{\hyperlink{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86}{decodificar\+\_\+parametro}}(\$p2\+\_\+hash)
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_ac7af39d3bfa9c1f80f078653395a3199}{\$snapshot}} = \$doc\+Ref-\/$>$snapshot()
+\item 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}}(Exception \$e) \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(! \$snapshot-\/$>$exists()) \doxymbox{\hyperlink{verificar__usuario_8php_a4c85480d585401c686af0eba494bb2b4}{\$data}} = \$snapshot-\/$>$data()
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_adf3cfddbd3f5df9f5e7c0272df248eea}{\$token\+\_\+db}} = \$data\+[\textquotesingle{}token\textquotesingle{}]\+ ?? null
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_aee86a2f66bbcdfaa19b7eb5cb3ad5e24}{\$validez\+\_\+db}} = \$data\+[\textquotesingle{}validez\textquotesingle{}]\+ ?? null
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_a94ee6dfe921eb4424cf6857b2bafcede}{\$estado\+\_\+token}} = \$data\+[\textquotesingle{}estado\+\_\+token\textquotesingle{}]\+ ?? null
+\item 
+\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}( \$token\+\_\+db !==\$token\+\_\+url) \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(\$estado\+\_\+token==1) \doxymbox{\hyperlink{verificar__usuario_8php_a8b79c84036b0639460a2454e42550c3a}{\$ahora}} = new Date\+Time()
+\item 
+\doxymbox{\hyperlink{verificar__usuario_8php_a68894d990b1a4be5b2c0c5e6cd5117e8}{\$fecha\+\_\+validez\+\_\+dt}} = null
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Script de backend (PHP) para la verificación de cuentas vía correo electrónico. 
+
+Este script actúa como el \textquotesingle{}endpoint\textquotesingle{} al que accede el usuario al hacer clic en el enlace de verificación recibido por email.
+\begin{DoxyItemize}
+\item Flujo principal:\+
+\end{DoxyItemize}
+\begin{DoxyEnumerate}
+\item Conexión segura con Firebase Firestore usando credenciales de servicio.
+\item Decodificación de parámetros URL (Email y Token).
+\item Validación de integridad (Token BBDD vs Token URL).
+\item Verificación de caducidad (Token expirado).
+\end{DoxyEnumerate}
+\begin{DoxyItemize}
+\item Si caducado:\+ Genera uno nuevo, actualiza BBDD y llama a la API de correo para reenviar.
+\end{DoxyItemize}
+\begin{DoxyEnumerate}
+\item Confirmación de éxito:\+ Actualiza el estado del usuario a \textquotesingle{}verificado\textquotesingle{}.
+\item Renderizado de respuesta visual HTML. 
+\end{DoxyEnumerate}
+
+Definition in file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{verificar__usuario_8php_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86}\index{verificar\_usuario.php@{verificar\_usuario.php}!decodificar\_parametro@{decodificar\_parametro}}
+\index{decodificar\_parametro@{decodificar\_parametro}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{decodificar\_parametro()}{decodificar\_parametro()}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86} 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}}(Exception \$e) decodificar\+\_\+parametro (\begin{DoxyParamCaption}\item[{}]{\$input}{}\end{DoxyParamCaption})}
+
+
+
+Decodifica una cadena Base64 URL-\/\+Safe recibida por GET. input:\+string -\/\texorpdfstring{$>$}{>} \doxylink{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86}{decodificar\+\_\+parametro()} -\/\texorpdfstring{$>$}{>} string. 
+
+
+\begin{DoxyItemize}
+\item 
+\end{DoxyItemize}
+
+Reinvierte el proceso de codificación realizado en Python/\+\+JS.
+\begin{DoxyEnumerate}
+\item Restaura el padding \textquotesingle{}=\textquotesingle{} si fue truncado.
+\item Reemplaza caracteres URL-\/safe (-\/\+\_\+) por los estándar de Base64 (+/\+).
+\item Decodifica la cadena resultante.
+\end{DoxyEnumerate}
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em input} & La cadena codificada recibida en la URL. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+La cadena original decodificada (email o token). 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00065}{65}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_a781d4b8a0eeb8d8fbc4b06bd1b918d3c}\index{verificar\_usuario.php@{verificar\_usuario.php}!generar\_html\_respuesta@{generar\_html\_respuesta}}
+\index{generar\_html\_respuesta@{generar\_html\_respuesta}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{generar\_html\_respuesta()}{generar\_html\_respuesta()}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a781d4b8a0eeb8d8fbc4b06bd1b918d3c} 
+generar\+\_\+html\+\_\+respuesta (\begin{DoxyParamCaption}\item[{}]{\$titulo}{, }\item[{}]{\$mensaje}{, }\item[{}]{\$exito}{}\end{DoxyParamCaption})}
+
+
+
+Genera una página HTML completa con el resultado de la operación. titulo:\+string, mensaje:\+string, exito:\+boolean -\/\texorpdfstring{$>$}{>} \doxylink{verificar__usuario_8php_a781d4b8a0eeb8d8fbc4b06bd1b918d3c}{generar\+\_\+html\+\_\+respuesta()} -\/\texorpdfstring{$>$}{>} string (HTML). 
+
+
+\begin{DoxyItemize}
+\item 
+\end{DoxyItemize}
+
+Crea una plantilla HTML responsiva con estilos en línea (CSS) para mostrar feedback al usuario. Adapta colores e iconos según si la operación fue exitosa o fallida.
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em titulo} & El encabezado principal de la tarjeta. \\
+\hline
+{\em mensaje} & El cuerpo del mensaje explicativo. \\
+\hline
+{\em exito} & Booleano para determinar el color (Verde/\+\+Rojo) y el icono. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+String conteniendo todo el código HTML de la página. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00085}{85}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{verificar__usuario_8php_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{verificar__usuario_8php_a8b79c84036b0639460a2454e42550c3a}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$ahora@{\$ahora}}
+\index{\$ahora@{\$ahora}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$ahora}{\$ahora}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a8b79c84036b0639460a2454e42550c3a} 
+\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}}(\$token\+\_\+db !==\$token\+\_\+url) \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}} ( \$estado\+\_\+token==1) \$ahora = new Date\+Time()}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00170}{170}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_a4c85480d585401c686af0eba494bb2b4}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$data@{\$data}}
+\index{\$data@{\$data}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$data}{\$data}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a4c85480d585401c686af0eba494bb2b4} 
+\doxymbox{\hyperlink{admin__sensor__detail_8js_a01f0810671e29d79cd35814fa97d3d55}{catch}}(Exception \$e) \doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}} (! \$snapshot-\/$>$exists()) \$data = \$snapshot-\/$>$data()}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00150}{150}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_a1fcba776a4a1e1f9b08542497aa6cf35}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$email@{\$email}}
+\index{\$email@{\$email}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$email}{\$email}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a1fcba776a4a1e1f9b08542497aa6cf35} 
+\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}} (empty( \$p1\+\_\+hash)\texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|}empty( \$p2\+\_\+hash)) \$email = \doxymbox{\hyperlink{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86}{decodificar\+\_\+parametro}}(\$p1\+\_\+hash)}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00133}{133}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_a94ee6dfe921eb4424cf6857b2bafcede}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$estado\_token@{\$estado\_token}}
+\index{\$estado\_token@{\$estado\_token}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$estado\_token}{\$estado\_token}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a94ee6dfe921eb4424cf6857b2bafcede} 
+\$estado\+\_\+token = \$data\+[\textquotesingle{}estado\+\_\+token\textquotesingle{}]\+ ?? null}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00154}{154}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_a68894d990b1a4be5b2c0c5e6cd5117e8}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$fecha\_validez\_dt@{\$fecha\_validez\_dt}}
+\index{\$fecha\_validez\_dt@{\$fecha\_validez\_dt}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$fecha\_validez\_dt}{\$fecha\_validez\_dt}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a68894d990b1a4be5b2c0c5e6cd5117e8} 
+\$fecha\+\_\+validez\+\_\+dt = null}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00171}{171}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_adb77079abf076b575f8057bbd127fa30}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$keyFilePath@{\$keyFilePath}}
+\index{\$keyFilePath@{\$keyFilePath}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$keyFilePath}{\$keyFilePath}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_adb77079abf076b575f8057bbd127fa30} 
+\$key\+File\+Path = \textquotesingle{}/\+p/\+vhosts/\+mrmenaya.\+upv.\+edu.\+es/\+service\+Account\+Key.\+json\textquotesingle{}}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00029}{29}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_a8baed7a102464be73da09ebb12abb081}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$p1\_hash@{\$p1\_hash}}
+\index{\$p1\_hash@{\$p1\_hash}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$p1\_hash}{\$p1\_hash}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a8baed7a102464be73da09ebb12abb081} 
+\$p1\+\_\+hash = \$\+\_\+\+GET\+[\textquotesingle{}p1\textquotesingle{}]\+ ?? \textquotesingle{}\textquotesingle{}}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00124}{124}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_ad47a61421d2a63f20b3723fbf4f134cd}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$p2\_hash@{\$p2\_hash}}
+\index{\$p2\_hash@{\$p2\_hash}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$p2\_hash}{\$p2\_hash}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_ad47a61421d2a63f20b3723fbf4f134cd} 
+\$p2\+\_\+hash = \$\+\_\+\+GET\+[\textquotesingle{}p2\textquotesingle{}]\+ ?? \textquotesingle{}\textquotesingle{}}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00125}{125}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_abd3456b4e729909d1b123ae303302391}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$projectId@{\$projectId}}
+\index{\$projectId@{\$projectId}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$projectId}{\$projectId}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_abd3456b4e729909d1b123ae303302391} 
+\$project\+Id = \textquotesingle{}proyecto-\/biometria-\/2025\textquotesingle{}}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00032}{32}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_ac7af39d3bfa9c1f80f078653395a3199}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$snapshot@{\$snapshot}}
+\index{\$snapshot@{\$snapshot}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$snapshot}{\$snapshot}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_ac7af39d3bfa9c1f80f078653395a3199} 
+\$snapshot = \$doc\+Ref-\/$>$snapshot()}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00139}{139}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_adf3cfddbd3f5df9f5e7c0272df248eea}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$token\_db@{\$token\_db}}
+\index{\$token\_db@{\$token\_db}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$token\_db}{\$token\_db}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_adf3cfddbd3f5df9f5e7c0272df248eea} 
+\$token\+\_\+db = \$data\+[\textquotesingle{}token\textquotesingle{}]\+ ?? null}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00151}{151}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_a56bb9b0f7b47971e6129fd85f1471030}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$token\_url@{\$token\_url}}
+\index{\$token\_url@{\$token\_url}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$token\_url}{\$token\_url}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_a56bb9b0f7b47971e6129fd85f1471030} 
+\$token\+\_\+url = \doxymbox{\hyperlink{verificar__usuario_8php_a91131b0e0479c9fa581a54dfe5824d86}{decodificar\+\_\+parametro}}(\$p2\+\_\+hash)}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00134}{134}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_aee86a2f66bbcdfaa19b7eb5cb3ad5e24}\index{verificar\_usuario.php@{verificar\_usuario.php}!\$validez\_db@{\$validez\_db}}
+\index{\$validez\_db@{\$validez\_db}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{\$validez\_db}{\$validez\_db}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_aee86a2f66bbcdfaa19b7eb5cb3ad5e24} 
+\$validez\+\_\+db = \$data\+[\textquotesingle{}validez\textquotesingle{}]\+ ?? null}
+
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00153}{153}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+
+\Hypertarget{verificar__usuario_8php_abe4cc9788f52e49485473dc699537388}\index{verificar\_usuario.php@{verificar\_usuario.php}!try@{try}}
+\index{try@{try}!verificar\_usuario.php@{verificar\_usuario.php}}
+\doxysubsubsection{\texorpdfstring{try}{try}}
+{\footnotesize\ttfamily \label{verificar__usuario_8php_abe4cc9788f52e49485473dc699537388} 
+try}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (!file\_exists(\doxymbox{\hyperlink{verificar__usuario_8php_adb77079abf076b575f8057bbd127fa30}{\$keyFilePath}}))\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ \textcolor{keyword}{new}\ Exception(\textcolor{stringliteral}{"{}No\ se\ encuentra\ el\ archivo\ de\ credenciales\ en:\ "{}}\ .\ \doxymbox{\hyperlink{verificar__usuario_8php_adb77079abf076b575f8057bbd127fa30}{\$keyFilePath}});}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \$db\ =\ \textcolor{keyword}{new}\ FirestoreClient([}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{stringliteral}{'keyFilePath'}\ =>\ \doxymbox{\hyperlink{verificar__usuario_8php_adb77079abf076b575f8057bbd127fa30}{\$keyFilePath}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{stringliteral}{'projectId'}\ =>\ \doxymbox{\hyperlink{verificar__usuario_8php_abd3456b4e729909d1b123ae303302391}{\$projectId}},}
+\DoxyCodeLine{\ \ \ \ ])}
+
+\end{DoxyCode}
+
+
+Definition at line \doxymbox{\hyperlink{verificar__usuario_8php_source_l00035}{35}} of file \doxymbox{\hyperlink{verificar__usuario_8php_source}{verificar\+\_\+usuario.\+php}}.
+

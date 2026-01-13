@@ -1,0 +1,242 @@
+\doxysection{src/\+js/\+official\+\_\+stations.js File Reference}
+\hypertarget{official__stations_8js}{}\label{official__stations_8js}\index{src/js/official\_stations.js@{src/js/official\_stations.js}}
+
+
+Gestión de estaciones oficiales de calidad del aire.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+function \doxymbox{\hyperlink{official__stations_8js_aecd1acbdced88f79965a32f42bc69e96}{inicializar\+Estaciones\+Oficiales}} (\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}})
+\begin{DoxyCompactList}\small\item\em Inicializa el sistema de estaciones oficiales en el mapa proporcionado. \end{DoxyCompactList}\item 
+async function \doxymbox{\hyperlink{official__stations_8js_a355c6d5b8e1fb5ddfa826e1e774c4e70}{cargar\+Estaciones}} (\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}})
+\begin{DoxyCompactList}\small\item\em Consulta la API de WAQI para obtener estaciones dentro de los límites visibles. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{official__stations_8js_ac8d608175dc57351229f6d73dcd4bd08}{dibujar\+Estaciones\+Como\+Iconos}} (estaciones)
+\begin{DoxyCompactList}\small\item\em Renderiza las estaciones recibidas como iconos en el mapa. \end{DoxyCompactList}\item 
+async function \doxymbox{\hyperlink{official__stations_8js_a03a4a11bc7ba25f22417a34d018bb8ff}{mostrar\+Popup\+Detalle}} (estacion\+Resumen, marker)
+\begin{DoxyCompactList}\small\item\em Carga y muestra los detalles completos de una estación en un popup. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{official__stations_8js_a4b9629901b7f06d56f9cb26aad8d9914}{obtener\+Color\+AQI}} (aqi)
+\begin{DoxyCompactList}\small\item\em Devuelve un color hexadecimal según el nivel de AQI. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{official__stations_8js_a85f2472089983e4246215b69692c674f}{WAQI\+\_\+\+TOKEN}} = \textquotesingle{}59f20eb8c12bcdf627a18f8c3daea9a9abb4fc2c\textquotesingle{}
+\begin{DoxyCompactList}\small\item\em Token de acceso a la API de WAQI. @const \{string\}. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}{capa\+Estaciones}} = null
+\begin{DoxyCompactList}\small\item\em Grupo de capas (Layer\+Group) para agrupar los marcadores de estaciones. @type \{L.\+Layer\+Group\texorpdfstring{$\vert$}{|}null\}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} \doxymbox{\hyperlink{official__stations_8js_a77d62711b897e07b380c9573f2b00d5a}{inicializar\+Estaciones\+Oficiales}} = inicializar\+Estaciones\+Oficiales
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Gestión de estaciones oficiales de calidad del aire. 
+
+Este script se conecta a la API pública de WAQI (World Air Quality Index) para obtener datos de estaciones oficiales cercanas y las dibuja en el mapa. Incluye:\+
+\begin{DoxyItemize}
+\item Detección de movimiento del mapa para recargar estaciones.
+\item Renderizado de iconos personalizados con el color del AQI.
+\item Popups interactivos que piden datos detallados bajo demanda.
+\end{DoxyItemize}
+
+@requires Leaflet.\+js -\/ Para dibujar marcadores y popups. \begin{DoxyVersion}{Version}
+1.\+2 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Breathe Tracking Team 
+\end{DoxyAuthor}
+
+
+Definition in file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{official__stations_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{official__stations_8js_a355c6d5b8e1fb5ddfa826e1e774c4e70}\index{official\_stations.js@{official\_stations.js}!cargarEstaciones@{cargarEstaciones}}
+\index{cargarEstaciones@{cargarEstaciones}!official\_stations.js@{official\_stations.js}}
+\doxysubsubsection{\texorpdfstring{cargarEstaciones()}{cargarEstaciones()}}
+{\footnotesize\ttfamily \label{official__stations_8js_a355c6d5b8e1fb5ddfa826e1e774c4e70} 
+async function cargar\+Estaciones (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Consulta la API de WAQI para obtener estaciones dentro de los límites visibles. 
+
+Obtiene los bounds (Norte, Sur, Este, Oeste) del mapa y construye la URL de consulta. Si la respuesta es exitosa, llama a {\ttfamily \doxylink{official__stations_8js_ac8d608175dc57351229f6d73dcd4bd08}{dibujar\+Estaciones\+Como\+Iconos}}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{\+L.\+Map\}} & mapa -\/ Instancia del mapa para obtener los límites (bounds). @async \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \doxymbox{\hyperlink{official__stations_8js_source_l00068}{68}} of file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 0
+Here is the caller graph for this function:\+
+% FIG 1
+\Hypertarget{official__stations_8js_ac8d608175dc57351229f6d73dcd4bd08}\index{official\_stations.js@{official\_stations.js}!dibujarEstacionesComoIconos@{dibujarEstacionesComoIconos}}
+\index{dibujarEstacionesComoIconos@{dibujarEstacionesComoIconos}!official\_stations.js@{official\_stations.js}}
+\doxysubsubsection{\texorpdfstring{dibujarEstacionesComoIconos()}{dibujarEstacionesComoIconos()}}
+{\footnotesize\ttfamily \label{official__stations_8js_ac8d608175dc57351229f6d73dcd4bd08} 
+function dibujar\+Estaciones\+Como\+Iconos (\begin{DoxyParamCaption}\item[{estaciones}]{}{}\end{DoxyParamCaption})}
+
+
+
+Renderiza las estaciones recibidas como iconos en el mapa. 
+
+
+\begin{DoxyEnumerate}
+\item Limpia los marcadores antiguos de {\ttfamily \doxylink{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}{capa\+Estaciones}}.
+\item Itera sobre cada estación recibida.
+\item Crea un {\ttfamily L.\+div\+Icon} personalizado con el color correspondiente al AQI.
+\item Añade un tooltip y un evento click para ver detalles.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{\+Array$<$\+Object$>$\}} & estaciones -\/ Lista de estaciones devuelta por la API. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \doxymbox{\hyperlink{official__stations_8js_source_l00106}{106}} of file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 2
+Here is the caller graph for this function:\+
+% FIG 3
+\Hypertarget{official__stations_8js_aecd1acbdced88f79965a32f42bc69e96}\index{official\_stations.js@{official\_stations.js}!inicializarEstacionesOficiales@{inicializarEstacionesOficiales}}
+\index{inicializarEstacionesOficiales@{inicializarEstacionesOficiales}!official\_stations.js@{official\_stations.js}}
+\doxysubsubsection{\texorpdfstring{inicializarEstacionesOficiales()}{inicializarEstacionesOficiales()}}
+{\footnotesize\ttfamily \label{official__stations_8js_aecd1acbdced88f79965a32f42bc69e96} 
+function inicializar\+Estaciones\+Oficiales (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Inicializa el sistema de estaciones oficiales en el mapa proporcionado. 
+
+
+\begin{DoxyEnumerate}
+\item Crea la capa {\ttfamily \doxylink{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}{capa\+Estaciones}} y la añade al mapa.
+\item Carga las estaciones visibles inicialmente.
+\item Configura un listener {\ttfamily moveend} para recargar estaciones al mover el mapa (con debounce de 1s).
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{\+L.\+Map\}} & mapa -\/ Instancia del mapa Leaflet donde se pintarán las estaciones. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \doxymbox{\hyperlink{official__stations_8js_source_l00038}{38}} of file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 4
+\Hypertarget{official__stations_8js_a03a4a11bc7ba25f22417a34d018bb8ff}\index{official\_stations.js@{official\_stations.js}!mostrarPopupDetalle@{mostrarPopupDetalle}}
+\index{mostrarPopupDetalle@{mostrarPopupDetalle}!official\_stations.js@{official\_stations.js}}
+\doxysubsubsection{\texorpdfstring{mostrarPopupDetalle()}{mostrarPopupDetalle()}}
+{\footnotesize\ttfamily \label{official__stations_8js_a03a4a11bc7ba25f22417a34d018bb8ff} 
+async function mostrar\+Popup\+Detalle (\begin{DoxyParamCaption}\item[{estacion\+Resumen}]{}{, }\item[{marker}]{}{}\end{DoxyParamCaption})}
+
+
+
+Carga y muestra los detalles completos de una estación en un popup. 
+
+Realiza una segunda petición a la API usando el UID de la estación para obtener desglose de contaminantes (PM2.\+5, PM10, O3, etc.) y metadatos.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{\+Object\}} & estacion\+Resumen -\/ Datos básicos de la estación (incluye UID). \\
+\hline
+{\em \{\+L.\+Marker\}} & marker -\/ El marcador sobre el cual abrir el popup. @async \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \doxymbox{\hyperlink{official__stations_8js_source_l00165}{165}} of file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 5
+\Hypertarget{official__stations_8js_a4b9629901b7f06d56f9cb26aad8d9914}\index{official\_stations.js@{official\_stations.js}!obtenerColorAQI@{obtenerColorAQI}}
+\index{obtenerColorAQI@{obtenerColorAQI}!official\_stations.js@{official\_stations.js}}
+\doxysubsubsection{\texorpdfstring{obtenerColorAQI()}{obtenerColorAQI()}}
+{\footnotesize\ttfamily \label{official__stations_8js_a4b9629901b7f06d56f9cb26aad8d9914} 
+function obtener\+Color\+AQI (\begin{DoxyParamCaption}\item[{aqi}]{}{}\end{DoxyParamCaption})}
+
+
+
+Devuelve un color hexadecimal según el nivel de AQI. 
+
+
+\begin{DoxyItemize}
+\item 0-\/50:\+ Verde (Bueno)
+\item 51-\/100:\+ Amarillo (Moderado)
+\item 101-\/150:\+ Naranja (Insalubre para grupos sensibles)
+\item 151-\/200:\+ Rojo (Insalubre)
+\item 201-\/300:\+ Morado (Muy insalubre)
+\item \texorpdfstring{$>$}{>}300:\+ Granate (Peligroso)
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{number\}} & aqi -\/ Índice de Calidad del Aire. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{string\} Color en formato Hex. 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{official__stations_8js_source_l00244}{244}} of file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 6
+
+
+\label{doc-var-members}
+\Hypertarget{official__stations_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}\index{official\_stations.js@{official\_stations.js}!capaEstaciones@{capaEstaciones}}
+\index{capaEstaciones@{capaEstaciones}!official\_stations.js@{official\_stations.js}}
+\doxysubsubsection{\texorpdfstring{capaEstaciones}{capaEstaciones}}
+{\footnotesize\ttfamily \label{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa} 
+let capa\+Estaciones = null}
+
+
+
+Grupo de capas (Layer\+Group) para agrupar los marcadores de estaciones. @type \{L.\+Layer\+Group\texorpdfstring{$\vert$}{|}null\}. 
+
+
+
+Definition at line \doxymbox{\hyperlink{official__stations_8js_source_l00027}{27}} of file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
+\Hypertarget{official__stations_8js_a77d62711b897e07b380c9573f2b00d5a}\index{official\_stations.js@{official\_stations.js}!inicializarEstacionesOficiales@{inicializarEstacionesOficiales}}
+\index{inicializarEstacionesOficiales@{inicializarEstacionesOficiales}!official\_stations.js@{official\_stations.js}}
+\doxysubsubsection{\texorpdfstring{inicializarEstacionesOficiales}{inicializarEstacionesOficiales}}
+{\footnotesize\ttfamily \label{official__stations_8js_a77d62711b897e07b380c9573f2b00d5a} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} inicializar\+Estaciones\+Oficiales = inicializar\+Estaciones\+Oficiales}
+
+
+
+Definition at line \doxymbox{\hyperlink{official__stations_8js_source_l00254}{254}} of file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
+\Hypertarget{official__stations_8js_a85f2472089983e4246215b69692c674f}\index{official\_stations.js@{official\_stations.js}!WAQI\_TOKEN@{WAQI\_TOKEN}}
+\index{WAQI\_TOKEN@{WAQI\_TOKEN}!official\_stations.js@{official\_stations.js}}
+\doxysubsubsection{\texorpdfstring{WAQI\_TOKEN}{WAQI\_TOKEN}}
+{\footnotesize\ttfamily \label{official__stations_8js_a85f2472089983e4246215b69692c674f} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} WAQI\+\_\+\+TOKEN = \textquotesingle{}59f20eb8c12bcdf627a18f8c3daea9a9abb4fc2c\textquotesingle{}}
+
+
+
+Token de acceso a la API de WAQI. @const \{string\}. 
+
+
+
+Definition at line \doxymbox{\hyperlink{official__stations_8js_source_l00021}{21}} of file \doxymbox{\hyperlink{official__stations_8js_source}{official\+\_\+stations.\+js}}.
+
