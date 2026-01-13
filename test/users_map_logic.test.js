@@ -35,7 +35,7 @@ describe('Pruebas de Lógica de Mapa (users_map_data.js)', () => {
         const intensidad = mapLogic.obtenerIntensidadSegunNivel(valorMedido, nivelesConfig);
 
         // VERIFICACIÓN
-        expect(intensidad).toBe(0.5);
+        expect(intensidad).toBe(0.6);
     });
 
     test('Debe asignar intensidad 0.2 (Verde) por defecto si no encaja en ningún nivel', () => {

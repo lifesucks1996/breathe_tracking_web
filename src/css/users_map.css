@@ -548,3 +548,109 @@ body {
     margin-top: 15px;
     margin-bottom: 0 !important;
 }
+
+/* --- ESTILOS PARA ESTACIONES OFICIALES (WAQI) --- */
+.official-popup {
+    font-family: 'Helvetica', sans-serif;
+    min-width: 200px;
+}
+
+.popup-header {
+    padding: 10px;
+    color: white;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #999; /* Color por defecto */
+}
+
+.city-name { font-size: 1.1em; font-weight: bold; }
+.aqi-badge { 
+    background: rgba(0,0,0,0.2); 
+    padding: 3px 8px; 
+    border-radius: 10px; 
+    font-weight: 800; 
+}
+
+.popup-body { padding: 10px; }
+
+.last-update {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.pollutant-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pollutant-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.95em;
+    border-bottom: 1px dashed #f0f0f0;
+}
+
+.gas-name { font-weight: 600; color: #1A2E44; }
+.gas-value { font-family: monospace; font-weight: bold; color: #333; }
+
+.popup-footer {
+    margin-top: 8px;
+    font-size: 0.7em;
+    color: #999;
+    text-align: right;
+    font-style: italic;
+}
+
+/* --- ESTILOS PARA LA ESTACIÓN OFICIAL (ICONO) --- */
+
+/* El contenedor del icono en el mapa */
+.station-icon-marker {
+    background: white;
+    border: 2px solid white;
+    border-radius: 6px; /* Bordes un poco redondeados */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4); /* Sombra para que flote */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.station-icon-marker:hover {
+    transform: scale(1.15); /* Efecto zoom al pasar el ratón */
+    z-index: 1000 !important;
+}
+
+/* El icono de FontAwesome dentro */
+.station-icon-marker i {
+    color: white; /* El icono siempre blanco */
+    font-size: 16px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Estilo para el Popup (Mejora visual) */
+.official-popup {
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    min-width: 220px;
+}
+.official-popup .popup-header {
+    padding: 12px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px 4px 0 0;
+}
+.official-popup .city-name { font-weight: bold; font-size: 1.1em; }
+.official-popup .aqi-badge { 
+    background: rgba(0,0,0,0.3); 
+    padding: 4px 8px; 
+    border-radius: 12px;
+    font-size: 0.9em;
+}

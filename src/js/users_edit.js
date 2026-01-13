@@ -15,7 +15,7 @@ const getFieldError = (name) => document.querySelector(`.field-error[data-for="$
 /**
  * @brief Abre el modal de edición y gestiona el foco inicial.
  */
-export function openModal() {
+function openModal() { // <--- HE QUITADO EL 'export'
     const modal = getModal();
     if (!modal) return;
     
@@ -33,7 +33,7 @@ export function openModal() {
 /**
  * @brief Cierra el modal, limpia errores y restaura el foco.
  */
-export function closeModal() {
+function closeModal() { // <--- HE QUITADO EL 'export'
     const modal = getModal();
     if (!modal) return;
     
@@ -53,7 +53,7 @@ export function closeModal() {
 /**
  * @brief Elimina todos los mensajes de error visibles en el formulario.
  */
-export function clearFieldErrors() {
+function clearFieldErrors() { // <--- HE QUITADO EL 'export'
     document.querySelectorAll('.field-error').forEach((el) => {
         el.textContent = '';
         el.classList.remove('show');
@@ -74,7 +74,7 @@ function showFieldError(name, message) {
 /**
  * @brief Valida los datos del formulario aplicando reglas de negocio.
  */
-export function validate(values) {
+function validate(values) { // <--- HE QUITADO EL 'export'
     let ok = true;
     
     // Validación de Nombre
@@ -95,11 +95,10 @@ export function validate(values) {
         ok = false;
     }
     
-    // Validación de cambio de contraseña (opcional, pero si inicia debe ser completo)
+    // Validación de cambio de contraseña
     const hasPasswordFields = values.currentPassword || values.newPassword || values.confirmPassword;
     
     if (hasPasswordFields) {
-        // Si hay al menos un campo de contraseña, todos deben estar presentes y válidos
         if (!values.currentPassword || values.currentPassword.trim().length === 0) {
             showFieldError('currentPassword', 'La contraseña actual es obligatoria para cambiar la contraseña.');
             ok = false;
@@ -109,7 +108,6 @@ export function validate(values) {
             showFieldError('newPassword', 'La nueva contraseña es obligatoria.');
             ok = false;
         } else {
-            // Validar complejidad de la nueva contraseña
             const passValidation = validatePasswordStrength(values.newPassword);
             if (!passValidation.valid) {
                 showFieldError('newPassword', passValidation.message);
@@ -132,7 +130,7 @@ export function validate(values) {
 /**
  * @brief Valida la complejidad de una contraseña según los requisitos.
  */
-export function validatePasswordStrength(password) {
+function validatePasswordStrength(password) { // <--- HE QUITADO EL 'export'
     const requirements = {
         length: password.length >= 8,
         uppercase: /[A-Z]/.test(password),
@@ -162,7 +160,7 @@ export function validatePasswordStrength(password) {
 /**
  * @brief Actualiza el indicador visual de requisitos de contraseña en tiempo real.
  */
-export function updatePasswordRequirements(password) {
+function updatePasswordRequirements(password) { // <--- HE QUITADO EL 'export'
     const requirements = validatePasswordStrength(password);
     
     document.querySelectorAll('.req-item').forEach(item => {
@@ -178,7 +176,10 @@ export function updatePasswordRequirements(password) {
 }
 
 // --- EXPORTACIÓN COMPATIBLE CON JEST ---
-// Esto permite que el test "vea" las funciones sin usar la palabra prohibida 'export'
+/* Esto es lo que Jest utilizará. Al quitar los 'export' de arriba,
+   el código se vuelve JavaScript estándar que Node entiende sin problemas,
+   y este bloque final expone las funciones a los tests.
+*/
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         openModal,

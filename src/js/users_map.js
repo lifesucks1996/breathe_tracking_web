@@ -38,6 +38,14 @@ const COORDS = [38.9670, -0.1830];
 mapa = L.map('mapa', { zoomControl: false }).setView(COORDS, 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(mapa);
 
+// API ESTACIONES OFICIALES
+// Esperar a que todo cargue y lanzar las estaciones oficiales
+window.addEventListener('load', () => {
+    if (window.inicializarEstacionesOficiales) {
+        window.inicializarEstacionesOficiales(mapa);
+    }
+});
+
 // 2. CARGAR
 if (window.inicializarFirebase) {
     window.inicializarFirebase(async () => {
@@ -110,6 +118,7 @@ function pintarMapaCalor() {
     if (!datosPuntosActuales.length || !L.heatLayer) return;
 
     // TRUCO DE INTENSIDAD:
+    
     // Fijamos max en 0.8. Esto significa que cualquier valor >= 0.8 (como nuestro Rojo 1.0)
     // se pintará con la intensidad MÁXIMA absoluta del gradiente.
     // Esto arregla que el mapa general se vea "flojo" comparado con los individuales.
@@ -131,7 +140,7 @@ function pintarMapaCalor() {
         mapa.removeLayer(capaCalor);
         capaCalor = null;
         heatmapCongelado = L.imageOverlay(imgData, bounds, { opacity: 0.85, interactive: false }).addTo(mapa);
-        mapa.setMaxBounds(bounds.pad(0.5));
+        //mapa.setMaxBounds(bounds.pad(0.5)); la comento para que no ancle el zoom
     }, 400); 
 }
 
@@ -231,7 +240,7 @@ function actualizarSidebar(id) {
         : 0;
 
     const txtVal = document.getElementById('ozono-value');
-    txtVal.innerText = `${valor.toFixed(1)} ${configGasActual.unidad}`;
+    txtVal.innerText = `${valor.toFixed(2)} ${configGasActual.unidad}`;
     txtVal.style.color = ''; 
 
     const slider = document.getElementById('ozono-slider');

@@ -183,28 +183,29 @@ const adminSensorsData = [
  * El array 'pathCoords' se usa para dibujar la polilínea de recorrido en el mapa.
  */
 const sensorDetailData = {
-    id: 'AKMSF134',
-    name: 'Sensor AKMSF134',
-    currentLocation: 'C/ Gandia, Gandia',
-    avgLocation: 'Av. del Cid 8, Gandia', // Ubicación media calculada
-    lastConnection: '14:32',
-    battery: '20%', // Nivel crítico para probar iconos de batería baja
-    radio: 29,
+    id: "AKMSF134",
+    name: "Sensor AKMSF134",
+    // Hora fija para que no salga undefined
+    lastConnection: "14:35", 
+    battery: "20%",
     
-    // Punto de medición específico con valores ambientales
-    point4: {
-        location: 'C/ Acacias, Gandia',
-        time: '13:23',
-        ozono: 0.3,
-        // --- IMPORTANTE: Dato de CO2 simulado para gráficas ---
-        co2: 500, 
-        temperatura: 24
-    },
+    // AQUÍ LA DIRECCIÓN INVENTADA DE GANDÍA (Solo saldrá esta)
+    currentLocation: "Passeig Marítim de Neptú, 32, Gandía", 
     
-    // Historial de coordenadas para trazado de ruta [Lat, Lng]
+    // Dejamos esto vacío para que no moleste
+    avgLocation: "",
+    
+    // Coordenadas (pueden ser cualquiera, solo afectan a dónde pinta el punto en el mapa)
     pathCoords: [
-        [38.9700, -0.1800], 
-        [38.9720, -0.1780],
-        [38.9780, -0.1720]
-    ]
+        [38.995, -0.165], // Coordenadas aprox de Gandia
+        [38.996, -0.166],
+        [38.997, -0.167] 
+    ],
+
+    // Datos para el bloque de mediciones
+    point4: {
+        time: "14:35"
+    }
 };
+
+window.sensorDetailData = sensorDetailData;
