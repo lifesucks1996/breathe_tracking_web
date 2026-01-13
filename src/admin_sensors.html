@@ -16,7 +16,7 @@
         .map-controls-overlay {
             position: absolute;
             top: 20px;
-            left: 60px; /* Ajustado para no tapar los controles de zoom si los hubiera */
+            left: 60px; /* Ajustado para no tapar los controles de zoom */
             z-index: 1000;
             background: rgba(255, 255, 255, 0.95);
             padding: 10px 15px;
@@ -66,18 +66,31 @@
         <section class="admin-section sensors-list-section">
             <div class="section-header">
                 <h2>Listado de Sensores</h2>
-                <div class="filter-activity">
-                    <label for="activityFilter">Actividad</label>
-                    <select id="activityFilter">
-                        <option value="all">Todos</option>
-                        <option value="incident">Con Incidencias</option>
-                        <option value="inactive">Inactivos</option>
-                    </select>
+                
+                <div class="filters-container" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                    
+                    <div class="filter-activity">
+                        <label for="activityFilter">Estado</label>
+                        <select id="activityFilter">
+                            <option value="all">Todos</option>
+                            <option value="incident">Con Incidencias</option>
+                            <option value="inactive">Inactivos</option>
+                        </select>
+                    </div>
+
+                    <div id="sort-inactive-container" class="filter-activity hidden" style="background-color: #fcebeb; border-color: #fab1b1;">
+                        <label for="inactiveSort">Inactividad</label>
+                        <select id="inactiveSort">
+                            <option value="recent">Recientes primero</option>
+                            <option value="old">Antiguos primero</option>
+                        </select>
+                    </div>
+
                 </div>
             </div>
             
             <div id="sensors-container" class="sensors-container">
-                </div>
+            </div>
         </section>
 
         <section class="admin-section sensor-map-section">

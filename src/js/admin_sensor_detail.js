@@ -1,11 +1,28 @@
 /**
  * @file admin_sensor_detail.js
- * Versión simplificada: Dirección estática y una sola línea de ubicación.
+ * @brief Controlador de la vista de detalle de un sensor específico.
+ * @details
+ * Este archivo gestiona la visualización detallada de un sensor seleccionado.
+ * Realiza las siguientes tareas:
+ * - Lee el ID del sensor de la URL (parametro ?id=...).
+ * - Busca los datos del sensor (simulados o reales) para mostrarlos.
+ * - Renderiza un mapa Leaflet centrado en la ubicación del sensor.
+ * - Muestra métricas clave: Batería, Última conexión, Ubicación.
+ * - Genera gráficos de actividad (Chart.js) para diferentes gases.
+ * * @requires admin_sensors_data.js - Para buscar los datos del sensor si no hay backend activo.
+ * @requires Chart.js - Para la visualización de gráficos.
+ * @requires Leaflet.js - Para el mapa de detalle.
+ * @requires Firebase - Para datos en tiempo real (opcional).
+ * * @version 2.0
+ * @author Breathe Tracking Team
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/**
+ * @brief Configuración de conexión a Firebase.
+ */
 const FIREBASE_CONFIG = {
     apiKey: "AIzaSyCbAVEYYdtSLmrH_opCM72G_G01QXPRZ48",
     authDomain: "biometria-g3.firebaseapp.com",
@@ -16,10 +33,14 @@ const FIREBASE_CONFIG = {
     appId: "1:817957103566:web:75c78a0a28f3380d092d9f"
 };
 
+/** @brief Instancia de la aplicación Firebase. */
 let firebaseApp;
+/** @brief Instancia de la base de datos Firestore. */
 let db;
+/** @brief Instancia del gráfico Chart.js para poder destruirlo y recrearlo. */
 let sensorChart = null;
 
+// Inicialización segura de Firebase
 try {
     firebaseApp = initializeApp(FIREBASE_CONFIG);
     db = getFirestore(firebaseApp);
@@ -27,12 +48,24 @@ try {
     console.error("Error al inicializar Firebase.", error);
 }
 
+/**
+ * @brief Etiquetas horarias para el eje X del gráfico (00:00 a 23:00).
+ * @const {Array<string>}
+ */
 const HOURLY_LABELS = Array.from({ length: 24 }, (_, i) => 
     `${i.toString().padStart(2, '0')}:00`
 );
 
+/**
+ * @brief Listener principal: Se ejecuta cuando el DOM está listo.
+ * @details
+ * 1. Carga los datos del sensor (leyendo ID de URL).
+ * 2. Inicializa el mapa de detalle.
+ * 3. Renderiza el gráfico inicial (Ozono).
+ * 4. Configura el selector de gases para actualizar el gráfico.
+ */
 document.addEventListener('DOMContentLoaded', () => {
-    loadSensorData();
+    loadSensorData(); // Carga dinámica basada en URL
     initDetailMap();
     renderChart('Ozono');
 
@@ -44,11 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+/**
+ * @brief Inicializa el mapa Leaflet centrado en el sensor.
+ * @details
+ * Usa `window.sensorDetailData` para obtener las coordenadas.
+ * Dibuja un marcador personalizado en la ubicación del sensor.
+ */
 function initDetailMap() {
-    if (!sensorDetailData || !sensorDetailData.pathCoords) return;
+    // Verificamos si hay datos cargados en la variable global
+    if (!window.sensorDetailData || !window.sensorDetailData.pathCoords) return;
     
-    // Centramos el mapa en la última coordenada
-    const center = sensorDetailData.pathCoords[sensorDetailData.pathCoords.length - 1];
+    // Centramos el mapa en la última coordenada disponible
+    const center = window.sensorDetailData.pathCoords[window.sensorDetailData.pathCoords.length - 1];
     
     // Inicializamos Leaflet
     const map = L.map('detail-map').setView(center, 15);
@@ -57,6 +97,7 @@ function initDetailMap() {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
+    // Icono personalizado (Estilo Chip Azul)
     const sensorIcon = L.divIcon({
         className: 'custom-div-icon',
         html: `<div class="leaflet-marker-icon sensor-marker" style="background-color: var(--primary-dark-blue, #003366); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-size: 1.2em;"><i class="fas fa-microchip"></i></div>`,
@@ -65,17 +106,53 @@ function initDetailMap() {
     });
 
     const currentMarker = L.marker(center, { icon: sensorIcon, draggable: true }).addTo(map);
-    currentMarker.bindPopup(`<b>${sensorDetailData.name}</b><br>${sensorDetailData.currentLocation}`).openPopup();
+    currentMarker.bindPopup(`<b>${window.sensorDetailData.name}</b><br>${window.sensorDetailData.currentLocation}`).openPopup();
 }
 
+/**
+ * @brief Carga los datos del sensor basándose en la URL.
+ * @details
+ * 1. Lee el parámetro `?id=` de la URL.
+ * 2. Busca ese ID en `adminSensorsData` (cargado desde admin_sensors_data.js).
+ * 3. Actualiza el objeto `window.sensorDetailData` con la información real.
+ * 4. Actualiza el DOM (Título, Batería, Ubicación, Última Conexión).
+ */
 function loadSensorData() {
-    if (!sensorDetailData) return;
-    const data = sensorDetailData;
+    // 1. LEER EL ID DE LA URL
+    const params = new URLSearchParams(window.location.search);
+    const sensorId = params.get('id');
+
+    // 2. BUSCAR EL SENSOR EN LA LISTA GLOBAL
+    // Por defecto usamos el mock que ya existía
+    let sensor = window.sensorDetailData; 
+    
+    // Si tenemos la lista de sensores cargada y hay un ID en la URL, buscamos el real
+    if (sensorId && typeof adminSensorsData !== 'undefined') {
+        const sensorEncontrado = adminSensorsData.find(s => s.id === sensorId);
+        
+        if (sensorEncontrado) {
+            // Construimos el objeto de detalle con los datos del sensor encontrado
+            sensor = {
+                ...window.sensorDetailData, // Mantenemos datos dummy (batería, path) si faltan
+                id: sensorEncontrado.id,
+                name: sensorEncontrado.name || sensorEncontrado.nombre,
+                currentLocation: sensorEncontrado.location || sensorEncontrado.ubicacion,
+                lastConnection: sensorEncontrado.lastConnection,
+                pathCoords: [sensorEncontrado.coords] // Centrar mapa en este sensor
+            };
+            // Actualizamos la variable global para que initDetailMap la use
+            window.sensorDetailData = sensor; 
+        }
+    }
+
+    const data = sensor;
+    
+    // --- RENDERIZADO EN EL DOM ---
     
     // Título
     document.getElementById('sensor-detail-title').textContent = data.name;
 
-    // Última conexión (Soluciona el undefined)
+    // Última conexión
     const lastConnInfo = document.getElementById('last-connection-info');
     if(lastConnInfo) {
         lastConnInfo.innerHTML = `Última conex: <span style="color:#e74c3c">${data.lastConnection}</span>`;
@@ -92,27 +169,33 @@ function loadSensorData() {
         }
     }
 
-    // --- UBICACIÓN (MODIFICADO) ---
-    // 1. Ponemos la dirección de Gandía inventada
+    // Ubicación
     const curLoc = document.getElementById('current-location');
     if(curLoc) curLoc.textContent = data.currentLocation;
     
-    // 2. OCULTAMOS la segunda línea para que no salga repetido ni salga otra ciudad
+    // Ocultar segunda línea de ubicación para limpieza visual
     const avgLoc = document.getElementById('avg-location');
     if(avgLoc) {
-        avgLoc.style.display = 'none'; // Esto la borra visualmente
+        avgLoc.style.display = 'none'; 
     }
 
-    // Datos del punto inferior
+    // Datos del punto inferior (Métricas actuales)
     const pLoc = document.getElementById('point-location-text');
-    if(pLoc && data.point4) pLoc.textContent = data.point4.location;
+    if(pLoc && data.point4) pLoc.textContent = data.currentLocation;
     
     const pTime = document.getElementById('point-time');
-    if(pTime && data.point4) pTime.textContent = `Hora: ${data.point4.time}`;
+    if(pTime) pTime.textContent = `Hora: ${data.lastConnection}`;
 }
 
-// --- Gráfico (Sin cambios) ---
+// ============================================================================
+// LÓGICA DE GRÁFICOS (Chart.js)
+// ============================================================================
 
+/**
+ * @brief Mapea el nombre del contaminante en la UI al ID de la base de datos.
+ * @param {string} uiName - Nombre seleccionado en el dropdown (ej: "Ozono").
+ * @return {string} ID del documento en Firestore (ej: "ozono").
+ */
 function mapContaminantToId(uiName) {
     switch (uiName) {
         case 'Ozono': case 'ozono': return 'ozono';
@@ -124,6 +207,14 @@ function mapContaminantToId(uiName) {
     }
 }
 
+/**
+ * @brief Renderiza o actualiza el gráfico de actividad.
+ * @details
+ * Obtiene datos históricos de Firestore (colección "datos_grafico") 
+ * y los pinta usando Chart.js.
+ * * @param {string} contaminantType - Tipo de contaminante a visualizar.
+ * @async
+ */
 async function renderChart(contaminantType) {
     const ctx = document.getElementById('activityChart')?.getContext('2d');
     if (!ctx) return; 
@@ -135,6 +226,7 @@ async function renderChart(contaminantType) {
     
     const queryType = mapContaminantToId(contaminantType);
     
+    // Configuración de colores y unidades según el gas
     switch (queryType) {
         case 'ozono': borderColor = '#8A2BE2'; unit = 'ppm'; break;
         case 'co2':   borderColor = '#32CD32'; unit = 'ppm'; break;
@@ -147,6 +239,7 @@ async function renderChart(contaminantType) {
     let bgColor = borderColor.replace('rgb', 'rgba').replace(')', ', 0.2)');
     if (bgColor.startsWith('#')) bgColor = 'rgba(100, 100, 100, 0.2)';
 
+    // Obtención de datos desde Firestore
     if (db && queryType) {
         try {
             const docRef = doc(db, "datos_grafico", queryType); 
@@ -161,12 +254,15 @@ async function renderChart(contaminantType) {
         }
     }
     
+    // Relleno de seguridad si no hay datos
     if (dataValues.length !== HOURLY_LABELS.length) {
         dataValues = HOURLY_LABELS.map(() => null); 
     }
 
+    // Destruir gráfico previo si existe para evitar superposiciones
     if (sensorChart) sensorChart.destroy();
 
+    // Crear nuevo gráfico
     sensorChart = new Chart(ctx, {
         type: 'line',
         data: {

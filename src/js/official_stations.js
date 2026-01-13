@@ -1,40 +1,72 @@
 /**
  * @file official_stations.js
- * Script para gestionar las estaciones oficiales de calidad del aire.
- * Se conecta a la API de WAQI y dibuja los marcadores en el mapa.
+ * @brief Gestión de estaciones oficiales de calidad del aire.
+ * @details
+ * Este script se conecta a la API pública de WAQI (World Air Quality Index)
+ * para obtener datos de estaciones oficiales cercanas y las dibuja en el mapa.
+ * Incluye:
+ * - Detección de movimiento del mapa para recargar estaciones.
+ * - Renderizado de iconos personalizados con el color del AQI.
+ * - Popups interactivos que piden datos detallados bajo demanda.
+ *
+ * @requires Leaflet.js - Para dibujar marcadores y popups.
+ * @version 1.2
+ * @author Breathe Tracking Team
  */
 
-// TOKEN de WAQI
+/**
+ * @brief Token de acceso a la API de WAQI.
+ * @const {string}
+ */
 const WAQI_TOKEN = '59f20eb8c12bcdf627a18f8c3daea9a9abb4fc2c'; 
 
-// Variable global para guardar la capa de marcadores y poder limpiarla luego
+/**
+ * @brief Grupo de capas (LayerGroup) para agrupar los marcadores de estaciones.
+ * @type {L.LayerGroup|null}
+ */
 let capaEstaciones = null; 
 
-// Funcion de inicio que se llama desde el mapa principal
+/**
+ * @brief Inicializa el sistema de estaciones oficiales en el mapa proporcionado.
+ * @details
+ * 1. Crea la capa `capaEstaciones` y la añade al mapa.
+ * 2. Carga las estaciones visibles inicialmente.
+ * 3. Configura un listener `moveend` para recargar estaciones al mover el mapa (con debounce de 1s).
+ *
+ * @param {L.Map} mapa - Instancia del mapa Leaflet donde se pintarán las estaciones.
+ */
 function inicializarEstacionesOficiales(mapa) {
-    if (!mapa) return; // Si no hay mapa, no hago nada
+    if (!mapa) return; // Validación de seguridad
     
     console.log(" Iniciando sistema de estaciones oficiales...");
 
-    // Creo un grupo de capas de Leaflet para meter aqui todos los iconos
+    // Crear grupo de capas para gestión eficiente
     capaEstaciones = L.layerGroup().addTo(mapa);
     
-    // Llamo a la funcion para cargar las estaciones nada mas empezar
+    // Carga inicial
     cargarEstaciones(mapa);
 
-    // Esto es para actualizar las estaciones cuando el usuario mueve el mapa
+    // Configuración del listener con debounce (retraso)
     let timeout;
     mapa.on('moveend', () => {
-        // Limpio el timeout anterior para no hacer peticiones a lo loco
+        // Limpia el timeout anterior para evitar peticiones múltiples
         clearTimeout(timeout);
-        // Espero 1 segundo despues de que termine de mover para recargar
+        // Espera 1 segundo de inactividad antes de recargar
         timeout = setTimeout(() => cargarEstaciones(mapa), 1000);
     });
 }
 
-// Funcion asincrona para pedir los datos a la API
+/**
+ * @brief Consulta la API de WAQI para obtener estaciones dentro de los límites visibles.
+ * @details
+ * Obtiene los bounds (Norte, Sur, Este, Oeste) del mapa y construye la URL de consulta.
+ * Si la respuesta es exitosa, llama a `dibujarEstacionesComoIconos`.
+ *
+ * @param {L.Map} mapa - Instancia del mapa para obtener los límites (bounds).
+ * @async
+ */
 async function cargarEstaciones(mapa) {
-    // Obtengo los limites visibles del mapa (las 4 esquinas)
+    // Obtener límites visibles
     const bounds = mapa.getBounds();
     const lat1 = bounds.getSouth();
     const lng1 = bounds.getWest();
@@ -43,15 +75,13 @@ async function cargarEstaciones(mapa) {
 
     console.log(` Consultando estaciones...`);
 
-    // Construyo la URL con las coordenadas para pedir solo las estaciones de esa zona
+    // Construcción de URL geo-restringida
     const url = `https://api.waqi.info/map/bounds/?latlng=${lat1},${lng1},${lat2},${lng2}&token=${WAQI_TOKEN}`;
 
     try {
-        // Hago la peticion fetch
         const respuesta = await fetch(url);
         const datos = await respuesta.json();
 
-        // Si la API me dice que todo ok, dibujo los iconos
         if (datos.status === 'ok') {
             console.log(` Estaciones encontradas: ${datos.data.length}`);
             dibujarEstacionesComoIconos(datos.data);
@@ -64,23 +94,29 @@ async function cargarEstaciones(mapa) {
 }
 
 /**
- * Recorre los datos recibidos y crea un marcador para cada estacion
+ * @brief Renderiza las estaciones recibidas como iconos en el mapa.
+ * @details
+ * 1. Limpia los marcadores antiguos de `capaEstaciones`.
+ * 2. Itera sobre cada estación recibida.
+ * 3. Crea un `L.divIcon` personalizado con el color correspondiente al AQI.
+ * 4. Añade un tooltip y un evento click para ver detalles.
+ *
+ * @param {Array<Object>} estaciones - Lista de estaciones devuelta por la API.
  */
 function dibujarEstacionesComoIconos(estaciones) {
-    // Primero borro los marcadores antiguos para que no se dupliquen
+    // Limpieza previa
     capaEstaciones.clearLayers(); 
 
     estaciones.forEach(est => {
-        // Si el valor AQI es un guion significa que no hay datos, asi que me salto esta estacion
+        // Filtrar estaciones sin datos validos
         if (est.aqi === '-') return; 
 
         const valorAQI = parseInt(est.aqi);
-        // Calculo el color (verde, amarillo, rojo...) segun la contaminacion
         const colorFondo = obtenerColorAQI(valorAQI);
 
-        // Creo un icono personalizado con HTML para que sea cuadrado y tenga el color correspondiente
+        // Icono HTML personalizado
         const iconoOficial = L.divIcon({
-            className: '', // Lo dejo vacio para quitar estilos por defecto de Leaflet
+            className: '', // Sin clases por defecto de Leaflet
             html: `
                 <div class="station-icon-marker" style="background-color: ${colorFondo}; width: 30px; height: 30px;">
                     <i class="fas fa-broadcast-tower"></i>
@@ -91,13 +127,13 @@ function dibujarEstacionesComoIconos(estaciones) {
             popupAnchor: [0, -20]
         });
 
-        // Creo el marcador en las coordenadas de la estacion
+        // Creación del marcador
         const marker = L.marker([est.lat, est.lon], { 
             icon: iconoOficial,
-            zIndexOffset: 1000 // Le pongo un zIndex alto para que se vea por encima de otros elementos
+            zIndexOffset: 1000 // Prioridad visual alta
         });
 
-        // Añado un tooltip sencillo que sale al pasar el raton
+        // Tooltip básico (hover)
         marker.bindTooltip(`
             <div style="text-align:center">
                 <strong>${est.station.name}</strong><br>
@@ -106,31 +142,36 @@ function dibujarEstacionesComoIconos(estaciones) {
             </div>
         `, { direction: 'top', offset: [0, -20] });
 
-        // Añado el evento click para abrir el popup con detalles
+        // Evento Click: Cargar detalles
         marker.on('click', (e) => {
-            // Esto es importante: evita que el click atraviese el marcador y mueva el mapa
-            L.DomEvent.stopPropagation(e); 
+            L.DomEvent.stopPropagation(e); // Evitar propagación al mapa
             mostrarPopupDetalle(est, marker);
         });
 
-        // Finalmente añado el marcador a la capa
         capaEstaciones.addLayer(marker);
     });
 }
 
-// Funcion para pedir datos detallados de una estacion concreta al hacer click
+/**
+ * @brief Carga y muestra los detalles completos de una estación en un popup.
+ * @details
+ * Realiza una segunda petición a la API usando el UID de la estación para obtener
+ * desglose de contaminantes (PM2.5, PM10, O3, etc.) y metadatos.
+ *
+ * @param {Object} estacionResumen - Datos básicos de la estación (incluye UID).
+ * @param {L.Marker} marker - El marcador sobre el cual abrir el popup.
+ * @async
+ */
 async function mostrarPopupDetalle(estacionResumen, marker) {
-    // Desactivo autoPan para que el mapa no se mueva solo al abrir el popup,
-    // porque si se mueve dispara el evento 'moveend' y recarga todo otra vez
     const popupOptions = {
-        autoPan: false,
+        autoPan: false, // Evita mover el mapa para no disparar recargas
         className: 'official-popup-container'
     };
 
-    // Pongo un mensaje de carga temporal en el popup
+    // Popup temporal de carga
     marker.bindPopup('<div style="padding:10px; text-align:center; color:#5BA3F5"><i class="fas fa-spinner fa-spin"></i> Conectando...</div>', popupOptions).openPopup();
 
-    // URL para pedir los datos especificos de esa estacion usando su UID
+    // URL de detalle por UID
     const url = `https://api.waqi.info/feed/@${estacionResumen.uid}/?token=${WAQI_TOKEN}`;
 
     try {
@@ -141,17 +182,16 @@ async function mostrarPopupDetalle(estacionResumen, marker) {
             const d = json.data;
             const iaqa = d.iaqi;
             
-            // Diccionario para traducir las claves de la API a nombres legibles
+            // Diccionario de traducción de contaminantes
             const nombres = {
                 pm25: "PM 2.5", pm10: "PM 10", o3: "Ozono (O₃)", 
                 no2: "NO₂", so2: "SO₂", co: "CO",
                 t: "Temp.", h: "Humedad", w: "Viento", p: "Presión"
             };
 
-            // Recorro los datos de contaminantes y genero la lista HTML
+            // Generación de lista HTML
             let listadoHtml = '';
             for (const [key, val] of Object.entries(iaqa)) {
-                // Solo muestro el dato si tengo su traduccion en el diccionario
                 if (nombres[key]) {
                     listadoHtml += `
                         <li>
@@ -161,7 +201,7 @@ async function mostrarPopupDetalle(estacionResumen, marker) {
                 }
             }
 
-            // Construyo todo el HTML del popup con los datos reales
+            // Construcción del HTML final
             const html = `
                 <div class="official-popup">
                     <div class="popup-header" style="background-color: ${obtenerColorAQI(d.aqi)}">
@@ -181,7 +221,6 @@ async function mostrarPopupDetalle(estacionResumen, marker) {
                     </div>
                 </div>
             `;
-            // Actualizo el contenido del popup
             marker.setPopupContent(html);
         }
     } catch (e) {
@@ -189,14 +228,27 @@ async function mostrarPopupDetalle(estacionResumen, marker) {
     }
 }
 
-// Funcion auxiliar para elegir el color segun el nivel de AQI
+/**
+ * @brief Devuelve un color hexadecimal según el nivel de AQI.
+ * @details
+ * - 0-50: Verde (Bueno)
+ * - 51-100: Amarillo (Moderado)
+ * - 101-150: Naranja (Insalubre para grupos sensibles)
+ * - 151-200: Rojo (Insalubre)
+ * - 201-300: Morado (Muy insalubre)
+ * - >300: Granate (Peligroso)
+ *
+ * @param {number} aqi - Índice de Calidad del Aire.
+ * @return {string} Color en formato Hex.
+ */
 function obtenerColorAQI(aqi) {
     if (aqi <= 50) return "#009966"; 
     if (aqi <= 100) return "#ffde33"; 
     if (aqi <= 150) return "#ff9933"; 
     if (aqi <= 200) return "#cc0033"; 
     if (aqi <= 300) return "#660099";
-    return "#7e0023"; }
+    return "#7e0023"; 
+}
 
-// Hago publica la funcion de inicio para poder usarla en otros archivos
+// Exposición global para acceso desde otros scripts
 window.inicializarEstacionesOficiales = inicializarEstacionesOficiales;

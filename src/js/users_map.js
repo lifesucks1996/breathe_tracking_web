@@ -1,9 +1,31 @@
 /**
  * @file users_map.js
- * @brief Interfaz visual: Saturación de Rojo forzada y PDF Original.
+ * @brief Interfaz visual del mapa de usuarios: Heatmaps, Pines y Reportes PDF.
+ * @details
+ * Gestiona la experiencia principal del usuario en la pantalla de mapa:
+ * 1. Inicializa el mapa Leaflet centrado en Gandía.
+ * 2. Carga datos de Firebase y renderiza el mapa de calor (Heatmap).
+ * 3. Permite añadir "Pines" (marcadores personalizados) en el mapa.
+ * 4. Muestra detalles de contaminación interpolados en la posición del pin.
+ * 5. Genera informes PDF premium usando jsPDF.
+ * 6. Integra las estaciones oficiales de WAQI (`official_stations.js`).
+ *
+ * @requires users_map_data.js - Para los cálculos de contaminación.
+ * @requires official_stations.js - Para las estaciones oficiales.
+ * @requires Leaflet.js
+ * @requires jsPDF
+ *
+ * @version 2.5
+ * @author Breathe Tracking Team
  */
 
 // ========================= FIX CANVAS =========================
+/**
+ * @brief Patch para mejorar el rendimiento del canvas en navegadores modernos.
+ * @details
+ * Sobrescribe `getContext` para forzar `willReadFrequently: true`.
+ * Esto es necesario porque el heatmap se congela leyéndolo píxel a píxel con `toDataURL`.
+ */
 HTMLCanvasElement.prototype.getContext = (function(origFn) {
   return function(type, attributes) {
     if (type === '2d') {
@@ -13,47 +35,86 @@ HTMLCanvasElement.prototype.getContext = (function(origFn) {
   };
 })(HTMLCanvasElement.prototype.getContext);
 
-// ========================= VARIABLES =========================
+// ========================= VARIABLES GLOBALES =========================
+
+/** @brief Instancia principal del mapa Leaflet. */
 let mapa = null;
+
+/** @brief Capa dinámica del heatmap (L.heatLayer). */
 let capaCalor = null;
+
+/** @brief Capa estática (Imagen) del heatmap congelado. */
 let heatmapCongelado = null;
+
+/** @brief Nivel de zoom óptimo para visualizar el heatmap congelado. */
 const ZOOM_CONGELADO = 14; 
 
+/** @brief Array de pines guardados por el usuario. */
 let pinesGuardados = [];
+
+/** @brief ID del pin actualmente seleccionado para ver detalles. */
 let idPinSeleccionado = null;
+
+/** @brief Contador para generar IDs únicos de pines. */
 let contadorPines = 0;
+
+/** @brief Estado del modo "Agregar Pin" (true/false). */
 let modoAgregar = false;
+
+/** @brief Almacena coordenadas temporales al hacer clic en el mapa. */
 let latLngTemporal = null;
 
+/** @brief Cache de puntos de contaminación actuales para repintar. */
 let datosPuntosActuales = [];
+
+/** @brief Configuración del gas seleccionado (unidad, umbrales, nombre). */
 let configGasActual = { unidad: 'ppm', gradiente: null, nombre: '', umbrales: [] };
 
-// DOM
+// DOM Elements
 const loading = document.getElementById('loading-indicator');
 const btnActualizar = document.getElementById('btn-update-map');
 const selectorGas = document.getElementById('selectorContaminante');
 
-// 1. INICIAR
+// ========================= 1. INICIALIZACIÓN =========================
+
+/** @brief Coordenadas iniciales del mapa (Gandía, España). */
 const COORDS = [38.9670, -0.1830];
+
+// Inicializar Leaflet
 mapa = L.map('mapa', { zoomControl: false }).setView(COORDS, 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(mapa);
 
 // API ESTACIONES OFICIALES
-// Esperar a que todo cargue y lanzar las estaciones oficiales
+/**
+ * @brief Carga las estaciones oficiales cuando la ventana termina de cargar.
+ * @details Llama a `inicializarEstacionesOficiales` definido en `official_stations.js`.
+ */
 window.addEventListener('load', () => {
     if (window.inicializarEstacionesOficiales) {
         window.inicializarEstacionesOficiales(mapa);
     }
 });
 
-// 2. CARGAR
+// ========================= 2. CARGA DE DATOS =========================
+
+// Iniciar conexión con Firebase
 if (window.inicializarFirebase) {
     window.inicializarFirebase(async () => {
         await cargarMapa();
+        // Crear un pin de ejemplo si no hay ninguno
         if (pinesGuardados.length === 0) crearPin({lat: 38.9665, lng: -0.1850}, "Estación Centro");
     });
 }
 
+/**
+ * @brief Carga los datos de contaminación y actualiza el mapa.
+ * @details
+ * 1. Obtiene fecha y gas seleccionado.
+ * 2. Llama a `window.obtenerDatosDelSensor` (de `users_map_data.js`).
+ * 3. Actualiza `datosPuntosActuales` y la configuración del gas.
+ * 4. Llama a `pintarMapaCalor`.
+ * @async
+ */
 async function cargarMapa() {
     const fecha = "2025-12-01"; 
     const gas = selectorGas.value;
@@ -77,15 +138,22 @@ async function cargarMapa() {
 
         pintarMapaCalor();
 
+        // Actualizar título en la interfaz
         const selectorText = selectorGas.options[selectorGas.selectedIndex].text;
         const tituloGas = document.getElementById('activity-contaminant-type');
         if (tituloGas) tituloGas.innerText = selectorText;
 
+        // Actualizar datos del pin seleccionado si lo hay
         if (idPinSeleccionado) actualizarSidebar(idPinSeleccionado);
     }
     if (loading) loading.style.display = 'none';
 }
 
+/**
+ * @brief Construye un gradiente de colores a partir de umbrales.
+ * @param {Array} umbrales - Lista de niveles de riesgo.
+ * @return {Object} Objeto gradiente compatible con Leaflet Heat.
+ */
 function construirGradienteDesdeUmbrales(umbrales) {
     if (!umbrales || umbrales.length === 0) {
         return { 0.0: 'rgba(0,0,0,0)', 0.2: 'green', 0.6: 'yellow', 1.0: 'red' };
@@ -97,6 +165,7 @@ function construirGradienteDesdeUmbrales(umbrales) {
     ordenados.forEach((u, i) => {
         const pos = Number((i / total).toFixed(2));
         let col = u.color || '#808080';
+        // Normalización de nombres de colores
         if (col === 'orange') col = 'yellow';
         if (col === 'purple') col = 'red';
         gradiente[pos] = hexToRgba(col, 0.85);
@@ -105,6 +174,12 @@ function construirGradienteDesdeUmbrales(umbrales) {
     return gradiente;
 }
 
+/**
+ * @brief Convierte color HEX a RGBA.
+ * @param {string} hex - Color hexadecimal (ej: "#ff0000").
+ * @param {number} alpha - Opacidad (0-1).
+ * @return {string} Color en formato `rgba(r,g,b,a)`.
+ */
 function hexToRgba(hex, alpha) {
     hex = hex.replace('#', '');
     const r = parseInt(hex.substring(0, 2), 16);
@@ -113,15 +188,19 @@ function hexToRgba(hex, alpha) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-// PINTAR
+// ========================= 3. PINTADO DEL MAPA =========================
+
+/**
+ * @brief Renderiza la capa de calor en el mapa.
+ * @details
+ * Utiliza `L.heatLayer` para dibujar los puntos. Luego congela la capa
+ * convirtiéndola en una imagen (`L.imageOverlay`) para mejorar el rendimiento al hacer zoom/pan.
+ */
 function pintarMapaCalor() {
     if (!datosPuntosActuales.length || !L.heatLayer) return;
 
     // TRUCO DE INTENSIDAD:
-    
-    // Fijamos max en 0.8. Esto significa que cualquier valor >= 0.8 (como nuestro Rojo 1.0)
-    // se pintará con la intensidad MÁXIMA absoluta del gradiente.
-    // Esto arregla que el mapa general se vea "flojo" comparado con los individuales.
+    // Fijamos max en 0.8 para asegurar saturación visual en colores rojos.
     const maxVal = 0.8; 
 
     capaCalor = L.heatLayer(datosPuntosActuales, {
@@ -133,6 +212,8 @@ function pintarMapaCalor() {
     }).addTo(mapa);
 
     mapa.setZoom(ZOOM_CONGELADO);
+    
+    // Congelado asíncrono
     setTimeout(() => {
         if (!capaCalor || !capaCalor._canvas) return;
         const imgData = capaCalor._canvas.toDataURL('image/png');
@@ -140,11 +221,11 @@ function pintarMapaCalor() {
         mapa.removeLayer(capaCalor);
         capaCalor = null;
         heatmapCongelado = L.imageOverlay(imgData, bounds, { opacity: 0.85, interactive: false }).addTo(mapa);
-        //mapa.setMaxBounds(bounds.pad(0.5)); la comento para que no ancle el zoom
     }, 400); 
 }
 
-// PINES
+// ========================= 4. GESTIÓN DE PINES =========================
+
 const btnAdd = document.getElementById('add-pin-btn');
 const modal = document.getElementById('name-pin-modal');
 const inputName = document.getElementById('new-pin-name-input');
@@ -164,6 +245,7 @@ if(btnAdd) {
         }
     });
 }
+
 function resetearModoAgregar() {
     modoAgregar = false;
     btnAdd.style.backgroundColor = '';
@@ -171,20 +253,28 @@ function resetearModoAgregar() {
     document.getElementById('mapa').style.cursor = '';
     mapa.off('click', alHacerClickMapa);
 }
+
 function alHacerClickMapa(e) {
     latLngTemporal = e.latlng;
     modal.style.display = 'flex';
     inputName.value = '';
     inputName.focus();
 }
+
 btnConfirm.addEventListener('click', () => {
     const nombre = inputName.value.trim() || `Punto ${contadorPines + 1}`;
     crearPin(latLngTemporal, nombre);
     modal.style.display = 'none';
     resetearModoAgregar();
 });
+
 btnCancel.addEventListener('click', () => { modal.style.display = 'none'; });
 
+/**
+ * @brief Crea un nuevo pin en el mapa y en la lista lateral.
+ * @param {Object} coords - Objeto {lat, lng}.
+ * @param {string} nombre - Nombre del pin.
+ */
 function crearPin(coords, nombre) {
     contadorPines++;
     const id = `pin-${contadorPines}`;
@@ -196,12 +286,16 @@ function crearPin(coords, nombre) {
         marker: marker
     };
 
+    // Eventos del marcador
     marker.on('click', () => abrirDetallePin(id));
+    
+    // Actualizar coordenadas al arrastrar
     marker.on('drag', (e) => {
         const pos = e.target.getLatLng();
         nuevoPin.lat = pos.lat; nuevoPin.lng = pos.lng;
         if (idPinSeleccionado === id) actualizarSidebar(id);
     });
+    
     marker.on('dragend', (e) => {
         const pos = e.target.getLatLng();
         nuevoPin.direccion = `Lat: ${pos.lat.toFixed(4)}, Lng: ${pos.lng.toFixed(4)}`;
@@ -209,6 +303,8 @@ function crearPin(coords, nombre) {
     });
 
     pinesGuardados.push(nuevoPin);
+    
+    // Renderizar en lista
     const container = document.getElementById('pins-container');
     const div = document.createElement('div');
     div.className = 'pin-item';
@@ -216,9 +312,14 @@ function crearPin(coords, nombre) {
     div.innerHTML = `<i class="fas fa-map-marker-alt pin-icon"></i><div class="pin-info"><h4>${nombre}</h4><p class="pin-dir-text">${nuevoPin.direccion}</p></div>`;
     div.addEventListener('click', () => abrirDetallePin(id));
     container.appendChild(div);
+    
     abrirDetallePin(id);
 }
 
+/**
+ * @brief Muestra la vista de detalle de un pin específico.
+ * @param {string} id - ID del pin.
+ */
 function abrirDetallePin(id) {
     idPinSeleccionado = id;
     const pin = pinesGuardados.find(p => p.id === id);
@@ -229,12 +330,18 @@ function abrirDetallePin(id) {
     actualizarSidebar(id);
 }
 
+/**
+ * @brief Actualiza los datos de la barra lateral con la contaminación interpolada.
+ * @details Llama a `calcularContaminacionEnUbicacion` para obtener el valor real en ese punto.
+ * @param {string} id - ID del pin.
+ */
 function actualizarSidebar(id) {
     const pin = pinesGuardados.find(p => p.id === id);
     if (!pin) return;
 
     document.getElementById('detail-direccion').innerText = pin.direccion;
     
+    // Cálculo matemático de contaminación (Interpolación IDW)
     const valor = window.calcularContaminacionEnUbicacion 
         ? window.calcularContaminacionEnUbicacion(pin.lat, pin.lng)
         : 0;
@@ -243,6 +350,7 @@ function actualizarSidebar(id) {
     txtVal.innerText = `${valor.toFixed(2)} ${configGasActual.unidad}`;
     txtVal.style.color = ''; 
 
+    // Actualizar barra de progreso
     const slider = document.getElementById('ozono-slider');
     const maxUmbral = configGasActual.umbrales.length > 0
         ? Math.max(...configGasActual.umbrales.map(u => u.max || 100))
@@ -267,19 +375,25 @@ btnDeletePin.addEventListener('click', () => {
     document.getElementById('pin-detail-view').style.display = 'none';
     document.getElementById('pin-list-view').style.display = 'block';
 });
+
+/** @brief Vuelve a la lista de pines desde el detalle. */
 window.mostrarListaPines = function() {
     document.getElementById('pin-detail-view').style.display = 'none';
     document.getElementById('pin-list-view').style.display = 'block';
     idPinSeleccionado = null;
 };
+
+// Listeners de actualización
 btnActualizar.addEventListener('click', cargarMapa);
 selectorGas.addEventListener('change', cargarMapa);
 
-// PAGOS Y PDF
+// ========================= 5. GENERACIÓN DE REPORTES PDF =========================
+
 const btnPremium = document.getElementById('btn-premium-report');
 const modalPayment = document.getElementById('modal-payment');
 const btnCancelPay = document.getElementById('cancel-payment-btn');
 const btnConfirmPay = document.getElementById('confirm-payment-btn');
+
 if (btnPremium) btnPremium.addEventListener('click', () => { if(idPinSeleccionado) modalPayment.style.display='flex'; });
 if (btnCancelPay) btnCancelPay.addEventListener('click', () => modalPayment.style.display='none');
 if (btnConfirmPay) btnConfirmPay.addEventListener('click', () => {
@@ -287,7 +401,16 @@ if (btnConfirmPay) btnConfirmPay.addEventListener('click', () => {
     generarInformePDF();
 });
 
-// ========================= GENERADOR PDF ORIGINAL =========================
+/**
+ * @brief Genera un informe PDF detallado del pin seleccionado.
+ * @details
+ * Utiliza la librería `jsPDF` para crear un documento con:
+ * - Cabecera corporativa.
+ * - Datos del punto (nombre, dirección).
+ * - Calificación simulada (nota del 0 al 10).
+ * - Gráfica de barras vectorial dibujada manualmente en el PDF.
+ * - Certificado oficial simulado.
+ */
 function generarInformePDF() {
     const { jsPDF } = window.jspdf;
     if (!jsPDF) return alert("Error al cargar la librería de PDF.");
@@ -353,11 +476,11 @@ function generarInformePDF() {
 
     doc.text("Evolución Semanal:", 110, 138);
     
-    // Gráfica de Barras
+    // Gráfica de Barras Vectorial
     const startX = 110;  
     const baseY = 175;  
     const barWidth = 8;  
-    const gap = 4;      
+    const gap = 4;       
     
     const datosSemana = [
         { dia: 'L', valor: 12, color: [46, 204, 113] },
