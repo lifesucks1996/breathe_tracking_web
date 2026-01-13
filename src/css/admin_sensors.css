@@ -316,7 +316,7 @@ body {
 
 .sensor-item.inactive .button-report {
     background-color: #999; /* Botón gris */
-    pointer-events: none;   /* No clickable si quieres, o déjalo clickable */
+    /*pointer-events: none;   /* No clickable si quieres, o déjalo clickable */
 }
 
 /* Etiqueta opcional para inactivos */
@@ -559,4 +559,69 @@ body {
 
 .pagination-btn:active:not(:disabled) {
     transform: translateY(0);
+}
+
+/* src/css/admin_sensors.css */
+
+/* ... (MANTÉN EL RESTO DE TUS ESTILOS IGUALES) ... */
+/* Solo asegúrate de tener estos estilos para el nuevo filtro y los marcadores */
+
+/* UTILIDADES */
+.hidden {
+    display: none !important;
+}
+
+/* MARCADORES EN EL MAPA - LIMPIEZA VISUAL (Z-INDEX) */
+.leaflet-marker-icon {
+    transition: all 0.3s ease;
+}
+
+/* 1. INACTIVOS: Fondo, gris, semitransparente */
+.leaflet-marker-icon.sensor-marker-inactive {
+    background-color: #bdc3c7; 
+    border-color: #95a5a6;
+    opacity: 0.6; /* Transparencia para que no molesten */
+    z-index: 100 !important; /* AL FONDO DEL TODO */
+}
+/* Al pasar el ratón por encima, que se vea bien */
+.leaflet-marker-icon.sensor-marker-inactive:hover {
+    opacity: 1;
+    z-index: 9000 !important;
+    transform: scale(1.2);
+}
+
+/* 2. ACTIVOS (NORMALES): Capa media */
+.leaflet-marker-icon.sensor-marker {
+    z-index: 500;
+}
+
+/* 3. INCIDENCIAS: Capa superior, Rojo brillante */
+.leaflet-marker-icon.sensor-marker-incident {
+    background-color: #e74c3c;
+    border-color: #c0392b;
+    opacity: 1;
+    z-index: 1000 !important; /* SIEMPRE ARRIBA */
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+}
+
+/* LISTADO LATERAL - COLORES */
+.sensor-item.inactive {
+    background-color: #f9f9f9;
+    border-left: 4px solid #bdc3c7;
+}
+.sensor-item.inactive .sensor-icon {
+    color: #bdc3c7;
+}
+.sensor-item.inactive h4, 
+.sensor-item.inactive p {
+    color: #999;
+}
+/* Asegurar que el botón se pueda pulsar aunque sea gris */
+.sensor-item.inactive .button-report {
+    background-color: #95a5a6;
+    cursor: pointer;
+    pointer-events: auto; /* IMPORTANTE: Permite clic */
+}
+.sensor-item.inactive .button-report:hover {
+    background-color: #7f8c8d;
 }
