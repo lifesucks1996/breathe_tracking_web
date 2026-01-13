@@ -1,0 +1,260 @@
+\doxysection{official\+\_\+stations.\+js}
+\hypertarget{official__stations_8js_source}{}\label{official__stations_8js_source}\index{src/js/official\_stations.js@{src/js/official\_stations.js}}
+\doxymbox{\hyperlink{official__stations_8js}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00001}00001\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00002}00002\ \textcolor{comment}{\ *\ @file\ official\_stations.js}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00003}00003\ \textcolor{comment}{\ *\ @brief\ Gestión\ de\ estaciones\ oficiales\ de\ calidad\ del\ aire.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00004}00004\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00005}00005\ \textcolor{comment}{\ *\ Este\ script\ se\ conecta\ a\ la\ API\ pública\ de\ WAQI\ (World\ Air\ Quality\ Index)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00006}00006\ \textcolor{comment}{\ *\ para\ obtener\ datos\ de\ estaciones\ oficiales\ cercanas\ y\ las\ dibuja\ en\ el\ mapa.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00007}00007\ \textcolor{comment}{\ *\ Incluye:}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00008}00008\ \textcolor{comment}{\ *\ -\/\ Detección\ de\ movimiento\ del\ mapa\ para\ recargar\ estaciones.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00009}00009\ \textcolor{comment}{\ *\ -\/\ Renderizado\ de\ iconos\ personalizados\ con\ el\ color\ del\ AQI.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00010}00010\ \textcolor{comment}{\ *\ -\/\ Popups\ interactivos\ que\ piden\ datos\ detallados\ bajo\ demanda.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00011}00011\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00012}00012\ \textcolor{comment}{\ *\ @requires\ Leaflet.js\ -\/\ Para\ dibujar\ marcadores\ y\ popups.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00013}00013\ \textcolor{comment}{\ *\ @version\ 1.2}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00014}00014\ \textcolor{comment}{\ *\ @author\ Breathe\ Tracking\ Team}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00015}00015\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00016}00016\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00017}00017\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00018}00018\ \textcolor{comment}{\ *\ @brief\ Token\ de\ acceso\ a\ la\ API\ de\ WAQI.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00019}00019\ \textcolor{comment}{\ *\ @const\ \{string\}}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00020}00020\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00021}\doxymbox{\hyperlink{official__stations_8js_a85f2472089983e4246215b69692c674f}{00021}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{official__stations_8js_a85f2472089983e4246215b69692c674f}{WAQI\_TOKEN}}\ =\ \textcolor{stringliteral}{'59f20eb8c12bcdf627a18f8c3daea9a9abb4fc2c'};\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00022}00022\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00023}00023\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00024}00024\ \textcolor{comment}{\ *\ @brief\ Grupo\ de\ capas\ (LayerGroup)\ para\ agrupar\ los\ marcadores\ de\ estaciones.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00025}00025\ \textcolor{comment}{\ *\ @type\ \{L.LayerGroup|null\}}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00026}00026\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00027}\doxymbox{\hyperlink{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}{00027}}\ let\ \doxymbox{\hyperlink{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}{capaEstaciones}}\ =\ null;\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00028}00028\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00029}00029\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00030}00030\ \textcolor{comment}{\ *\ @brief\ Inicializa\ el\ sistema\ de\ estaciones\ oficiales\ en\ el\ mapa\ proporcionado.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00031}00031\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00032}00032\ \textcolor{comment}{\ *\ 1.\ Crea\ la\ capa\ \`{}capaEstaciones`\ y\ la\ añade\ al\ mapa.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00033}00033\ \textcolor{comment}{\ *\ 2.\ Carga\ las\ estaciones\ visibles\ inicialmente.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00034}00034\ \textcolor{comment}{\ *\ 3.\ Configura\ un\ listener\ \`{}moveend`\ para\ recargar\ estaciones\ al\ mover\ el\ mapa\ (con\ debounce\ de\ 1s).}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00035}00035\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00036}00036\ \textcolor{comment}{\ *\ @param\ \{L.Map\}\ mapa\ -\/\ Instancia\ del\ mapa\ Leaflet\ donde\ se\ pintarán\ las\ estaciones.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00037}00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00038}\doxymbox{\hyperlink{official__stations_8js_aecd1acbdced88f79965a32f42bc69e96}{00038}}\ function\ \doxymbox{\hyperlink{official__stations_8js_a77d62711b897e07b380c9573f2b00d5a}{inicializarEstacionesOficiales}}(\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}})\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00039}00039\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}})\ \textcolor{keywordflow}{return};\ \textcolor{comment}{//\ Validación\ de\ seguridad}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00040}00040\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00041}00041\ \ \ \ \ console.log(\textcolor{stringliteral}{"{}\ Iniciando\ sistema\ de\ estaciones\ oficiales..."{}});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00043}00043\ \ \ \ \ \textcolor{comment}{//\ Crear\ grupo\ de\ capas\ para\ gestión\ eficiente}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00044}00044\ \ \ \ \ \doxymbox{\hyperlink{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}{capaEstaciones}}\ =\ L.layerGroup().addTo(\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00045}00045\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00046}00046\ \ \ \ \ \textcolor{comment}{//\ Carga\ inicial}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00047}00047\ \ \ \ \ \doxymbox{\hyperlink{official__stations_8js_a355c6d5b8e1fb5ddfa826e1e774c4e70}{cargarEstaciones}}(\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00049}00049\ \ \ \ \ \textcolor{comment}{//\ Configuración\ del\ listener\ con\ debounce\ (retraso)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00050}00050\ \ \ \ \ let\ timeout;}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00051}00051\ \ \ \ \ \doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}}.on(\textcolor{stringliteral}{'moveend'},\ ()\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00052}00052\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Limpia\ el\ timeout\ anterior\ para\ evitar\ peticiones\ múltiples}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00053}00053\ \ \ \ \ \ \ \ \ clearTimeout(timeout);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00054}00054\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Espera\ 1\ segundo\ de\ inactividad\ antes\ de\ recargar}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00055}00055\ \ \ \ \ \ \ \ \ timeout\ =\ setTimeout(()\ =>\ \doxymbox{\hyperlink{official__stations_8js_a355c6d5b8e1fb5ddfa826e1e774c4e70}{cargarEstaciones}}(\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}}),\ 1000);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00056}00056\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00057}00057\ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00058}00058\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00059}00059\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00060}00060\ \textcolor{comment}{\ *\ @brief\ Consulta\ la\ API\ de\ WAQI\ para\ obtener\ estaciones\ dentro\ de\ los\ límites\ visibles.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00061}00061\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00062}00062\ \textcolor{comment}{\ *\ Obtiene\ los\ bounds\ (Norte,\ Sur,\ Este,\ Oeste)\ del\ mapa\ y\ construye\ la\ URL\ de\ consulta.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00063}00063\ \textcolor{comment}{\ *\ Si\ la\ respuesta\ es\ exitosa,\ llama\ a\ \`{}dibujarEstacionesComoIconos`.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00064}00064\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00065}00065\ \textcolor{comment}{\ *\ @param\ \{L.Map\}\ mapa\ -\/\ Instancia\ del\ mapa\ para\ obtener\ los\ límites\ (bounds).}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00066}00066\ \textcolor{comment}{\ *\ @async}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00067}00067\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00068}\doxymbox{\hyperlink{official__stations_8js_a355c6d5b8e1fb5ddfa826e1e774c4e70}{00068}}\ async\ function\ \doxymbox{\hyperlink{official__stations_8js_a355c6d5b8e1fb5ddfa826e1e774c4e70}{cargarEstaciones}}(\doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}})\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00069}00069\ \ \ \ \ \textcolor{comment}{//\ Obtener\ límites\ visibles}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00070}00070\ \ \ \ \ \textcolor{keyword}{const}\ bounds\ =\ \doxymbox{\hyperlink{users__map_8js_a1c9c2efdbd50cb20764afd00cef367b0}{mapa}}.getBounds();}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00071}00071\ \ \ \ \ \textcolor{keyword}{const}\ lat1\ =\ bounds.getSouth();}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00072}00072\ \ \ \ \ \textcolor{keyword}{const}\ lng1\ =\ bounds.getWest();}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00073}00073\ \ \ \ \ \textcolor{keyword}{const}\ lat2\ =\ bounds.getNorth();}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00074}00074\ \ \ \ \ \textcolor{keyword}{const}\ lng2\ =\ bounds.getEast();}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00075}00075\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00076}00076\ \ \ \ \ console.log(\`{}\ Consultando\ estaciones...\`{});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00078}00078\ \ \ \ \ \textcolor{comment}{//\ Construcción\ de\ URL\ geo-\/restringida}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00079}00079\ \ \ \ \ \textcolor{keyword}{const}\ url\ =\ \`{}https:\textcolor{comment}{//api.waqi.info/map/bounds/?latlng=\$\{lat1\},\$\{lng1\},\$\{lat2\},\$\{lng2\}\&token=\$\{WAQI\_TOKEN\}`;}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00080}00080\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00081}00081\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00082}00082\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ respuesta\ =\ await\ fetch(url);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00083}00083\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ datos\ =\ await\ respuesta.json();}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00085}00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (datos.status\ ===\ \textcolor{stringliteral}{'ok'})\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00086}00086\ \ \ \ \ \ \ \ \ \ \ \ \ console.log(\`{}\ Estaciones\ encontradas:\ \$\{datos.data.length\}\`{});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00087}00087\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{official__stations_8js_ac8d608175dc57351229f6d73dcd4bd08}{dibujarEstacionesComoIconos}}(datos.data);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00088}00088\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00089}00089\ \ \ \ \ \ \ \ \ \ \ \ \ console.warn(\textcolor{stringliteral}{"{}\ API\ WAQI\ Error:"{}},\ datos.data);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00090}00090\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00091}00091\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (error)\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00092}00092\ \ \ \ \ \ \ \ \ console.error(\textcolor{stringliteral}{"{}\ Error\ conectando\ con\ estaciones:"{}},\ error);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00093}00093\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00094}00094\ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00095}00095\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00096}00096\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00097}00097\ \textcolor{comment}{\ *\ @brief\ Renderiza\ las\ estaciones\ recibidas\ como\ iconos\ en\ el\ mapa.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00098}00098\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00099}00099\ \textcolor{comment}{\ *\ 1.\ Limpia\ los\ marcadores\ antiguos\ de\ \`{}capaEstaciones`.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00100}00100\ \textcolor{comment}{\ *\ 2.\ Itera\ sobre\ cada\ estación\ recibida.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00101}00101\ \textcolor{comment}{\ *\ 3.\ Crea\ un\ \`{}L.divIcon`\ personalizado\ con\ el\ color\ correspondiente\ al\ AQI.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00102}00102\ \textcolor{comment}{\ *\ 4.\ Añade\ un\ tooltip\ y\ un\ evento\ click\ para\ ver\ detalles.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00103}00103\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00104}00104\ \textcolor{comment}{\ *\ @param\ \{Array<Object>\}\ estaciones\ -\/\ Lista\ de\ estaciones\ devuelta\ por\ la\ API.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00105}00105\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00106}\doxymbox{\hyperlink{official__stations_8js_ac8d608175dc57351229f6d73dcd4bd08}{00106}}\ function\ \doxymbox{\hyperlink{official__stations_8js_ac8d608175dc57351229f6d73dcd4bd08}{dibujarEstacionesComoIconos}}(estaciones)\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00107}00107\ \ \ \ \ \textcolor{comment}{//\ Limpieza\ previa}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00108}00108\ \ \ \ \ \doxymbox{\hyperlink{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}{capaEstaciones}}.clearLayers();\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00109}00109\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00110}00110\ \ \ \ \ estaciones.forEach(est\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00111}00111\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Filtrar\ estaciones\ sin\ datos\ validos}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00112}00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (est.aqi\ ===\ \textcolor{charliteral}{'-\/'})\ \textcolor{keywordflow}{return};\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00113}00113\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00114}00114\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ valorAQI\ =\ parseInt(est.aqi);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00115}00115\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ colorFondo\ =\ \doxymbox{\hyperlink{official__stations_8js_a4b9629901b7f06d56f9cb26aad8d9914}{obtenerColorAQI}}(valorAQI);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00116}00116\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00117}00117\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Icono\ HTML\ personalizado}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00118}00118\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ iconoOficial\ =\ L.divIcon(\{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00119}00119\ \ \ \ \ \ \ \ \ \ \ \ \ className:\ \textcolor{stringliteral}{''},\ \textcolor{comment}{//\ Sin\ clases\ por\ defecto\ de\ Leaflet}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00120}00120\ \ \ \ \ \ \ \ \ \ \ \ \ html:\ \`{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00121}00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <div\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}station-\/icon-\/marker"{}}\ style=\textcolor{stringliteral}{"{}background-\/color:\ \$\{colorFondo\};\ width:\ 30px;\ height:\ 30px;"{}}>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00122}00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <i\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}fas\ fa-\/broadcast-\/tower"{}}></i>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ </div>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ \ \ \`{},}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00125}00125\ \ \ \ \ \ \ \ \ \ \ \ \ iconSize:\ [30,\ 30],}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ iconAnchor:\ [15,\ 15],}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00127}00127\ \ \ \ \ \ \ \ \ \ \ \ \ popupAnchor:\ [0,\ -\/20]}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00128}00128\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00129}00129\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00130}00130\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Creación\ del\ marcador}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00131}00131\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ marker\ =\ L.marker([est.lat,\ est.lon],\ \{\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ icon:\ iconoOficial,}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ zIndexOffset:\ 1000\ \textcolor{comment}{//\ Prioridad\ visual\ alta}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00134}00134\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00135}00135\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00136}00136\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Tooltip\ básico\ (hover)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00137}00137\ \ \ \ \ \ \ \ \ marker.bindTooltip(\`{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00138}00138\ \ \ \ \ \ \ \ \ \ \ \ \ <div\ style=\textcolor{stringliteral}{"{}text-\/align:center"{}}>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00139}00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <strong>\$\{est.station.name\}</strong><br>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Estación\ Oficial<br>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00141}00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AQI:\ \$\{est.aqi\}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ </div>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00143}00143\ \ \ \ \ \ \ \ \ \`{},\ \{\ direction:\ \textcolor{stringliteral}{'top'},\ offset:\ [0,\ -\/20]\ \});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00144}00144\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00145}00145\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Evento\ Click:\ Cargar\ detalles}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00146}00146\ \ \ \ \ \ \ \ \ marker.on(\textcolor{stringliteral}{'click'},\ (e)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00147}00147\ \ \ \ \ \ \ \ \ \ \ \ \ L.DomEvent.stopPropagation(e);\ \textcolor{comment}{//\ Evitar\ propagación\ al\ mapa}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00148}00148\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{official__stations_8js_a03a4a11bc7ba25f22417a34d018bb8ff}{mostrarPopupDetalle}}(est,\ marker);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00149}00149\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00150}00150\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00151}00151\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{official__stations_8js_a6fed3af462549708f9ec991c4d7a2dfa}{capaEstaciones}}.addLayer(marker);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00152}00152\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00153}00153\ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00154}00154\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00155}00155\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00156}00156\ \textcolor{comment}{\ *\ @brief\ Carga\ y\ muestra\ los\ detalles\ completos\ de\ una\ estación\ en\ un\ popup.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00157}00157\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00158}00158\ \textcolor{comment}{\ *\ Realiza\ una\ segunda\ petición\ a\ la\ API\ usando\ el\ UID\ de\ la\ estación\ para\ obtener}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00159}00159\ \textcolor{comment}{\ *\ desglose\ de\ contaminantes\ (PM2.5,\ PM10,\ O3,\ etc.)\ y\ metadatos.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00160}00160\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00161}00161\ \textcolor{comment}{\ *\ @param\ \{Object\}\ estacionResumen\ -\/\ Datos\ básicos\ de\ la\ estación\ (incluye\ UID).}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00162}00162\ \textcolor{comment}{\ *\ @param\ \{L.Marker\}\ marker\ -\/\ El\ marcador\ sobre\ el\ cual\ abrir\ el\ popup.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00163}00163\ \textcolor{comment}{\ *\ @async}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00164}00164\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00165}\doxymbox{\hyperlink{official__stations_8js_a03a4a11bc7ba25f22417a34d018bb8ff}{00165}}\ async\ function\ \doxymbox{\hyperlink{official__stations_8js_a03a4a11bc7ba25f22417a34d018bb8ff}{mostrarPopupDetalle}}(estacionResumen,\ marker)\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00166}00166\ \ \ \ \ \textcolor{keyword}{const}\ popupOptions\ =\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00167}00167\ \ \ \ \ \ \ \ \ autoPan:\ \textcolor{keyword}{false},\ \textcolor{comment}{//\ Evita\ mover\ el\ mapa\ para\ no\ disparar\ recargas}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00168}00168\ \ \ \ \ \ \ \ \ className:\ \textcolor{stringliteral}{'official-\/popup-\/container'}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00169}00169\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00170}00170\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00171}00171\ \ \ \ \ \textcolor{comment}{//\ Popup\ temporal\ de\ carga}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00172}00172\ \ \ \ \ marker.bindPopup(\textcolor{stringliteral}{'<div\ style="{}padding:10px;\ text-\/align:center;\ color:\#5BA3F5"{}><i\ class="{}fas\ fa-\/spinner\ fa-\/spin"{}></i>\ Conectando...</div>'},\ popupOptions).openPopup();}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00173}00173\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00174}00174\ \ \ \ \ \textcolor{comment}{//\ URL\ de\ detalle\ por\ UID}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00175}00175\ \ \ \ \ \textcolor{keyword}{const}\ url\ =\ \`{}https:\textcolor{comment}{//api.waqi.info/feed/@\$\{estacionResumen.uid\}/?token=\$\{WAQI\_TOKEN\}`;}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00176}00176\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00177}00177\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00178}00178\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ res\ =\ await\ fetch(url);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00179}00179\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ json\ =\ await\ res.json();}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00180}00180\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00181}00181\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (json.status\ ===\ \textcolor{stringliteral}{'ok'})\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00182}00182\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ d\ =\ json.data;}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00183}00183\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ iaqa\ =\ d.iaqi;}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00184}00184\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00185}00185\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Diccionario\ de\ traducción\ de\ contaminantes}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00186}00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ nombres\ =\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00187}00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pm25:\ \textcolor{stringliteral}{"{}PM\ 2.5"{}},\ pm10:\ \textcolor{stringliteral}{"{}PM\ 10"{}},\ o3:\ \textcolor{stringliteral}{"{}Ozono\ (O₃)"{}},\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00188}00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ no2:\ \textcolor{stringliteral}{"{}NO₂"{}},\ so2:\ \textcolor{stringliteral}{"{}SO₂"{}},\ co:\ \textcolor{stringliteral}{"{}CO"{}},}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00189}00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ t:\ \textcolor{stringliteral}{"{}Temp."{}},\ h:\ \textcolor{stringliteral}{"{}Humedad"{}},\ w:\ \textcolor{stringliteral}{"{}Viento"{}},\ p:\ \textcolor{stringliteral}{"{}Presión"{}}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00190}00190\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00191}00191\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00192}00192\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Generación\ de\ lista\ HTML}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00193}00193\ \ \ \ \ \ \ \ \ \ \ \ \ let\ listadoHtml\ =\ \textcolor{stringliteral}{''};}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00194}00194\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ [key,\ val]\ of\ Object.entries(iaqa))\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00195}00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (nombres[key])\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00196}00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ listadoHtml\ +=\ \`{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00197}00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <li>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00198}00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <span\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}gas-\/name"{}}>\$\{nombres[key]\}</span>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00199}00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <span\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}gas-\/value"{}}>\$\{val.v\}</span>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00200}00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ </li>\`{};}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00201}00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00202}00202\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00203}00203\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00204}00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Construcción\ del\ HTML\ final}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00205}00205\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ html\ =\ \`{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00206}00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <div\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}official-\/popup"{}}>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00207}00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <div\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}popup-\/header"{}}\ style=\textcolor{stringliteral}{"{}background-\/color:\ \$\{obtenerColorAQI(d.aqi)\}"{}}>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00208}00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <span\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}city-\/name"{}}>\$\{d.city.name.split(\textcolor{charliteral}{','})[0]\}</span>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00209}00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <span\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}aqi-\/badge"{}}>AQI\ \$\{d.aqi\}</span>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00210}00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ </div>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00211}00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <div\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}popup-\/body"{}}>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00212}00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <div\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}last-\/update"{}}>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00213}00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <i\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}fas\ fa-\/clock"{}}></i>\ Hora:\ \$\{d.time.s.substring(11,\ 16)\}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00214}00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ </div>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00215}00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <ul\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}pollutant-\/list"{}}>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00216}00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\{listadoHtml\ ||\ \textcolor{stringliteral}{'<li>Datos\ generales\ solo</li>'}\}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00217}00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ </ul>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00218}00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <div\ \textcolor{keyword}{class}=\textcolor{stringliteral}{"{}popup-\/footer"{}}>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00219}00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Fuente:\ \$\{d.attributions[0]?.name\ ||\ \textcolor{stringliteral}{'GVA'}\}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00220}00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ </div>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00221}00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ </div>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00222}00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ </div>}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00223}00223\ \ \ \ \ \ \ \ \ \ \ \ \ \`{};}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00224}00224\ \ \ \ \ \ \ \ \ \ \ \ \ marker.setPopupContent(html);}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00225}00225\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00226}00226\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (e)\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00227}00227\ \ \ \ \ \ \ \ \ marker.setPopupContent(\textcolor{stringliteral}{'Error\ de\ conexión.'});}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00228}00228\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00229}00229\ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00230}00230\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00231}00231\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00232}00232\ \textcolor{comment}{\ *\ @brief\ Devuelve\ un\ color\ hexadecimal\ según\ el\ nivel\ de\ AQI.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00233}00233\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00234}00234\ \textcolor{comment}{\ *\ -\/\ 0-\/50:\ Verde\ (Bueno)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00235}00235\ \textcolor{comment}{\ *\ -\/\ 51-\/100:\ Amarillo\ (Moderado)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00236}00236\ \textcolor{comment}{\ *\ -\/\ 101-\/150:\ Naranja\ (Insalubre\ para\ grupos\ sensibles)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00237}00237\ \textcolor{comment}{\ *\ -\/\ 151-\/200:\ Rojo\ (Insalubre)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00238}00238\ \textcolor{comment}{\ *\ -\/\ 201-\/300:\ Morado\ (Muy\ insalubre)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00239}00239\ \textcolor{comment}{\ *\ -\/\ >300:\ Granate\ (Peligroso)}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00240}00240\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00241}00241\ \textcolor{comment}{\ *\ @param\ \{number\}\ aqi\ -\/\ Índice\ de\ Calidad\ del\ Aire.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00242}00242\ \textcolor{comment}{\ *\ @return\ \{string\}\ Color\ en\ formato\ Hex.}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00243}00243\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00244}\doxymbox{\hyperlink{official__stations_8js_a4b9629901b7f06d56f9cb26aad8d9914}{00244}}\ function\ \doxymbox{\hyperlink{official__stations_8js_a4b9629901b7f06d56f9cb26aad8d9914}{obtenerColorAQI}}(aqi)\ \{}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00245}00245\ \ \ \ \ \textcolor{keywordflow}{if}\ (aqi\ <=\ 50)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\#009966"{}};\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00246}00246\ \ \ \ \ \textcolor{keywordflow}{if}\ (aqi\ <=\ 100)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\#ffde33"{}};\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00247}00247\ \ \ \ \ \textcolor{keywordflow}{if}\ (aqi\ <=\ 150)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\#ff9933"{}};\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00248}00248\ \ \ \ \ \textcolor{keywordflow}{if}\ (aqi\ <=\ 200)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\#cc0033"{}};\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00249}00249\ \ \ \ \ \textcolor{keywordflow}{if}\ (aqi\ <=\ 300)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\#660099"{}};}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00250}00250\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\#7e0023"{}};\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00251}00251\ \}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00252}00252\ }
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00253}00253\ \textcolor{comment}{//\ Exposición\ global\ para\ acceso\ desde\ otros\ scripts}}
+\DoxyCodeLine{\Hypertarget{official__stations_8js_source_l00254}\doxymbox{\hyperlink{official__stations_8js_a77d62711b897e07b380c9573f2b00d5a}{00254}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.inicializarEstacionesOficiales\ =\ \doxymbox{\hyperlink{official__stations_8js_a77d62711b897e07b380c9573f2b00d5a}{inicializarEstacionesOficiales}};}
+
+\end{DoxyCode}

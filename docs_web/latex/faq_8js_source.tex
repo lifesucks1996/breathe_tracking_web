@@ -1,0 +1,260 @@
+\doxysection{faq.\+js}
+\hypertarget{faq_8js_source}{}\label{faq_8js_source}\index{src/js/faq.js@{src/js/faq.js}}
+\doxymbox{\hyperlink{faq_8js}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00001}00001\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00002}00002\ \textcolor{comment}{\ *\ @file\ faq.js}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00003}00003\ \textcolor{comment}{\ *\ @brief\ Módulo\ de\ Preguntas\ Frecuentes\ (FAQ)\ con\ interactividad\ completa.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00004}00004\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00005}00005\ \textcolor{comment}{\ *\ Gestiona\ la\ funcionalidad\ de\ la\ página\ de\ FAQ\ incluyendo:}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00006}00006\ \textcolor{comment}{\ *\ -\/\ Apertura/cierre\ de\ respuestas\ con\ animación\ suave}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00007}00007\ \textcolor{comment}{\ *\ -\/\ Navegación\ desde\ tabla\ de\ contenidos\ con\ scroll\ suave}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00008}00008\ \textcolor{comment}{\ *\ -\/\ Soporte\ de\ accesibilidad\ (ARIA,\ navegación\ por\ teclado)}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00009}00009\ \textcolor{comment}{\ *\ -\/\ Búsqueda\ de\ preguntas\ (función\ disponible)}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00010}00010\ \textcolor{comment}{\ *\ -\/\ Gestión\ de\ secciones\ (abrir/cerrar\ múltiples\ items)}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00011}00011\ \textcolor{comment}{\ *\ -\/\ Impresión\ de\ FAQ}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00012}00012\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00013}00013\ \textcolor{comment}{\ *\ @version\ 1.0}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00014}00014\ \textcolor{comment}{\ *\ @author\ Breathe\ Tracking\ Team}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00015}00015\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00017}00017\ \textcolor{comment}{//\ =====\ INICIALIZACIÓN\ =====}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00018}\doxymbox{\hyperlink{faq_8js_a1c8d70983aae4e9ab023f3f90accb068}{00018}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.addEventListener(\textcolor{stringliteral}{'DOMContentLoaded'},\ function()\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00019}00019\ \ \ \ \ \doxymbox{\hyperlink{faq_8js_a04614f58763e2b1687dcf2ff549a5d6e}{inicializarFAQ}}();}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00020}00020\ \ \ \ \ \doxymbox{\hyperlink{faq_8js_a56d748ffed9980e840d91120848586cb}{inicializarScrollNavegacion}}();}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00021}00021\ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00022}00022\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00023}00023\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00024}00024\ \textcolor{comment}{\ *\ @brief\ Inicializa\ todos\ los\ elementos\ FAQ\ y\ asigna\ listeners\ de\ eventos.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00025}00025\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00026}00026\ \textcolor{comment}{\ *\ Selecciona\ todos\ los\ elementos\ con\ clase\ 'faq-\/question'\ y\ añade\ un}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00027}00027\ \textcolor{comment}{\ *\ listener\ de\ clic\ a\ cada\ uno\ para\ abrir/cerrar\ su\ respuesta\ correspondiente.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00028}00028\ \textcolor{comment}{\ *\ void\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00029}00029\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00030}00030\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00031}\doxymbox{\hyperlink{faq_8js_a04614f58763e2b1687dcf2ff549a5d6e}{00031}}\ function\ \doxymbox{\hyperlink{faq_8js_a04614f58763e2b1687dcf2ff549a5d6e}{inicializarFAQ}}()\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00032}00032\ \ \ \ \ \textcolor{keyword}{const}\ preguntas\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.querySelectorAll(\textcolor{stringliteral}{'.faq-\/question'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00033}00033\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00034}00034\ \ \ \ \ preguntas.forEach(pregunta\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00035}00035\ \ \ \ \ \ \ \ \ pregunta.addEventListener(\textcolor{stringliteral}{'click'},\ function()\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00036}00036\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc}{abrirCerrarRespuesta}}(\textcolor{keyword}{this});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00037}00037\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00038}00038\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00039}00039\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00040}00040\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00041}00041\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00042}00042\ \textcolor{comment}{\ *\ @brief\ Alterna\ la\ apertura/cierre\ de\ una\ respuesta\ FAQ\ con\ animación\ suave.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00043}00043\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00044}00044\ \textcolor{comment}{\ *\ Si\ la\ pregunta\ está\ cerrada,\ la\ abre\ y\ hace\ scroll\ suave\ hacia\ ella.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00045}00045\ \textcolor{comment}{\ *\ Si\ está\ abierta,\ simplemente\ la\ cierra.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00046}00046\ \textcolor{comment}{\ *\ Actualiza\ el\ atributo\ aria-\/expanded\ para\ accesibilidad.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00047}00047\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00048}00048\ \textcolor{comment}{\ *\ @param\ \{Element\}\ elemento\ -\/\ El\ botón\ .faq-\/question\ clickeado}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00049}00049\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00050}00050\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00051}\doxymbox{\hyperlink{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc}{00051}}\ function\ \doxymbox{\hyperlink{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc}{abrirCerrarRespuesta}}(elemento)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00052}00052\ \ \ \ \ \textcolor{keyword}{const}\ item\ =\ elemento.closest(\textcolor{stringliteral}{'.faq-\/item'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00053}00053\ \ \ \ \ \textcolor{keyword}{const}\ yaAbierto\ =\ item.classList.contains(\textcolor{stringliteral}{'active'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00054}00054\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00055}00055\ \ \ \ \ \textcolor{comment}{//\ Cerrar\ todos\ los\ items\ abiertos\ (opcional:\ descomenta\ para\ acordeón)}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00056}00056\ \ \ \ \ \textcolor{comment}{//\ cerrarTodas();}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00057}00057\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00058}00058\ \ \ \ \ \textcolor{comment}{//\ Alternar\ el\ estado\ del\ item\ actual}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00059}00059\ \ \ \ \ \textcolor{keywordflow}{if}\ (yaAbierto)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00060}00060\ \ \ \ \ \ \ \ \ item.classList.remove(\textcolor{stringliteral}{'active'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00061}00061\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Animar\ el\ cierre}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00062}00062\ \ \ \ \ \ \ \ \ elemento.setAttribute(\textcolor{stringliteral}{'aria-\/expanded'},\ \textcolor{stringliteral}{'false'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00063}00063\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00064}00064\ \ \ \ \ \ \ \ \ item.classList.add(\textcolor{stringliteral}{'active'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00065}00065\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Animar\ la\ apertura}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00066}00066\ \ \ \ \ \ \ \ \ elemento.setAttribute(\textcolor{stringliteral}{'aria-\/expanded'},\ \textcolor{stringliteral}{'true'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00067}00067\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00068}00068\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Scroll\ suave\ hacia\ la\ pregunta\ abierta}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00069}00069\ \ \ \ \ \ \ \ \ elemento.scrollIntoView(\{\ behavior:\ \textcolor{stringliteral}{'smooth'},\ block:\ \textcolor{stringliteral}{'nearest'}\ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00070}00070\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00071}00071\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00072}00072\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00073}00073\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00074}00074\ \textcolor{comment}{\ *\ @brief\ Cierra\ todas\ las\ respuestas\ FAQ\ visibles\ en\ la\ página.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00075}00075\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00076}00076\ \textcolor{comment}{\ *\ Elimina\ la\ clase\ 'active'\ de\ todos\ los\ items\ .faq-\/item}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00077}00077\ \textcolor{comment}{\ *\ y\ actualiza\ los\ atributos\ aria-\/expanded\ para\ accesibilidad.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00078}00078\ \textcolor{comment}{\ *\ Útil\ para\ implementar\ modo\ acordeón.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00079}00079\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00080}00080\ \textcolor{comment}{\ *\ void\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00081}00081\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00082}00082\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00083}\doxymbox{\hyperlink{faq_8js_a62f10544b3cef2cf404d923985762a8c}{00083}}\ function\ \doxymbox{\hyperlink{faq_8js_a62f10544b3cef2cf404d923985762a8c}{cerrarTodas}}()\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00084}00084\ \ \ \ \ \textcolor{keyword}{const}\ todosLosItems\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.querySelectorAll(\textcolor{stringliteral}{'.faq-\/item'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00085}00085\ \ \ \ \ todosLosItems.forEach(item\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00086}00086\ \ \ \ \ \ \ \ \ item.classList.remove(\textcolor{stringliteral}{'active'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00087}00087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ boton\ =\ item.querySelector(\textcolor{stringliteral}{'.faq-\/question'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00088}00088\ \ \ \ \ \ \ \ \ boton.setAttribute(\textcolor{stringliteral}{'aria-\/expanded'},\ \textcolor{stringliteral}{'false'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00089}00089\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00090}00090\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00091}00091\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00092}00092\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00093}00093\ \textcolor{comment}{\ *\ @brief\ Inicializa\ la\ navegación\ desde\ la\ tabla\ de\ contenidos\ con\ scroll\ suave.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00094}00094\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00095}00095\ \textcolor{comment}{\ *\ Asigna\ listeners\ a\ todos\ los\ enlaces\ de\ la\ tabla\ de\ contenidos.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00096}00096\ \textcolor{comment}{\ *\ Cuando\ se\ hace\ clic,\ realiza\ un\ scroll\ suave\ hacia\ la\ sección\ destino}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00097}00097\ \textcolor{comment}{\ *\ y\ abre\ automáticamente\ el\ primer\ FAQ\ de\ esa\ sección.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00098}00098\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00099}00099\ \textcolor{comment}{\ *\ void\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00100}00100\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00101}00101\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00102}\doxymbox{\hyperlink{faq_8js_a56d748ffed9980e840d91120848586cb}{00102}}\ function\ \doxymbox{\hyperlink{faq_8js_a56d748ffed9980e840d91120848586cb}{inicializarScrollNavegacion}}()\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00103}00103\ \ \ \ \ \textcolor{keyword}{const}\ enlaces\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.querySelectorAll(\textcolor{stringliteral}{'.table-\/of-\/contents\ a'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00104}00104\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00105}00105\ \ \ \ \ enlaces.forEach(enlace\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00106}00106\ \ \ \ \ \ \ \ \ enlace.addEventListener(\textcolor{stringliteral}{'click'},\ function(e)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ e.preventDefault();}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00108}00108\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00109}00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ idDestino\ =\ this.getAttribute(\textcolor{stringliteral}{'href'}).substring(1);}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00110}00110\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ elemento\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(idDestino);}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00111}00111\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00112}00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (elemento)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00113}00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Scroll\ suave\ hacia\ la\ sección}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00114}00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ elemento.scrollIntoView(\{\ behavior:\ \textcolor{stringliteral}{'smooth'}\ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00115}00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00116}00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Opcional:\ Abrir\ el\ primer\ FAQ\ de\ la\ sección}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00117}00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{faq_8js_a000b16dddb5d547135f34687a9045f81}{abrirPrimerFAQDelaSección}}(elemento);}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00118}00118\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00119}00119\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00120}00120\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00121}00121\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00122}00122\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00123}00123\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00124}00124\ \textcolor{comment}{\ *\ @brief\ Abre\ el\ primer\ item\ FAQ\ de\ una\ sección\ específica.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00125}00125\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00126}00126\ \textcolor{comment}{\ *\ Busca\ el\ primer\ elemento\ .faq-\/item\ dentro\ de\ la\ sección\ proporcionada.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00127}00127\ \textcolor{comment}{\ *\ Si\ existe\ y\ no\ está\ activo,\ lo\ activa\ y\ actualiza\ aria-\/expanded.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00128}00128\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00129}00129\ \textcolor{comment}{\ *\ @param\ \{Element\}\ seccion\ -\/\ La\ sección\ (elemento\ DOM)\ a\ procesar}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00130}00130\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00131}00131\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00132}\doxymbox{\hyperlink{faq_8js_a000b16dddb5d547135f34687a9045f81}{00132}}\ function\ \doxymbox{\hyperlink{faq_8js_a000b16dddb5d547135f34687a9045f81}{abrirPrimerFAQDelaSección}}(seccion)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00133}00133\ \ \ \ \ \textcolor{keyword}{const}\ primerItem\ =\ seccion.querySelector(\textcolor{stringliteral}{'.faq-\/item'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00134}00134\ \ \ \ \ \textcolor{keywordflow}{if}\ (primerItem\ \&\&\ !primerItem.classList.contains(\textcolor{stringliteral}{'active'}))\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00135}00135\ \ \ \ \ \ \ \ \ primerItem.classList.add(\textcolor{stringliteral}{'active'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00136}00136\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ boton\ =\ primerItem.querySelector(\textcolor{stringliteral}{'.faq-\/question'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00137}00137\ \ \ \ \ \ \ \ \ boton.setAttribute(\textcolor{stringliteral}{'aria-\/expanded'},\ \textcolor{stringliteral}{'true'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00138}00138\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00139}00139\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00140}00140\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00141}00141\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00142}00142\ \textcolor{comment}{\ *\ @brief\ Busca\ preguntas\ FAQ\ según\ un\ término\ de\ búsqueda.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00143}00143\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00144}00144\ \textcolor{comment}{\ *\ Filtra\ los\ items\ FAQ\ mostrando\ solo\ aquellos\ cuya\ pregunta\ o\ respuesta}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00145}00145\ \textcolor{comment}{\ *\ contenga\ el\ término\ buscado\ (case-\/insensitive).}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00146}00146\ \textcolor{comment}{\ *\ Oculta\ el\ resto\ mediante\ display:\ 'none'.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00147}00147\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00148}00148\ \textcolor{comment}{\ *\ @param\ \{string\}\ termino\ -\/\ El\ término\ a\ buscar\ en\ preguntas\ y\ respuestas}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00149}00149\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00150}00150\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00151}\doxymbox{\hyperlink{faq_8js_a0e95767122058af28757d7187edf8e18}{00151}}\ function\ \doxymbox{\hyperlink{faq_8js_a0e95767122058af28757d7187edf8e18}{buscarPreguntas}}(termino)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00152}00152\ \ \ \ \ \textcolor{keyword}{const}\ items\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.querySelectorAll(\textcolor{stringliteral}{'.faq-\/item'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00153}00153\ \ \ \ \ \textcolor{keyword}{const}\ terminoLower\ =\ termino.toLowerCase();}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00154}00154\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00155}00155\ \ \ \ \ items.forEach(item\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00156}00156\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ pregunta\ =\ item.querySelector(\textcolor{stringliteral}{'.faq-\/question\ .question-\/text'}).textContent.toLowerCase();}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00157}00157\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ respuesta\ =\ item.querySelector(\textcolor{stringliteral}{'.faq-\/answer'}).textContent.toLowerCase();}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00158}00158\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00159}00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pregunta.includes(terminoLower)\ ||\ respuesta.includes(terminoLower))\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00160}00160\ \ \ \ \ \ \ \ \ \ \ \ \ item.style.display\ =\ \textcolor{stringliteral}{'block'};}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00161}00161\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00162}00162\ \ \ \ \ \ \ \ \ \ \ \ \ item.style.display\ =\ \textcolor{stringliteral}{'none'};}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00163}00163\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00164}00164\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00165}00165\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00166}00166\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00167}00167\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00168}00168\ \textcolor{comment}{\ *\ @brief\ Listener\ de\ teclado\ para\ navegar\ FAQ\ con\ Tab\ +\ Enter\ (accesibilidad).}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00169}00169\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00170}00170\ \textcolor{comment}{\ *\ Permite\ a\ usuarios\ navegar\ el\ FAQ\ usando\ solo\ teclado.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00171}00171\ \textcolor{comment}{\ *\ Enter\ abre/cierra\ la\ pregunta\ enfocada.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00172}00172\ \textcolor{comment}{\ *\ Previene\ el\ comportamiento\ por\ defecto\ de\ Enter\ cuando\ se\ enfoca\ un\ .faq-\/question.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00173}00173\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00174}00174\ \textcolor{comment}{\ *\ @event\ keydown\ -\/\ Se\ dispara\ cuando\ se\ presiona\ una\ tecla}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00175}00175\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00176}00176\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00177}\doxymbox{\hyperlink{faq_8js_adfec76c8f215c3d02da1caac66d1342f}{00177}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.addEventListener(\textcolor{stringliteral}{'keydown'},\ function(event)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00178}00178\ \ \ \ \ \textcolor{keywordflow}{if}\ (event.key\ ===\ \textcolor{stringliteral}{'Enter'})\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00179}00179\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ elemento\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.activeElement;}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00180}00180\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (elemento.classList.contains(\textcolor{stringliteral}{'faq-\/question'}))\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00181}00181\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{event}.preventDefault();}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00182}00182\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{faq_8js_a9e5ad54c2f30a8b78766baa896fa0bcc}{abrirCerrarRespuesta}}(elemento);}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00183}00183\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00184}00184\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00185}00185\ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00186}00186\ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00187}00187\ \textcolor{comment}{//\ =====\ UTILIDADES\ =====}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00188}00188\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00189}00189\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00190}00190\ \textcolor{comment}{\ *\ @brief\ Abre\ todos\ los\ items\ FAQ\ de\ una\ sección\ específica.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00191}00191\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00192}00192\ \textcolor{comment}{\ *\ Busca\ la\ sección\ por\ su\ ID\ y\ abre\ todos\ los\ .faq-\/item\ dentro.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00193}00193\ \textcolor{comment}{\ *\ Actualiza\ los\ atributos\ aria-\/expanded\ para\ accesibilidad.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00194}00194\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00195}00195\ \textcolor{comment}{\ *\ @param\ \{string\}\ idSeccion\ -\/\ El\ ID\ HTML\ de\ la\ sección\ a\ expandir}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00196}00196\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00197}00197\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00198}\doxymbox{\hyperlink{faq_8js_a867b2df531ce2f83ba9233a5fcda526c}{00198}}\ function\ \doxymbox{\hyperlink{faq_8js_a867b2df531ce2f83ba9233a5fcda526c}{abrirTodosDeLaSección}}(idSeccion)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00199}00199\ \ \ \ \ \textcolor{keyword}{const}\ seccion\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(idSeccion);}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00200}00200\ \ \ \ \ \textcolor{keywordflow}{if}\ (!seccion)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00201}00201\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00202}00202\ \ \ \ \ \textcolor{keyword}{const}\ items\ =\ seccion.querySelectorAll(\textcolor{stringliteral}{'.faq-\/item'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00203}00203\ \ \ \ \ items.forEach(item\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00204}00204\ \ \ \ \ \ \ \ \ item.classList.add(\textcolor{stringliteral}{'active'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00205}00205\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ boton\ =\ item.querySelector(\textcolor{stringliteral}{'.faq-\/question'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00206}00206\ \ \ \ \ \ \ \ \ boton.setAttribute(\textcolor{stringliteral}{'aria-\/expanded'},\ \textcolor{stringliteral}{'true'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00207}00207\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00208}00208\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00209}00209\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00210}00210\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00211}00211\ \textcolor{comment}{\ *\ @brief\ Cierra\ todos\ los\ items\ FAQ\ de\ una\ sección\ específica.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00212}00212\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00213}00213\ \textcolor{comment}{\ *\ Busca\ la\ sección\ por\ su\ ID\ y\ cierra\ todos\ los\ .faq-\/item\ dentro.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00214}00214\ \textcolor{comment}{\ *\ Actualiza\ los\ atributos\ aria-\/expanded\ para\ accesibilidad.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00215}00215\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00216}00216\ \textcolor{comment}{\ *\ @param\ \{string\}\ idSeccion\ -\/\ El\ ID\ HTML\ de\ la\ sección\ a\ contraer}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00217}00217\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00218}00218\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00219}\doxymbox{\hyperlink{faq_8js_a643ac3b3e7a4f1acebf2e046464826c6}{00219}}\ function\ \doxymbox{\hyperlink{faq_8js_a643ac3b3e7a4f1acebf2e046464826c6}{cerrarTodosDeLaSección}}(idSeccion)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00220}00220\ \ \ \ \ \textcolor{keyword}{const}\ seccion\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(idSeccion);}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00221}00221\ \ \ \ \ \textcolor{keywordflow}{if}\ (!seccion)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00222}00222\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00223}00223\ \ \ \ \ \textcolor{keyword}{const}\ items\ =\ seccion.querySelectorAll(\textcolor{stringliteral}{'.faq-\/item'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00224}00224\ \ \ \ \ items.forEach(item\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00225}00225\ \ \ \ \ \ \ \ \ item.classList.remove(\textcolor{stringliteral}{'active'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00226}00226\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ boton\ =\ item.querySelector(\textcolor{stringliteral}{'.faq-\/question'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00227}00227\ \ \ \ \ \ \ \ \ boton.setAttribute(\textcolor{stringliteral}{'aria-\/expanded'},\ \textcolor{stringliteral}{'false'});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00228}00228\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00229}00229\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00230}00230\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00231}00231\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00232}00232\ \textcolor{comment}{\ *\ @brief\ Abre\ el\ diálogo\ de\ impresión\ del\ navegador\ para\ imprimir\ la\ página\ FAQ.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00233}00233\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00234}00234\ \textcolor{comment}{\ *\ Invoca\ window.print()\ para\ abrir\ el\ cuadro\ de\ diálogo\ de\ impresión.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00235}00235\ \textcolor{comment}{\ *\ El\ CSS\ @media\ print\ puede\ personalizar\ la\ salida\ de\ impresión.}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00236}00236\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00237}00237\ \textcolor{comment}{\ *\ void\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00238}00238\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00239}00239\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00240}\doxymbox{\hyperlink{faq_8js_a0c16a52c68b5aee6db910e22d5fbab46}{00240}}\ function\ \doxymbox{\hyperlink{faq_8js_a0c16a52c68b5aee6db910e22d5fbab46}{imprimirFAQ}}()\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00241}00241\ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.print();}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00242}00242\ \}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00243}00243\ }
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00244}00244\ \textcolor{comment}{//\ Exportar\ funciones\ si\ se\ usa\ como\ módulo}}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00245}\doxymbox{\hyperlink{faq_8js_a055563d333ba4a61b84ebe56ced06d6b}{00245}}\ \textcolor{keywordflow}{if}\ (typeof\ module\ !==\ \textcolor{stringliteral}{'undefined'}\ \&\&\ module.exports)\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00246}00246\ \ \ \ \ \textcolor{keyword}{module}.exports\ =\ \{}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00247}00247\ \ \ \ \ \ \ \ \ inicializarFAQ,}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00248}00248\ \ \ \ \ \ \ \ \ abrirCerrarRespuesta,}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00249}00249\ \ \ \ \ \ \ \ \ buscarPreguntas,}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00250}00250\ \ \ \ \ \ \ \ \ abrirTodosDeLaSección,}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00251}00251\ \ \ \ \ \ \ \ \ cerrarTodosDeLaSección,}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00252}00252\ \ \ \ \ \ \ \ \ imprimirFAQ}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00253}00253\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{faq_8js_source_l00254}00254\ \}}
+
+\end{DoxyCode}

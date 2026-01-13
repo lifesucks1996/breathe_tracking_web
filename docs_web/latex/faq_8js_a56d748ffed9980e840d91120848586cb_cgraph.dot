@@ -1,0 +1,11 @@
+digraph "inicializarScrollNavegacion"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="inicializarScrollNavegacion",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Inicializa la navegación desde la tabla de contenidos con scroll suave."];
+  Node1 -> Node2 [id="edge2_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="abrirPrimerFAQDelaSección",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$faq_8js.html#a000b16dddb5d547135f34687a9045f81",tooltip="Abre el primer item FAQ de una sección específica."];
+}

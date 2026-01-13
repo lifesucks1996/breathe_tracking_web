@@ -1,0 +1,394 @@
+\doxysection{users\+\_\+profile.\+js}
+\hypertarget{users__profile_8js_source}{}\label{users__profile_8js_source}\index{src/js/users\_profile.js@{src/js/users\_profile.js}}
+\doxymbox{\hyperlink{users__profile_8js}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00001}00001\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00002}00002\ \textcolor{comment}{\ *\ @file\ users\_profile.js}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00003}00003\ \textcolor{comment}{\ *\ @brief\ Gestor\ de\ sesión\ de\ usuario\ y\ manipulación\ de\ datos\ de\ perfil\ (CRUD).}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00004}00004\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00005}00005\ \textcolor{comment}{\ *\ Este\ script\ actúa\ como\ el\ controlador\ principal\ de\ la\ página\ de\ perfil.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00006}00006\ \textcolor{comment}{\ *\ Sus\ responsabilidades\ incluyen:}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00007}00007\ \textcolor{comment}{\ *\ 1.\ Escuchar\ cambios\ en\ la\ autenticación\ de\ Firebase\ (Login/Logout).}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00008}00008\ \textcolor{comment}{\ *\ 2.\ Recuperar\ datos\ del\ usuario\ desde\ Firestore\ (soportando\ búsqueda\ por\ UID\ o\ Email).}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00009}00009\ \textcolor{comment}{\ *\ 3.\ Renderizar\ la\ información\ en\ el\ DOM.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00010}00010\ \textcolor{comment}{\ *\ 4.\ Gestionar\ el\ formulario\ de\ edición\ y\ guardar\ los\ cambios\ en\ la\ base\ de\ datos.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00011}00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00013}00013\ \textcolor{keyword}{import}\ \{\ initializeApp,\ getApp,\ getApps\ \}\ from\ "{}https://www.gstatic.com/firebasejs/10.12.2/firebase-\/app.js"{};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00014}00014\ \textcolor{keyword}{import}\ \{\ getAuth,\ onAuthStateChanged,\ signOut,\ reauthenticateWithCredential,\ EmailAuthProvider,\ updatePassword\ \}\ from\ "{}https://www.gstatic.com/firebasejs/10.12.2/firebase-\/auth.js"{};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00015}00015\ \textcolor{keyword}{import}\ \{\ getFirestore,\ doc,\ getDoc,\ setDoc\ \}\ from\ "{}https://www.gstatic.com/firebasejs/10.12.2/firebase-\/firestore.js"{};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00016}00016\ \textcolor{keyword}{import}\ \{\ openModal,\ closeModal,\ validate,\ clearFieldErrors,\ updatePasswordRequirements\ \}\ from\ "{}\doxymbox{\hyperlink{users__edit_8js}{./users\_edit.js}}"{};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00018}00018\ \textcolor{comment}{//\ Configuración\ de\ conexión}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00019}\doxymbox{\hyperlink{users__profile_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{00019}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebaseConfig}}\ =\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00020}00020\ \ \ \ \ apiKey:\ \textcolor{stringliteral}{"{}AIzaSyCbAVEYYdtSLmrH\_opCM72G\_G01QXPRZ48"{}},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00021}00021\ \ \ \ \ authDomain:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebaseapp.com"{}},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00022}00022\ \ \ \ \ databaseURL:\ \textcolor{stringliteral}{"{}https://biometria-\/g3-\/default-\/rtdb.europe-\/west1.firebasedatabase.app"{}},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00023}00023\ \ \ \ \ projectId:\ \textcolor{stringliteral}{"{}biometria-\/g3"{}},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00024}00024\ \ \ \ \ storageBucket:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebasestorage.app"{}},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00025}00025\ \ \ \ \ messagingSenderId:\ \textcolor{stringliteral}{"{}817957103566"{}},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00026}00026\ \ \ \ \ appId:\ \textcolor{stringliteral}{"{}1:817957103566:web:75c78a0a28f3380d092d9f"{}}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00027}00027\ \};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00029}00029\ \textcolor{comment}{//\ Inicialización\ Singleton\ (evita\ errores\ si\ el\ script\ se\ carga\ dos\ veces)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00030}\doxymbox{\hyperlink{users__profile_8js_a61cd714f583f5ea8c02710a85ef32b9c}{00030}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensors_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}}\ =\ getApps().length\ ?\ getApp()\ :\ initializeApp(\doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebaseConfig}});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00031}\doxymbox{\hyperlink{users__profile_8js_ae24006db5a243dcdeeb58c174e0bba64}{00031}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}\ =\ getAuth(\doxymbox{\hyperlink{admin__sensors_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00032}\doxymbox{\hyperlink{users__profile_8js_a654025a65d621cdee9f702b15aaf71d2}{00032}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}\ =\ getFirestore(\doxymbox{\hyperlink{admin__sensors_8js_a61cd714f583f5ea8c02710a85ef32b9c}{app}});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00034}00034\ \textcolor{comment}{//\ Variables\ de\ estado\ global\ para\ el\ contexto\ del\ usuario}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00035}\doxymbox{\hyperlink{users__profile_8js_ac251a9277170fcfab02d38719b3016d4}{00035}}\ let\ \doxymbox{\hyperlink{users__profile_8js_ac251a9277170fcfab02d38719b3016d4}{currentUserId}}\ =\ null;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00036}\doxymbox{\hyperlink{users__profile_8js_a83299da92c845611d25e3d5e3d8031b6}{00036}}\ let\ \doxymbox{\hyperlink{users__profile_8js_a83299da92c845611d25e3d5e3d8031b6}{currentProfileDocId}}\ =\ null;\ \textcolor{comment}{//\ Almacena\ el\ ID\ real\ del\ documento\ (puede\ ser\ UID\ o\ Email)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00038}00038\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00039}\doxymbox{\hyperlink{users__profile_8js_afdaecb21a692a73a24031b2d63660a3e}{00039}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.addEventListener(\textcolor{stringliteral}{'DOMContentLoaded'},\ function\ ()\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00040}00040\ \ \ \ \ \textcolor{comment}{//\ 1.\ Referencias\ UI\ Generales}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00041}00041\ \ \ \ \ \textcolor{keyword}{const}\ statusEl\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'status'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00042}00042\ \ \ \ \ \textcolor{keyword}{const}\ editForm\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'editForm'});\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00043}00043\ \ \ \ \ \textcolor{keyword}{const}\ modalBackdrop\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'modal-\/edit'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00044}00044\ \ \ \ \ \textcolor{keyword}{const}\ btnEdit\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'btn-\/edit'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00045}00045\ \ \ \ \ \textcolor{keyword}{const}\ btnCancel\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'edit-\/cancel'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00047}00047\ \ \ \ \ \textcolor{comment}{//\ 2.\ Referencias\ a\ los\ elementos\ de\ visualización\ (Solo\ lectura)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00048}00048\ \ \ \ \ \textcolor{keyword}{const}\ pNombre\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'p-\/nombre'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00049}00049\ \ \ \ \ \textcolor{keyword}{const}\ pApellidos\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'p-\/apellidos'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00050}00050\ \ \ \ \ \textcolor{keyword}{const}\ pCp\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'p-\/cp'});\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00051}00051\ \ \ \ \ \textcolor{keyword}{const}\ pEmail\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'p-\/email'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00053}00053\ \ \ \ \ \textcolor{comment}{//\ 3.\ Referencias\ a\ Inputs\ del\ modal\ (Edición)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00054}00054\ \ \ \ \ \textcolor{keyword}{const}\ editNombre\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'edit-\/nombre'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00055}00055\ \ \ \ \ \textcolor{keyword}{const}\ editApellidos\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'edit-\/apellidos'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00056}00056\ \ \ \ \ \textcolor{keyword}{const}\ editCp\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'edit-\/cp'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00057}00057\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00058}00058\ \ \ \ \ \textcolor{comment}{//\ 4.\ Referencias\ a\ Inputs\ de\ cambio\ de\ contraseña}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00059}00059\ \ \ \ \ \textcolor{keyword}{const}\ editCurrentPassword\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'edit-\/current-\/password'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00060}00060\ \ \ \ \ \textcolor{keyword}{const}\ editNewPassword\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'edit-\/new-\/password'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00061}00061\ \ \ \ \ \textcolor{keyword}{const}\ editConfirmPassword\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'edit-\/confirm-\/password'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00062}00062\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00063}00063\ \ \ \ \ \textcolor{comment}{//\ 5.\ Listeners\ de\ toggle\ de\ visibilidad\ de\ contraseña}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00064}00064\ \ \ \ \ \textcolor{keyword}{const}\ passwordToggles\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.querySelectorAll(\textcolor{stringliteral}{'.password-\/input-\/wrapper\ .toggle-\/password'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00065}00065\ \ \ \ \ passwordToggles.forEach(toggle\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00066}00066\ \ \ \ \ \ \ \ \ toggle.addEventListener(\textcolor{stringliteral}{'click'},\ function()\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00067}00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ wrapper\ =\ toggle.closest(\textcolor{stringliteral}{'.password-\/input-\/wrapper'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00068}00068\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ input\ =\ wrapper.querySelector(\textcolor{stringliteral}{'input'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00069}00069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ eyeOpen\ =\ toggle.querySelector(\textcolor{stringliteral}{'.fas.fa-\/eye'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00070}00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ eyeClosed\ =\ toggle.querySelector(\textcolor{stringliteral}{'.fas.fa-\/eye-\/slash'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00071}00071\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (input.type\ ===\ \textcolor{stringliteral}{'password'})\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ input.type\ =\ \textcolor{stringliteral}{'text'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00074}00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eyeOpen.style.display\ =\ \textcolor{stringliteral}{'none'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eyeClosed.style.display\ =\ \textcolor{stringliteral}{'inline-\/block'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00076}00076\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00077}00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ input.type\ =\ \textcolor{stringliteral}{'password'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00078}00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eyeOpen.style.display\ =\ \textcolor{stringliteral}{'inline-\/block'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00079}00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ eyeClosed.style.display\ =\ \textcolor{stringliteral}{'none'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00081}00081\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00082}00082\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00083}00083\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00084}00084\ \ \ \ \ \textcolor{comment}{//\ 6.\ Listener\ en\ tiempo\ real\ para\ validar\ requisitos\ de\ contraseña}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00085}00085\ \ \ \ \ \textcolor{keywordflow}{if}\ (editNewPassword)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00086}00086\ \ \ \ \ \ \ \ \ editNewPassword.addEventListener(\textcolor{stringliteral}{'input'},\ ()\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00087}00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (editNewPassword.value)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00088}00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{users__edit_8js_a31d25edbd7cb1e364dcd593207f65b76}{updatePasswordRequirements}}(editNewPassword.value);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00089}00089\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00090}00090\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00091}00091\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00092}00092\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00093}00093\ \ \ \ \ \textcolor{comment}{//\ Referencia\ para\ control\ de\ navegación}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00094}00094\ \ \ \ \ \textcolor{keyword}{const}\ loginLink\ =\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.querySelector(\textcolor{stringliteral}{'.header-\/nav\ a[href="{}login.html"{}]'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00095}00095\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00096}00096\ \textcolor{comment}{\ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00097}00097\ \textcolor{comment}{\ \ \ \ \ *\ @brief\ Muestra\ un\ mensaje\ de\ retroalimentación\ visual\ al\ usuario.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00098}00098\ \textcolor{comment}{\ \ \ \ \ *\ message:string,\ type:string\ -\/>\ showStatus()\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00099}00099\ \textcolor{comment}{\ \ \ \ \ *\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00100}00100\ \textcolor{comment}{\ \ \ \ \ *\ Hace\ visible\ la\ barra\ de\ estado\ con\ un\ color\ específico\ (info,\ success,\ error)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00101}00101\ \textcolor{comment}{\ \ \ \ \ *\ y\ programa\ su\ ocultación\ automática\ tras\ 5\ segundos.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00102}00102\ \textcolor{comment}{\ \ \ \ \ *\ *\ @param\ message\ El\ texto\ a\ mostrar.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00103}00103\ \textcolor{comment}{\ \ \ \ \ *\ @param\ type\ El\ tipo\ de\ alerta\ ('info',\ 'warning',\ 'error',\ 'success').}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00104}00104\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00105}00105\ \ \ \ \ function\ showStatus(message,\ type\ =\ \textcolor{stringliteral}{'info'})\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00106}00106\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!statusEl)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00107}00107\ \ \ \ \ \ \ \ \ statusEl.textContent\ =\ message;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00108}00108\ \ \ \ \ \ \ \ \ statusEl.className\ =\ \textcolor{stringliteral}{'status-\/bar\ show\ '}\ +\ (type\ ?\ \textcolor{stringliteral}{'status-\/'}\ +\ type\ :\ \textcolor{stringliteral}{''});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00109}00109\ \ \ \ \ \ \ \ \ setTimeout(hideStatus,\ 5000);\ \textcolor{comment}{//\ Ocultar\ después\ de\ 5\ segundos}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00110}00110\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00111}00111\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00112}00112\ \textcolor{comment}{\ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00113}00113\ \textcolor{comment}{\ \ \ \ \ *\ @brief\ Oculta\ la\ barra\ de\ estado\ inmediatamente.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00114}00114\ \textcolor{comment}{\ \ \ \ \ *\ (void)\ -\/>\ hideStatus()\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00115}00115\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00116}00116\ \ \ \ \ function\ hideStatus()\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00117}00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!statusEl)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00118}00118\ \ \ \ \ \ \ \ \ statusEl.className\ =\ \textcolor{stringliteral}{'status-\/bar'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00119}00119\ \ \ \ \ \ \ \ \ statusEl.textContent\ =\ \textcolor{stringliteral}{''};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00120}00120\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00121}00121\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00122}00122\ \textcolor{comment}{\ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00123}00123\ \textcolor{comment}{\ \ \ \ \ *\ @brief\ Actualiza\ el\ DOM\ con\ los\ datos\ del\ usuario.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00124}00124\ \textcolor{comment}{\ \ \ \ \ *\ user:Object\ -\/>\ renderProfile()\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00125}00125\ \textcolor{comment}{\ \ \ \ \ *\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00126}00126\ \textcolor{comment}{\ \ \ \ \ *\ Si\ el\ objeto\ usuario\ es\ válido,\ rellena\ los\ campos\ de\ texto.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00127}00127\ \textcolor{comment}{\ \ \ \ \ *\ Si\ es\ null\ o\ undefined,\ muestra\ guiones\ (—)\ como\ placeholders.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00128}00128\ \textcolor{comment}{\ \ \ \ \ *\ *\ @param\ user\ Objeto\ con\ las\ propiedades\ del\ usuario\ (nombre,\ apellidos,\ cp,\ email).}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00129}00129\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00130}00130\ \ \ \ \ function\ renderProfile(user)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00131}00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!user)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Estado\ vacío\ /\ Cargando}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ pNombre.textContent\ =\ \textcolor{stringliteral}{'—'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ pApellidos.textContent\ =\ \textcolor{stringliteral}{'—'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \ \ pCp.textContent\ =\ \textcolor{stringliteral}{'—'};\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00136}00136\ \ \ \ \ \ \ \ \ \ \ \ \ pEmail.textContent\ =\ \textcolor{stringliteral}{'—'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00137}00137\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'p-\/password'}).textContent\ =\ \textcolor{stringliteral}{'••••••••'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00138}00138\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00139}00139\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00140}00140\ \ \ \ \ \ \ \ \ hideStatus();}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00141}00141\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00142}00142\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Inyección\ de\ datos\ segura\ (prevención\ básica\ de\ XSS\ vía\ textContent)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00143}00143\ \ \ \ \ \ \ \ \ pNombre.textContent\ =\ user.nombre\ ||\ \textcolor{stringliteral}{'—'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00144}00144\ \ \ \ \ \ \ \ \ pApellidos.textContent\ =\ user.apellidos\ ||\ \textcolor{stringliteral}{'—'};\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00145}00145\ \ \ \ \ \ \ \ \ pCp.textContent\ =\ user.cp\ ||\ \textcolor{stringliteral}{'—'};\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00146}00146\ \ \ \ \ \ \ \ \ pEmail.textContent\ =\ user.email\ ||\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser?.email\ ||\ \textcolor{stringliteral}{'—'};\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00147}00147\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'p-\/password'}).textContent\ =\ \textcolor{stringliteral}{'••••••••'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00148}00148\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00149}00149\ \ \ \ \ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00150}00150\ \textcolor{comment}{\ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00151}00151\ \textcolor{comment}{\ \ \ \ \ *\ @brief\ Prepara\ el\ formulario\ del\ modal\ con\ los\ valores\ actuales.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00152}00152\ \textcolor{comment}{\ \ \ \ \ *\ userData:Object\ -\/>\ fillEditModal()\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00153}00153\ \textcolor{comment}{\ \ \ \ \ *\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00154}00154\ \textcolor{comment}{\ \ \ \ \ *\ Mapea\ los\ datos\ de\ la\ vista\ a\ los\ inputs\ del\ formulario\ para\ facilitar\ la\ edición.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00155}00155\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00156}00156\ \ \ \ \ function\ fillEditModal(userData)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00157}00157\ \ \ \ \ \ \ \ \ editNombre.value\ =\ userData.nombre\ ||\ \textcolor{stringliteral}{''};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00158}00158\ \ \ \ \ \ \ \ \ editApellidos.value\ =\ userData.apellidos\ ||\ \textcolor{stringliteral}{''};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00159}00159\ \ \ \ \ \ \ \ \ editCp.value\ =\ userData.cp\ ||\ \textcolor{stringliteral}{''};\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00160}00160\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00161}00161\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00162}00162\ \textcolor{comment}{\ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00163}00163\ \textcolor{comment}{\ \ \ \ \ *\ @brief\ Recupera\ el\ perfil\ desde\ Firestore\ con\ estrategia\ de\ doble\ búsqueda.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00164}00164\ \textcolor{comment}{\ \ \ \ \ *\ userId:string\ -\/>\ loadUserProfileFromFirestore()\ -\/>\ Promise<Object|null>}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00165}00165\ \textcolor{comment}{\ \ \ \ \ *\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00166}00166\ \textcolor{comment}{\ \ \ \ \ *\ Implementa\ una\ lógica\ de\ fallback\ para\ compatibilidad\ con\ registros\ antiguos:}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00167}00167\ \textcolor{comment}{\ \ \ \ \ *\ 1.\ Intenta\ buscar\ el\ documento\ por\ UID\ (Estándar\ actual).}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00168}00168\ \textcolor{comment}{\ \ \ \ \ *\ 2.\ Si\ no\ existe,\ intenta\ buscar\ por\ Email\ (Legacy).}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00169}00169\ \textcolor{comment}{\ \ \ \ \ *\ 3.\ Retorna\ los\ datos\ fusionados\ con\ el\ email\ actual\ de\ la\ sesión.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00170}00170\ \textcolor{comment}{\ \ \ \ \ *\ *\ @param\ userId\ El\ UID\ del\ usuario\ autenticado.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00171}00171\ \textcolor{comment}{\ \ \ \ \ *\ @return\ Promesa\ con\ los\ datos\ del\ usuario\ o\ null\ si\ hay\ error\ crítico.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00172}00172\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00173}00173\ \ \ \ \ async\ function\ loadUserProfileFromFirestore(userId)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00174}00174\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{users__profile_8js_ac251a9277170fcfab02d38719b3016d4}{currentUserId}}\ =\ userId;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00175}00175\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ emailKey\ =\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser?.email\ ?\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser.email.toLowerCase()\ :\ null;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00176}00176\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00177}00177\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Función\ helper\ interna\ para\ intentar\ cargar\ un\ documento}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00178}00178\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ tryLoad\ =\ async\ (docId)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00179}00179\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!docId)\ \textcolor{keywordflow}{return}\ null;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00180}00180\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ref\ =\ doc(\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}},\ \textcolor{stringliteral}{"{}Usuarios"{}},\ docId);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00181}00181\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ snap\ =\ await\ getDoc(ref);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00182}00182\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!snap.exists())\ \textcolor{keywordflow}{return}\ null;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00183}00183\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \{\ docId,\ data:\ snap.data()\ \};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00184}00184\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00185}00185\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00186}00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00187}00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Intento\ 1:\ Búsqueda\ por\ UID}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00188}00188\ \ \ \ \ \ \ \ \ \ \ \ \ let\ result\ =\ await\ tryLoad(userId);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00189}00189\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00190}00190\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Intento\ 2:\ Fallback\ a\ búsqueda\ por\ Email\ si\ falla\ el\ UID}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00191}00191\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!result\ \&\&\ emailKey)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00192}00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ result\ =\ await\ tryLoad(emailKey);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00193}00193\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00194}00194\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00195}00195\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (result)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00196}00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{users__profile_8js_a83299da92c845611d25e3d5e3d8031b6}{currentProfileDocId}}\ =\ result.docId;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00197}00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Construcción\ del\ objeto\ final\ asegurando\ que\ el\ email\ esté\ presente}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00198}00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ userData\ =\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00199}00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ...result.data,}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00200}00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ email:\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser?.email\ ||\ result.data.email,}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00201}00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00202}00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fillEditModal(userData);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00203}00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ userData;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00204}00204\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00205}00205\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00206}00206\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Caso:\ Usuario\ autenticado\ pero\ sin\ documento\ en\ 'Usuarios'}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00207}00207\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{users__profile_8js_a83299da92c845611d25e3d5e3d8031b6}{currentProfileDocId}}\ =\ null;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00208}00208\ \ \ \ \ \ \ \ \ \ \ \ \ console.warn(\textcolor{stringliteral}{"{}Documento\ de\ perfil\ no\ encontrado\ para:"{}},\ userId,\ emailKey);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00209}00209\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'Perfil\ incompleto.\ Por\ favor,\ completa\ tus\ datos.'},\ \textcolor{stringliteral}{'warning'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00210}00210\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \{\ email:\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser?.email\ \};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00211}00211\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00212}00212\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (error)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00213}00213\ \ \ \ \ \ \ \ \ \ \ \ \ console.error(\textcolor{stringliteral}{"{}Error\ al\ obtener\ el\ perfil\ de\ Firestore:"{}},\ error);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00214}00214\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'Error\ al\ cargar\ el\ perfil.\ Por\ favor,\ revisa\ tus\ Reglas\ de\ Seguridad.'},\ \textcolor{stringliteral}{'error'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00215}00215\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ null;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00216}00216\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00217}00217\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00218}00218\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00219}00219\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Listeners\ de\ Interfaz\ -\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00220}00220\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00221}00221\ \ \ \ \ btnEdit?.addEventListener(\textcolor{stringliteral}{'click'},\ ()\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00222}00222\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{users__edit_8js_a6a430733f585e5b7e2c277f33e4d0bfe}{clearFieldErrors}}();}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00223}00223\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{admin__sensors_8js_aca679aa4a680e2ab2cee0ce778948304}{openModal}}();}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00224}00224\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00225}00225\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00226}00226\ \ \ \ \ btnCancel?.addEventListener(\textcolor{stringliteral}{'click'},\ ()\ =>\ \doxymbox{\hyperlink{admin__sensors_8js_a3fc8c0a7c0efb132d305d652635617b9}{closeModal}}());}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00227}00227\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00228}00228\ \ \ \ \ modalBackdrop?.addEventListener(\textcolor{stringliteral}{'click'},\ (event)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00229}00229\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (event.target\ ===\ modalBackdrop)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00230}00230\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{admin__sensors_8js_a3fc8c0a7c0efb132d305d652635617b9}{closeModal}}();}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00231}00231\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00232}00232\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00233}00233\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00234}00234\ \textcolor{comment}{\ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00235}00235\ \textcolor{comment}{\ \ \ \ \ *\ @brief\ Manejador\ del\ envío\ del\ formulario\ de\ edición\ (Update).}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00236}00236\ \textcolor{comment}{\ \ \ \ \ *\ event:SubmitEvent\ -\/>\ (anon\_async)\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00237}00237\ \textcolor{comment}{\ \ \ \ \ *\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00238}00238\ \textcolor{comment}{\ \ \ \ \ *\ 1.\ Recolecta\ y\ limpia\ los\ datos\ del\ formulario.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00239}00239\ \textcolor{comment}{\ \ \ \ \ *\ 2.\ Valida\ los\ campos\ usando\ \`{}users\_edit.js`.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00240}00240\ \textcolor{comment}{\ \ \ \ \ *\ 3.\ Determina\ el\ ID\ del\ documento\ a\ actualizar.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00241}00241\ \textcolor{comment}{\ \ \ \ \ *\ 4.\ Si\ hay\ cambio\ de\ contraseña:\ reautentica\ y\ actualiza.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00242}00242\ \textcolor{comment}{\ \ \ \ \ *\ 5.\ Escribe\ en\ Firestore\ (usando\ \`{}merge:\ true`\ para\ no\ borrar\ otros\ campos).}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00243}00243\ \textcolor{comment}{\ \ \ \ \ *\ 6.\ Actualiza\ la\ vista\ local\ y\ cierra\ el\ modal.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00244}00244\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00245}00245\ \ \ \ \ editForm?.addEventListener(\textcolor{stringliteral}{'submit'},\ async\ (e)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00246}00246\ \ \ \ \ \ \ \ \ e.preventDefault();}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00247}00247\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00248}00248\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ payload\ =\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00249}00249\ \ \ \ \ \ \ \ \ \ \ \ \ nombre:\ editNombre.value.trim(),}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00250}00250\ \ \ \ \ \ \ \ \ \ \ \ \ apellidos:\ editApellidos.value.trim(),}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00251}00251\ \ \ \ \ \ \ \ \ \ \ \ \ cp:\ editCp.value.trim(),}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00252}00252\ \ \ \ \ \ \ \ \ \ \ \ \ currentPassword:\ editCurrentPassword?.value?.trim()\ ||\ \textcolor{stringliteral}{''},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00253}00253\ \ \ \ \ \ \ \ \ \ \ \ \ newPassword:\ editNewPassword?.value?.trim()\ ||\ \textcolor{stringliteral}{''},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00254}00254\ \ \ \ \ \ \ \ \ \ \ \ \ confirmPassword:\ editConfirmPassword?.value?.trim()\ ||\ \textcolor{stringliteral}{''},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00255}00255\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00256}00256\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00257}00257\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{users__edit_8js_a6a430733f585e5b7e2c277f33e4d0bfe}{clearFieldErrors}}();}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00258}00258\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00259}00259\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Validación\ de\ negocio\ (longitud,\ formato\ CP,\ complejidad\ de\ contraseña,\ etc.)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00260}00260\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}}(payload))\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00261}00261\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'Corrige\ los\ campos\ marcados\ antes\ de\ guardar.'},\ \textcolor{stringliteral}{'warning'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00262}00262\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00263}00263\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00264}00264\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00265}00265\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\doxymbox{\hyperlink{users__profile_8js_ac251a9277170fcfab02d38719b3016d4}{currentUserId}})\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00266}00266\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'Error:\ Usuario\ no\ autenticado\ para\ actualizar.'},\ \textcolor{stringliteral}{'error'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00267}00267\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00268}00268\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00269}00269\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00270}00270\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Determinar\ clave\ primaria\ (preferencia\ por\ ID\ existente,\ sino\ UID)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00271}00271\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ primaryDocId\ =\ \doxymbox{\hyperlink{users__profile_8js_a83299da92c845611d25e3d5e3d8031b6}{currentProfileDocId}}\ ||\ \doxymbox{\hyperlink{users__profile_8js_ac251a9277170fcfab02d38719b3016d4}{currentUserId}};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00272}00272\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ emailDocId\ =\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser?.email\ ?\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser.email.toLowerCase()\ :\ null;}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00273}00273\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ docRef\ =\ doc(\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}},\ \textcolor{stringliteral}{"{}Usuarios"{}},\ primaryDocId);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00274}00274\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00275}00275\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00276}00276\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'Guardando\ cambios...'},\ \textcolor{stringliteral}{'info'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00277}00277\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00278}00278\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ PASO\ 1:\ Cambio\ de\ contraseña\ (si\ está\ presente)\ -\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00279}00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (payload.newPassword)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00280}00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00281}00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reautenticar\ al\ usuario\ con\ la\ contraseña\ actual}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00282}00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ credential\ =\ EmailAuthProvider.credential(}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00283}00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser.email,}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00284}00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ payload.currentPassword}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00285}00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ );}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00286}00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00287}00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ await\ reauthenticateWithCredential(\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser,\ credential);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00288}00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00289}00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Si\ la\ reautenticación\ es\ exitosa,\ actualizar\ la\ contraseña}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00290}00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ await\ updatePassword(\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser,\ payload.newPassword);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00291}00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00292}00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (authError)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00293}00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ console.error(\textcolor{stringliteral}{"{}Error\ de\ autenticación:"{}},\ authError.code);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00294}00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00295}00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mapeo\ de\ errores\ de\ autenticación}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00296}00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ let\ authErrorMessage\ =\ \textcolor{stringliteral}{'Error\ al\ cambiar\ la\ contraseña.'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00297}00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (authError.code\ ===\ \textcolor{stringliteral}{'auth/wrong-\/password'})\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00298}00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ authErrorMessage\ =\ \textcolor{stringliteral}{'La\ contraseña\ actual\ es\ incorrecta.'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00299}00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (authError.code\ ===\ \textcolor{stringliteral}{'auth/invalid-\/credential'})\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00300}00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ authErrorMessage\ =\ \textcolor{stringliteral}{'La\ contraseña\ actual\ es\ incorrecta.'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00301}00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00302}00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00303}00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(authErrorMessage,\ \textcolor{stringliteral}{'error'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00304}00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00305}00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00306}00306\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00307}00307\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00308}00308\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ PASO\ 2:\ Actualizar\ datos\ del\ perfil\ en\ Firestore\ -\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00309}00309\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ docPayload\ =\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00310}00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nombre:\ payload.nombre,}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00311}00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ apellidos:\ payload.apellidos,}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00312}00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cp:\ payload.cp,\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00313}00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ email:\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser?.email\ ||\ undefined,}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00314}00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uid:\ \doxymbox{\hyperlink{users__profile_8js_ac251a9277170fcfab02d38719b3016d4}{currentUserId}},}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00315}00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ updated\_at:\ \textcolor{keyword}{new}\ Date(),}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00316}00316\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00317}00317\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00318}00318\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Escritura\ principal}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00319}00319\ \ \ \ \ \ \ \ \ \ \ \ \ await\ setDoc(docRef,\ docPayload,\ \{\ merge:\ \textcolor{keyword}{true}\ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00320}00320\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00321}00321\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mantenimiento\ de\ integridad:\ Si\ existe\ un\ doc\ con\ ID\ email,\ sincronizarlo\ también}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00322}00322\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (emailDocId\ \&\&\ emailDocId\ !==\ primaryDocId)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00323}00323\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ await\ setDoc(doc(\doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}},\ \textcolor{stringliteral}{"{}Usuarios"{}},\ emailDocId),\ docPayload,\ \{\ merge:\ \textcolor{keyword}{true}\ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00324}00324\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00325}00325\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00326}00326\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Recargar\ datos\ para\ confirmar\ la\ escritura}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00327}00327\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ updatedData\ =\ await\ loadUserProfileFromFirestore(\doxymbox{\hyperlink{users__profile_8js_ac251a9277170fcfab02d38719b3016d4}{currentUserId}});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00328}00328\ \ \ \ \ \ \ \ \ \ \ \ \ renderProfile(updatedData);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00329}00329\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00330}00330\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Limpiar\ campos\ de\ contraseña}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00331}00331\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (editCurrentPassword)\ editCurrentPassword.value\ =\ \textcolor{stringliteral}{''};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00332}00332\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (editNewPassword)\ editNewPassword.value\ =\ \textcolor{stringliteral}{''};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00333}00333\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (editConfirmPassword)\ editConfirmPassword.value\ =\ \textcolor{stringliteral}{''};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00334}00334\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00335}00335\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{admin__sensors_8js_a3fc8c0a7c0efb132d305d652635617b9}{closeModal}}();\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00336}00336\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'¡Perfil\ actualizado\ con\ éxito!'},\ \textcolor{stringliteral}{'success'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00337}00337\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00338}00338\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (error)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00339}00339\ \ \ \ \ \ \ \ \ \ \ \ \ console.error(\textcolor{stringliteral}{"{}Error\ al\ actualizar\ el\ perfil:"{}},\ error);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00340}00340\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'Error\ al\ guardar:\ '}\ +\ error.message,\ \textcolor{stringliteral}{'error'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00341}00341\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00342}00342\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00343}00343\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00344}00344\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00345}00345\ \ \ \ \ \textcolor{comment}{//\ 3.\ Manejador\ del\ botón\ de\ cerrar\ sesión}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00346}00346\ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}.getElementById(\textcolor{stringliteral}{'btn-\/logout'})?.addEventListener(\textcolor{stringliteral}{'click'},\ async\ ()\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00347}00347\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00348}00348\ \ \ \ \ \ \ \ \ \ \ \ \ await\ signOut(\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}});\ \textcolor{comment}{//\ Cierra\ la\ sesión\ en\ Firebase\ y\ dispara\ onAuthStateChanged}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00349}00349\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (error)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00350}00350\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'Error\ al\ cerrar\ sesión:\ '}\ +\ error.message,\ \textcolor{stringliteral}{'error'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00351}00351\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00352}00352\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00353}00353\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00354}00354\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00355}00355\ \ \ \ \ \textcolor{comment}{//\ 4.\ PUNTO\ DE\ ENTRADA\ PRINCIPAL:\ Monitor\ de\ Estado\ de\ Autenticación}\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00356}00356\ \textcolor{comment}{\ \ \ \ /**}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00357}00357\ \textcolor{comment}{\ \ \ \ \ *\ @brief\ Listener\ global\ de\ cambios\ en\ la\ sesión\ de\ Firebase.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00358}00358\ \textcolor{comment}{\ \ \ \ \ *\ user:User|null\ -\/>\ (anon\_async)\ -\/>\ void}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00359}00359\ \textcolor{comment}{\ \ \ \ \ *\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00360}00360\ \textcolor{comment}{\ \ \ \ \ *\ Se\ dispara\ automáticamente\ al\ cargar\ la\ página\ o\ al\ hacer\ login/logout.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00361}00361\ \textcolor{comment}{\ \ \ \ \ *\ -\/\ Si\ hay\ usuario:\ Carga\ el\ perfil\ desde\ Firestore.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00362}00362\ \textcolor{comment}{\ \ \ \ \ *\ -\/\ Si\ no\ hay\ usuario:\ Muestra\ estado\ vacío\ y\ redirige\ al\ login\ tras\ una\ breve\ pausa.}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00363}00363\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00364}00364\ \ \ \ \ onAuthStateChanged(\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}},\ async\ (user)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00365}00365\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (user)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00366}00366\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ USUARIO\ LOGUEADO}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00367}00367\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (loginLink)\ loginLink.style.display\ =\ \textcolor{stringliteral}{'none'};}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00368}00368\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00369}00369\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ userData\ =\ await\ loadUserProfileFromFirestore(user.uid);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00370}00370\ \ \ \ \ \ \ \ \ \ \ \ \ renderProfile(userData);}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00371}00371\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00372}00372\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00373}00373\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ USUARIO\ NO\ LOGUEADO\ (O\ Logout\ finalizado)}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00374}00374\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (loginLink)\ loginLink.style.display\ =\ \textcolor{stringliteral}{'block'};\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00375}00375\ \ \ \ \ \ \ \ \ \ \ \ \ renderProfile(null);\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00376}00376\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00377}00377\ \ \ \ \ \ \ \ \ \ \ \ \ showStatus(\textcolor{stringliteral}{'No\ hay\ sesión\ iniciada.\ Redirigiendo\ a\ login...'},\ \textcolor{stringliteral}{'warning'});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00378}00378\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00379}00379\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Redirección\ de\ seguridad}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00380}00380\ \ \ \ \ \ \ \ \ \ \ \ \ setTimeout(()\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00381}00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.currentUser)\ \{}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00382}00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.location.href\ =\ \textcolor{stringliteral}{'login.html'};\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00383}00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00384}00384\ \ \ \ \ \ \ \ \ \ \ \ \ \},\ 1500);\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00385}00385\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00386}00386\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00387}00387\ }
+\DoxyCodeLine{\Hypertarget{users__profile_8js_source_l00388}00388\ \});}
+
+\end{DoxyCode}

@@ -1,0 +1,86 @@
+\doxysection{test/\+users\+\_\+map\+\_\+logic.test.\+js File Reference}
+\hypertarget{users__map__logic_8test_8js}{}\label{users__map__logic_8test_8js}\index{test/users\_map\_logic.test.js@{test/users\_map\_logic.test.js}}
+
+
+Tests unitarios para \doxylink{users__map__data_8js}{users\+\_\+map\+\_\+data.\+js}.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{users__map__logic_8test_8js_a5f231ef217a10efb650f7689d4aa4af3}{describe}} (\textquotesingle{}Pruebas de Lógica de Mapa(users\+\_\+map\+\_\+data.\+js)\textquotesingle{},()=$>$ \{ test(\textquotesingle{}Debe asignar intensidad 0.\+5(Amarillo) si el valor está en el rango medio\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} valor\+Medido=60;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} niveles\+Config=\+[\{ min:\+0, max:\+50, color:\+\textquotesingle{}Verde\textquotesingle{} \}, \{ min:\+51, max:\+100, color:\+\textquotesingle{}Amarillo\textquotesingle{} \}, \{ min:\+101, max:\+200, color:\+\textquotesingle{}Rojo\textquotesingle{} \}]\+;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} intensidad=\doxymbox{\hyperlink{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}{map\+Logic.\+obtener\+Intensidad\+Segun\+Nivel}}(valor\+Medido, niveles\+Config);expect(intensidad).to\+Be(0.\+6);\});test(\textquotesingle{}Debe asignar intensidad 0.\+2(Verde) por defecto si no encaja en ningún nivel\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} valor\+Fuera\+De\+Rango=5000;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} niveles\+Config=\+[\{ min:\+0, max:\+100, color:\+\textquotesingle{}Verde\textquotesingle{} \}]\+;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} intensidad=\doxymbox{\hyperlink{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}{map\+Logic.\+obtener\+Intensidad\+Segun\+Nivel}}(valor\+Fuera\+De\+Rango, niveles\+Config);expect(intensidad).to\+Be(0.\+2);\});test(\textquotesingle{}La interpolación debe promediar valores cercanos\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} datos\+Falsos=\+[\+[40.\+0001, -\/3.\+0001, 100]\+, \+[40.\+0001, -\/3.\+0001, 100]\+,]\+;\doxymbox{\hyperlink{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36}{map\+Logic.\+set\+Cache\+Pruebas}}(datos\+Falsos);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} resultado=\doxymbox{\hyperlink{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}{map\+Logic.\+calcular\+Contaminacion\+En\+Ubicacion}}(40.\+0001, -\/3.\+0001);expect(resultado).to\+Be\+Close\+To(100, 1);\});test(\textquotesingle{}La interpolación debe devolver 0 si no hay sensores cerca\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36}{map\+Logic.\+set\+Cache\+Pruebas}}(\+[\+[40.\+0, -\/3.\+0, 100]\+]\+);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} resultado=\doxymbox{\hyperlink{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}{map\+Logic.\+calcular\+Contaminacion\+En\+Ubicacion}}(41.\+38, 2.\+17);expect(resultado).to\+Be(0);\});\})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+global \doxymbox{\hyperlink{users__map__logic_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}
+\item 
+global \doxymbox{\hyperlink{users__map__logic_8test_8js_a516f298d4f12a96439e819204eeee081}{\+\_\+\+\_\+firebase\+\_\+config}} = JSON.\+stringify(\{\})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map__logic_8test_8js_ae328370e0bc06f9de824f8c6ec94700e}{map\+Logic}} = require(\textquotesingle{}../\+src/\+js/\+users\+\_\+map\+\_\+data.\+js\textquotesingle{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Tests unitarios para \doxylink{users__map__data_8js}{users\+\_\+map\+\_\+data.\+js}. 
+
+
+
+Definition in file \doxymbox{\hyperlink{users__map__logic_8test_8js_source}{users\+\_\+map\+\_\+logic.\+test.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{users__map__logic_8test_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{users__map__logic_8test_8js_a5f231ef217a10efb650f7689d4aa4af3}\index{users\_map\_logic.test.js@{users\_map\_logic.test.js}!describe@{describe}}
+\index{describe@{describe}!users\_map\_logic.test.js@{users\_map\_logic.test.js}}
+\doxysubsubsection{\texorpdfstring{describe()}{describe()}}
+{\footnotesize\ttfamily \label{users__map__logic_8test_8js_a5f231ef217a10efb650f7689d4aa4af3} 
+describe (\begin{DoxyParamCaption}\item[{\textquotesingle{}Pruebas de Lógica de Mapa(users\+\_\+map\+\_\+data.\+js)\textquotesingle{}}]{}{, }\item[{()}]{}{, }\item[{\{ test(\textquotesingle{}Debe asignar intensidad 0.\+5(Amarillo) si el valor está en el rango medio\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} valor\+Medido=60;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} niveles\+Config=\+[\{ min:\+0, max:\+50, color:\+\textquotesingle{}Verde\textquotesingle{} \}, \{ min:\+51, max:\+100, color:\+\textquotesingle{}Amarillo\textquotesingle{} \}, \{ min:\+101, max:\+200, color:\+\textquotesingle{}Rojo\textquotesingle{} \}]\+;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} intensidad=\doxymbox{\hyperlink{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}{map\+Logic.\+obtener\+Intensidad\+Segun\+Nivel}}(valor\+Medido, niveles\+Config);expect(intensidad).to\+Be(0.\+6);\});test(\textquotesingle{}Debe asignar intensidad 0.\+2(Verde) por defecto si no encaja en ningún nivel\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} valor\+Fuera\+De\+Rango=5000;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} niveles\+Config=\+[\{ min:\+0, max:\+100, color:\+\textquotesingle{}Verde\textquotesingle{} \}]\+;\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} intensidad=\doxymbox{\hyperlink{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}{map\+Logic.\+obtener\+Intensidad\+Segun\+Nivel}}(valor\+Fuera\+De\+Rango, niveles\+Config);expect(intensidad).to\+Be(0.\+2);\});test(\textquotesingle{}La interpolación debe promediar valores cercanos\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} datos\+Falsos=\+[\+[40.\+0001, -\/3.\+0001, 100]\+, \+[40.\+0001, -\/3.\+0001, 100]\+,]\+;\doxymbox{\hyperlink{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36}{map\+Logic.\+set\+Cache\+Pruebas}}(datos\+Falsos);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} resultado=\doxymbox{\hyperlink{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}{map\+Logic.\+calcular\+Contaminacion\+En\+Ubicacion}}(40.\+0001, -\/3.\+0001);expect(resultado).to\+Be\+Close\+To(100, 1);\});test(\textquotesingle{}La interpolación debe devolver 0 si no hay sensores cerca\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36}{map\+Logic.\+set\+Cache\+Pruebas}}(\+[\+[40.\+0, -\/3.\+0, 100]\+]\+);\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} resultado=\doxymbox{\hyperlink{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}{map\+Logic.\+calcular\+Contaminacion\+En\+Ubicacion}}(41.\+38, 2.\+17);expect(resultado).to\+Be(0);\});\}}]{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-var-members}
+\Hypertarget{users__map__logic_8test_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{users__map__logic_8test_8js_a516f298d4f12a96439e819204eeee081}\index{users\_map\_logic.test.js@{users\_map\_logic.test.js}!\_\_firebase\_config@{\_\_firebase\_config}}
+\index{\_\_firebase\_config@{\_\_firebase\_config}!users\_map\_logic.test.js@{users\_map\_logic.test.js}}
+\doxysubsubsection{\texorpdfstring{\_\_firebase\_config}{\_\_firebase\_config}}
+{\footnotesize\ttfamily \label{users__map__logic_8test_8js_a516f298d4f12a96439e819204eeee081} 
+global \+\_\+\+\_\+firebase\+\_\+config = JSON.\+stringify(\{\})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map__logic_8test_8js_source_l00016}{16}} of file \doxymbox{\hyperlink{users__map__logic_8test_8js_source}{users\+\_\+map\+\_\+logic.\+test.\+js}}.
+
+\Hypertarget{users__map__logic_8test_8js_ae328370e0bc06f9de824f8c6ec94700e}\index{users\_map\_logic.test.js@{users\_map\_logic.test.js}!mapLogic@{mapLogic}}
+\index{mapLogic@{mapLogic}!users\_map\_logic.test.js@{users\_map\_logic.test.js}}
+\doxysubsubsection{\texorpdfstring{mapLogic}{mapLogic}}
+{\footnotesize\ttfamily \label{users__map__logic_8test_8js_ae328370e0bc06f9de824f8c6ec94700e} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} map\+Logic = require(\textquotesingle{}../\+src/\+js/\+users\+\_\+map\+\_\+data.\+js\textquotesingle{})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map__logic_8test_8js_source_l00019}{19}} of file \doxymbox{\hyperlink{users__map__logic_8test_8js_source}{users\+\_\+map\+\_\+logic.\+test.\+js}}.
+
+\Hypertarget{users__map__logic_8test_8js_a8ac3c63e523598549c2264ad7042f8af}\index{users\_map\_logic.test.js@{users\_map\_logic.test.js}!window@{window}}
+\index{window@{window}!users\_map\_logic.test.js@{users\_map\_logic.test.js}}
+\doxysubsubsection{\texorpdfstring{window}{window}}
+{\footnotesize\ttfamily \label{users__map__logic_8test_8js_a8ac3c63e523598549c2264ad7042f8af} 
+global window}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ =\ \{}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{users__map__data_8js_ae6e0332bc363e59ff8d87c1a82ed69f4}{inicializarFirebase}}:\ ()\ =>\ \{\},}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{users__map__data_8js_ab38a3a30ab2d8b0f8da8e7a946a7ced8}{obtenerDatosDelSensor}}:\ ()\ =>\ \{\},}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}{calcularContaminacionEnUbicacion}}:\ ()\ =>\ \{\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__logic_8test_8js_source_l00008}{8}} of file \doxymbox{\hyperlink{users__map__logic_8test_8js_source}{users\+\_\+map\+\_\+logic.\+test.\+js}}.
+

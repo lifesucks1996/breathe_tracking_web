@@ -1,0 +1,214 @@
+\doxysection{src/\+js/\+users\+\_\+edit.js File Reference}
+\hypertarget{users__edit_8js}{}\label{users__edit_8js}\index{src/js/users\_edit.js@{src/js/users\_edit.js}}
+
+
+Módulo de utilidades para la gestión del modal de edición de perfil.  
+
+
+This graph shows which files directly or indirectly include this file:\+
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+function \doxymbox{\hyperlink{users__edit_8js_aca679aa4a680e2ab2cee0ce778948304}{open\+Modal}} ()
+\begin{DoxyCompactList}\small\item\em Abre el modal de edición y gestiona el foco inicial. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__edit_8js_a3fc8c0a7c0efb132d305d652635617b9}{close\+Modal}} ()
+\begin{DoxyCompactList}\small\item\em Cierra el modal, limpia errores y restaura el foco. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__edit_8js_a6a430733f585e5b7e2c277f33e4d0bfe}{clear\+Field\+Errors}} ()
+\begin{DoxyCompactList}\small\item\em Elimina todos los mensajes de error visibles en el formulario. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__edit_8js_a025a265218284bd2dae6e75909eeb014}{show\+Field\+Error}} (name, message)
+\begin{DoxyCompactList}\small\item\em Helper interno para mostrar un error en un campo específico. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}} (values)
+\begin{DoxyCompactList}\small\item\em Valida los datos del formulario aplicando reglas de negocio. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__edit_8js_ae5938babebe64aead4f9370d04e2b348}{validate\+Password\+Strength}} (password)
+\begin{DoxyCompactList}\small\item\em Valida la complejidad de una contraseña según los requisitos. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__edit_8js_a31d25edbd7cb1e364dcd593207f65b76}{update\+Password\+Requirements}} (password)
+\begin{DoxyCompactList}\small\item\em Actualiza el indicador visual de requisitos de contraseña en tiempo real. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{users__edit_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}} (typeof module !==\textquotesingle{}undefined\textquotesingle{} \&\&module.\+exports)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+let \doxymbox{\hyperlink{users__edit_8js_aed2ac71e82a0b6d2e7dcf21f7d761c96}{element\+Focused\+Before\+Modal}} = null
+\begin{DoxyCompactList}\small\item\em Variable de estado para accesibilidad (A11y). \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__edit_8js_a8e3b19b37c8c56938eb49f8902155a89}{get\+Modal}} = () =$>$ document.\+get\+Element\+By\+Id(\textquotesingle{}modal-\/edit\textquotesingle{})
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__edit_8js_aab5b4242afd9dc1c9b2c8161462e58e1}{get\+Field\+Error}} = (name) =$>$ document.\+query\+Selector(\`{}.field-\/error\+[data-\/for="{}\$\{name\}"{}]\+\`{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Módulo de utilidades para la gestión del modal de edición de perfil. 
+
+
+
+Definition in file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{users__edit_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{users__edit_8js_a6a430733f585e5b7e2c277f33e4d0bfe}\index{users\_edit.js@{users\_edit.js}!clearFieldErrors@{clearFieldErrors}}
+\index{clearFieldErrors@{clearFieldErrors}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{clearFieldErrors()}{clearFieldErrors()}}
+{\footnotesize\ttfamily \label{users__edit_8js_a6a430733f585e5b7e2c277f33e4d0bfe} 
+function clear\+Field\+Errors (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Elimina todos los mensajes de error visibles en el formulario. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00056}{56}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 1
+\Hypertarget{users__edit_8js_a3fc8c0a7c0efb132d305d652635617b9}\index{users\_edit.js@{users\_edit.js}!closeModal@{closeModal}}
+\index{closeModal@{closeModal}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{closeModal()}{closeModal()}}
+{\footnotesize\ttfamily \label{users__edit_8js_a3fc8c0a7c0efb132d305d652635617b9} 
+function close\+Modal (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Cierra el modal, limpia errores y restaura el foco. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00036}{36}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 2
+\Hypertarget{users__edit_8js_a055563d333ba4a61b84ebe56ced06d6b}\index{users\_edit.js@{users\_edit.js}!if@{if}}
+\index{if@{if}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{if()}{if()}}
+{\footnotesize\ttfamily \label{users__edit_8js_a055563d333ba4a61b84ebe56ced06d6b} 
+if (\begin{DoxyParamCaption}\item[{typeof module !}]{}{ = {\ttfamily =~\textquotesingle{}undefined\textquotesingle{}~\&\&~module.exports}}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00183}{183}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+\Hypertarget{users__edit_8js_aca679aa4a680e2ab2cee0ce778948304}\index{users\_edit.js@{users\_edit.js}!openModal@{openModal}}
+\index{openModal@{openModal}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{openModal()}{openModal()}}
+{\footnotesize\ttfamily \label{users__edit_8js_aca679aa4a680e2ab2cee0ce778948304} 
+function open\+Modal (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Abre el modal de edición y gestiona el foco inicial. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00018}{18}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+\Hypertarget{users__edit_8js_a025a265218284bd2dae6e75909eeb014}\index{users\_edit.js@{users\_edit.js}!showFieldError@{showFieldError}}
+\index{showFieldError@{showFieldError}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{showFieldError()}{showFieldError()}}
+{\footnotesize\ttfamily \label{users__edit_8js_a025a265218284bd2dae6e75909eeb014} 
+function show\+Field\+Error (\begin{DoxyParamCaption}\item[{name}]{}{, }\item[{message}]{}{}\end{DoxyParamCaption})}
+
+
+
+Helper interno para mostrar un error en un campo específico. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00066}{66}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 3
+\Hypertarget{users__edit_8js_a31d25edbd7cb1e364dcd593207f65b76}\index{users\_edit.js@{users\_edit.js}!updatePasswordRequirements@{updatePasswordRequirements}}
+\index{updatePasswordRequirements@{updatePasswordRequirements}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{updatePasswordRequirements()}{updatePasswordRequirements()}}
+{\footnotesize\ttfamily \label{users__edit_8js_a31d25edbd7cb1e364dcd593207f65b76} 
+function update\+Password\+Requirements (\begin{DoxyParamCaption}\item[{password}]{}{}\end{DoxyParamCaption})}
+
+
+
+Actualiza el indicador visual de requisitos de contraseña en tiempo real. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00163}{163}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 4
+Here is the caller graph for this function:\+
+% FIG 5
+\Hypertarget{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}\index{users\_edit.js@{users\_edit.js}!validate@{validate}}
+\index{validate@{validate}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{validate()}{validate()}}
+{\footnotesize\ttfamily \label{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396} 
+function validate (\begin{DoxyParamCaption}\item[{values}]{}{}\end{DoxyParamCaption})}
+
+
+
+Valida los datos del formulario aplicando reglas de negocio. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00077}{77}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 6
+Here is the caller graph for this function:\+
+% FIG 7
+\Hypertarget{users__edit_8js_ae5938babebe64aead4f9370d04e2b348}\index{users\_edit.js@{users\_edit.js}!validatePasswordStrength@{validatePasswordStrength}}
+\index{validatePasswordStrength@{validatePasswordStrength}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{validatePasswordStrength()}{validatePasswordStrength()}}
+{\footnotesize\ttfamily \label{users__edit_8js_ae5938babebe64aead4f9370d04e2b348} 
+function validate\+Password\+Strength (\begin{DoxyParamCaption}\item[{password}]{}{}\end{DoxyParamCaption})}
+
+
+
+Valida la complejidad de una contraseña según los requisitos. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00133}{133}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 8
+
+
+\label{doc-var-members}
+\Hypertarget{users__edit_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{users__edit_8js_aed2ac71e82a0b6d2e7dcf21f7d761c96}\index{users\_edit.js@{users\_edit.js}!elementFocusedBeforeModal@{elementFocusedBeforeModal}}
+\index{elementFocusedBeforeModal@{elementFocusedBeforeModal}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{elementFocusedBeforeModal}{elementFocusedBeforeModal}}
+{\footnotesize\ttfamily \label{users__edit_8js_aed2ac71e82a0b6d2e7dcf21f7d761c96} 
+let element\+Focused\+Before\+Modal = null}
+
+
+
+Variable de estado para accesibilidad (A11y). 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00009}{9}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+\Hypertarget{users__edit_8js_aab5b4242afd9dc1c9b2c8161462e58e1}\index{users\_edit.js@{users\_edit.js}!getFieldError@{getFieldError}}
+\index{getFieldError@{getFieldError}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{getFieldError}{getFieldError}}
+{\footnotesize\ttfamily \label{users__edit_8js_aab5b4242afd9dc1c9b2c8161462e58e1} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} get\+Field\+Error = (name) =$>$ document.\+query\+Selector(\`{}.field-\/error\+[data-\/for="{}\$\{name\}"{}]\+\`{})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00013}{13}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+
+\Hypertarget{users__edit_8js_a8e3b19b37c8c56938eb49f8902155a89}\index{users\_edit.js@{users\_edit.js}!getModal@{getModal}}
+\index{getModal@{getModal}!users\_edit.js@{users\_edit.js}}
+\doxysubsubsection{\texorpdfstring{getModal}{getModal}}
+{\footnotesize\ttfamily \label{users__edit_8js_a8e3b19b37c8c56938eb49f8902155a89} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} get\+Modal = () =$>$ document.\+get\+Element\+By\+Id(\textquotesingle{}modal-\/edit\textquotesingle{})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__edit_8js_source_l00012}{12}} of file \doxymbox{\hyperlink{users__edit_8js_source}{users\+\_\+edit.\+js}}.
+

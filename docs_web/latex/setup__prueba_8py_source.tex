@@ -1,0 +1,124 @@
+\doxysection{setup\+\_\+prueba.\+py}
+\hypertarget{setup__prueba_8py_source}{}\label{setup__prueba_8py_source}\index{scripts\_python/setup\_prueba.py@{scripts\_python/setup\_prueba.py}}
+\doxymbox{\hyperlink{setup__prueba_8py}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00001}\doxymbox{\hyperlink{namespacesetup__prueba}{00001}}\ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00002}00002\ \textcolor{stringliteral}{@file\ setup\_prueba.py}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00003}00003\ \textcolor{stringliteral}{@brief\ Script\ de\ configuración\ rápida\ para\ la\ prueba\ de\ carga.}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00004}00004\ \textcolor{stringliteral}{@details}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00005}00005\ \textcolor{stringliteral}{Verifica\ que\ todo\ esté\ listo\ antes\ de\ ejecutar\ la\ prueba.}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00006}00006\ \textcolor{stringliteral}{"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00008}00008\ \textcolor{keyword}{import}\ os}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00009}00009\ \textcolor{keyword}{import}\ sys}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00010}00010\ \textcolor{keyword}{import}\ subprocess}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00012}\doxymbox{\hyperlink{namespacesetup__prueba_acb4fe7d9452a5bcad1aa631668b9a89d}{00012}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespacesetup__prueba_acb4fe7d9452a5bcad1aa631668b9a89d}{verificar\_python}}():}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00013}00013\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}Verifica\ que\ Python\ 3.8+\ está\ instalado"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00014}00014\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Verificando\ Python..."{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00015}00015\ \ \ \ \ version\ =\ sys.version\_info}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00016}00016\ \ \ \ \ \textcolor{keywordflow}{if}\ version.major\ ==\ 3\ \textcolor{keywordflow}{and}\ version.minor\ >=\ 8:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00017}00017\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Python\ \{version.major\}.\{version.minor\}.\{version.micro\}\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{True}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00019}00019\ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00020}00020\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ Python\ \{version.major\}.\{version.minor\}\ detectado"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00021}00021\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ \ Se\ requiere\ Python\ 3.8\ o\ superior\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00022}00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{False}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00024}\doxymbox{\hyperlink{namespacesetup__prueba_a14c18b260ef09a5eda9febfc6fcb0c69}{00024}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespacesetup__prueba_a14c18b260ef09a5eda9febfc6fcb0c69}{verificar\_dependencias}}():}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00025}00025\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}Verifica\ que\ las\ dependencias\ están\ instaladas"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00026}00026\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Verificando\ dependencias..."{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00027}00027\ \ \ \ \ dependencias\ =\ \{}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00028}00028\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}firebase\_admin"{}}:\ \textcolor{stringliteral}{"{}firebase-\/admin"{}},}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00029}00029\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}tqdm"{}}:\ \textcolor{stringliteral}{"{}tqdm"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00030}00030\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00031}00031\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00032}00032\ \ \ \ \ faltantes\ =\ []}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00033}00033\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00034}00034\ \ \ \ \ \textcolor{keywordflow}{for}\ modulo,\ paquete\ \textcolor{keywordflow}{in}\ dependencias.items():}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00035}00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00036}00036\ \ \ \ \ \ \ \ \ \ \ \ \ \_\_import\_\_(modulo)}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00037}00037\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \{paquete\}"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00038}00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{except}\ ImportError:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00039}00039\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \{paquete\}\ NO\ instalado"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00040}00040\ \ \ \ \ \ \ \ \ \ \ \ \ faltantes.append(paquete)}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00041}00041\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00042}00042\ \ \ \ \ \textcolor{keywordflow}{if}\ faltantes:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00043}00043\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\(\backslash\)n\ \ Instala\ las\ dependencias\ faltantes:"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00044}00044\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \ pip\ install\ \{'\ '.join(faltantes)\}\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00045}00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{False}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00046}00046\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00047}00047\ \ \ \ \ print()}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00048}00048\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{True}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00049}00049\ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00050}\doxymbox{\hyperlink{namespacesetup__prueba_ac2d5c8d98d4c25f211468d08623d4e3b}{00050}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespacesetup__prueba_ac2d5c8d98d4c25f211468d08623d4e3b}{verificar\_serviceaccount}}():}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00051}00051\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}Verifica\ que\ serviceAccountKey.json\ existe"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00052}00052\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Verificando\ credenciales\ Firebase..."{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00053}00053\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00054}00054\ \ \ \ \ ruta\ =\ \textcolor{stringliteral}{"{}serviceAccountKey.json"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00055}00055\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00056}00056\ \ \ \ \ \textcolor{keywordflow}{if}\ os.path.exists(ruta):}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00057}00057\ \ \ \ \ \ \ \ \ tamaño\ =\ os.path.getsize(ruta)}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00058}00058\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \{ruta\}\ (\{tamaño\}\ bytes)\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00059}00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{True}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00060}00060\ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00061}00061\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \{ruta\}\ NO\ encontrado\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00062}00062\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ \ Instrucciones:"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00063}00063\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ \ 1.\ Ve\ a\ Firebase\ Console\ >\ Tu\ Proyecto"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00064}00064\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ \ 2.\ Configuración\ >\ Cuentas\ de\ Servicio"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00065}00065\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ \ 3.\ Descarga\ 'Generar\ nueva\ clave\ privada'"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00066}00066\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ \ 4.\ Coloca\ el\ archivo\ en:\ scripts\_python/serviceAccountKey.json\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00067}00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{False}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00069}\doxymbox{\hyperlink{namespacesetup__prueba_adf2c45c4eba99528e0b24c68f75f5818}{00069}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespacesetup__prueba_adf2c45c4eba99528e0b24c68f75f5818}{verificar\_archivos\_prueba}}():}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00070}00070\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}Verifica\ que\ los\ scripts\ de\ prueba\ existen"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00071}00071\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ Verificando\ archivos\ de\ prueba..."{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00072}00072\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00073}00073\ \ \ \ \ archivos\ =\ \{}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00074}00074\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}prueba\_carga\_sensores.py"{}}:\ \textcolor{stringliteral}{"{}Script\ principal"{}},}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00075}00075\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}analizar\_resultados.py"{}}:\ \textcolor{stringliteral}{"{}Análisis\ de\ resultados"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00076}00076\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00077}00077\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00078}00078\ \ \ \ \ todos\_existen\ =\ \textcolor{keyword}{True}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00079}00079\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00080}00080\ \ \ \ \ \textcolor{keywordflow}{for}\ archivo,\ descripcion\ \textcolor{keywordflow}{in}\ archivos.items():}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00081}00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ os.path.exists(archivo):}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00082}00082\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \{archivo\}\ -\/\ \{descripcion\}"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00083}00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00084}00084\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \{archivo\}\ NO\ encontrado\ -\/\ \{descripcion\}"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00085}00085\ \ \ \ \ \ \ \ \ \ \ \ \ todos\_existen\ =\ \textcolor{keyword}{False}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00086}00086\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00087}00087\ \ \ \ \ print()}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00088}00088\ \ \ \ \ \textcolor{keywordflow}{return}\ todos\_existen}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00090}\doxymbox{\hyperlink{namespacesetup__prueba_aa1056a60d53266a850719095f8fca851}{00090}}\ \textcolor{keyword}{def\ }\doxymbox{\hyperlink{namespacesetup__prueba_aa1056a60d53266a850719095f8fca851}{main}}():}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00091}00091\ \ \ \ \ \textcolor{stringliteral}{"{}"{}"{}Ejecución\ principal"{}"{}"{}}}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00092}00092\ \ \ \ \ print(\textcolor{stringliteral}{"{}\(\backslash\)n"{}}\ +\ \textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00093}00093\ \ \ \ \ print(\textcolor{stringliteral}{"{}\ CONFIGURACIÓN\ RÁPIDA\ -\/\ PRUEBA\ DE\ CARGA"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00094}00094\ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70\ +\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00095}00095\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00096}00096\ \ \ \ \ checks\ =\ [}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00097}00097\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespacesetup__prueba_acb4fe7d9452a5bcad1aa631668b9a89d}{verificar\_python}}(),}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00098}00098\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespacesetup__prueba_a14c18b260ef09a5eda9febfc6fcb0c69}{verificar\_dependencias}}(),}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00099}00099\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespacesetup__prueba_ac2d5c8d98d4c25f211468d08623d4e3b}{verificar\_serviceaccount}}(),}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00100}00100\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{namespacesetup__prueba_adf2c45c4eba99528e0b24c68f75f5818}{verificar\_archivos\_prueba}}()}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00101}00101\ \ \ \ \ ]}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00102}00102\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00103}00103\ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00104}00104\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00105}00105\ \ \ \ \ \textcolor{keywordflow}{if}\ all(checks):}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00106}00106\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ ¡TODO\ LISTO\ PARA\ EJECUTAR\ LA\ PRUEBA!"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00107}00107\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00108}00108\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\(\backslash\)nPróximo\ paso:"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00109}00109\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ \ python\ prueba\_carga\_sensores.py\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00110}00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00111}00111\ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00112}00112\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\ \ FALTAN\ CONFIGURACIONES"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00113}00113\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}="{}}\ *\ 70)}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00114}00114\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}\(\backslash\)nRevisa\ los\ errores\ arriba\ y\ ejecuta\ setup\_prueba.py\ de\ nuevo.\(\backslash\)n"{}})}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00115}00115\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00116}00116\ }
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00117}00117\ \textcolor{keywordflow}{if}\ \_\_name\_\_\ ==\ \textcolor{stringliteral}{"{}\_\_main\_\_"{}}:}
+\DoxyCodeLine{\Hypertarget{setup__prueba_8py_source_l00118}00118\ \ \ \ \ sys.exit(\doxymbox{\hyperlink{namespacesetup__prueba_aa1056a60d53266a850719095f8fca851}{main}}())}
+
+\end{DoxyCode}

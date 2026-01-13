@@ -1,0 +1,23 @@
+digraph "applyFiltersAndSort"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="applyFiltersAndSort",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Aplica filtros y ordenación a la lista de sensores."];
+  Node1 -> Node2 [id="edge9_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="addSensorMarkers",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#ac37efec4017251e33915c22fd1b79896",tooltip="Añade marcadores al mapa con gestión de Z-Index para evitar desorden."];
+  Node2 -> Node3 [id="edge10_Node000002_Node000003",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="getSensorStatus",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#ae9d7a0ad5c0ce2aabe40a91ee9e97bfc",tooltip="Determina el estado normalizado de un sensor."];
+  Node1 -> Node3 [id="edge11_Node000001_Node000003",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node4 [id="edge12_Node000001_Node000004",color="steelblue1",style="solid",tooltip=" "];
+  Node4 [id="Node000004",label="parseDateLoose",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#ab3b515fc2502b93383f780cde85c22be",tooltip="Parsea fechas en formatos variados para permitir ordenación."];
+  Node1 -> Node5 [id="edge13_Node000001_Node000005",color="steelblue1",style="solid",tooltip=" "];
+  Node5 [id="Node000005",label="renderSensorsList",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#a1fa286c6f06c04d656577a428e5048e4",tooltip="Prepara la lista de sensores para la paginación."];
+  Node5 -> Node6 [id="edge14_Node000005_Node000006",color="steelblue1",style="solid",tooltip=" "];
+  Node6 [id="Node000006",label="renderPage",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#ad1e22ffa8f86b5476b709f435c2053c7",tooltip="Renderiza una página específica de sensores."];
+  Node6 -> Node7 [id="edge15_Node000006_Node000007",color="steelblue1",style="solid",tooltip=" "];
+  Node7 [id="Node000007",label="addPaginationControls",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$admin__sensors_8js.html#a8d7d179d1b95f9864940d43c0ab55acb",tooltip="Añade controles de paginación (Anterior, Siguiente, etc)."];
+  Node6 -> Node3 [id="edge16_Node000006_Node000003",color="steelblue1",style="solid",tooltip=" "];
+}

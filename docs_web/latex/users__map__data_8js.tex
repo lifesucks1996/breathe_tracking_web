@@ -1,0 +1,433 @@
+\doxysection{src/\+js/\+users\+\_\+map\+\_\+data.js File Reference}
+\hypertarget{users__map__data_8js}{}\label{users__map__data_8js}\index{src/js/users\_map\_data.js@{src/js/users\_map\_data.js}}
+
+
+Gestión de datos de mapas, conexión a Firebase y cálculos matemáticos.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{users__map__data_8js_a94675ad2b00e078bc343933d1f097c55}{if}} (typeof firebase !==\textquotesingle{}undefined\textquotesingle{} \&\&firebase\+Config.\+api\+Key)
+\item 
+async function \doxymbox{\hyperlink{users__map__data_8js_af498823bdb604ede736ba16f25825191}{descargar\+Gas\+Individual}} (fecha\+ISO, tipo\+Gas)
+\begin{DoxyCompactList}\small\item\em Descarga los datos de un gas específico desde Firestore. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}{obtener\+Intensidad\+Segun\+Nivel}} (valor, niveles)
+\begin{DoxyCompactList}\small\item\em Determina la intensidad visual (0-\/1) de un valor según los umbrales. \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__map__data_8js_a42cd18fde1c03a3c4851edcce7aa2c0a}{procesar\+Colores\+De\+BBDD}} (niveles)
+\begin{DoxyCompactList}\small\item\em Genera un objeto gradiente compatible con Leaflet a partir de niveles BBDD. \end{DoxyCompactList}\item 
+async function \doxymbox{\hyperlink{users__map__data_8js_a090cfa046f5a7b8586a8a410da42bb3f}{calcular\+Mapa\+Calidad\+General}} (fecha\+ISO)
+\begin{DoxyCompactList}\small\item\em Genera un mapa compuesto de Calidad General (ICA). \end{DoxyCompactList}\item 
+function \doxymbox{\hyperlink{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36}{set\+Cache\+Pruebas}} (datos\+Falsos)
+\begin{DoxyCompactList}\small\item\em Inyecta datos falsos en la caché para pruebas unitarias. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{users__map__data_8js_a055563d333ba4a61b84ebe56ced06d6b}{if}} (typeof module !==\textquotesingle{}undefined\textquotesingle{} \&\&module.\+exports)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map__data_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebase\+Config}}
+\begin{DoxyCompactList}\small\item\em Configuración de conexión a Firebase. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map__data_8js_af670582b5c8da7efc1bd7486225bcec7}{db}} = null
+\begin{DoxyCompactList}\small\item\em Instancia de Firestore Database. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map__data_8js_ae32b74d86240025f829d81e222ef88dd}{auth}} = null
+\begin{DoxyCompactList}\small\item\em Instancia de Firebase Auth. \end{DoxyCompactList}\item 
+let \doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{global\+Datos\+Cache}} = \+[$\,$]\+
+\begin{DoxyCompactList}\small\item\em Caché global de datos descargados. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map__data_8js_a99a063512d952b9ad340a08ad61f328e}{UNIDADES\+\_\+\+ESTANDAR}}
+\begin{DoxyCompactList}\small\item\em Diccionario de unidades de medida estándar por tipo de gas. @const \{Object\}. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \doxymbox{\hyperlink{users__map__data_8js_a88ee1072f21f77c3535e762b5113145e}{INTENSIDAD\+\_\+\+COLORES}}
+\begin{DoxyCompactList}\small\item\em Mapeo de nombres de colores a valores de intensidad del Heatmap (0.\+0 a 1.\+0). \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} \doxymbox{\hyperlink{users__map__data_8js_ae6e0332bc363e59ff8d87c1a82ed69f4}{inicializar\+Firebase}}
+\begin{DoxyCompactList}\small\item\em Inicializa la autenticación anónima con Firebase. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} \doxymbox{\hyperlink{users__map__data_8js_ab38a3a30ab2d8b0f8da8e7a946a7ced8}{obtener\+Datos\+Del\+Sensor}}
+\begin{DoxyCompactList}\small\item\em Función principal para obtener datos de sensores. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} \doxymbox{\hyperlink{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}{calcular\+Contaminacion\+En\+Ubicacion}}
+\begin{DoxyCompactList}\small\item\em Calcula el nivel de contaminación estimado en una coordenada específica. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Gestión de datos de mapas, conexión a Firebase y cálculos matemáticos. 
+
+Este archivo actúa como la capa de datos (Model) para el mapa de usuarios. Sus responsabilidades principales son:\+
+\begin{DoxyEnumerate}
+\item Conectar con Firebase Firestore para descargar mapas diarios de contaminantes.
+\item Procesar los datos crudos y convertirlos en puntos visuales (Heatmap) con intensidad 0-\/1.
+\item Realizar cálculos matemáticos (Interpolación IDW) para estimar la contaminación en cualquier punto donde el usuario haga clic, basándose en los sensores cercanos.
+\item Gestionar la caché de datos para evitar descargas innecesarias.
+\end{DoxyEnumerate}
+
+\begin{DoxyVersion}{Version}
+1.\+5 (Con Depuración y IDW corregido) 
+\end{DoxyVersion}
+\begin{DoxyAuthor}{Author}
+Breathe Tracking Team 
+\end{DoxyAuthor}
+
+
+Definition in file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{users__map__data_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{users__map__data_8js_a090cfa046f5a7b8586a8a410da42bb3f}\index{users\_map\_data.js@{users\_map\_data.js}!calcularMapaCalidadGeneral@{calcularMapaCalidadGeneral}}
+\index{calcularMapaCalidadGeneral@{calcularMapaCalidadGeneral}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{calcularMapaCalidadGeneral()}{calcularMapaCalidadGeneral()}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a090cfa046f5a7b8586a8a410da42bb3f} 
+async function calcular\+Mapa\+Calidad\+General (\begin{DoxyParamCaption}\item[{fecha\+ISO}]{}{}\end{DoxyParamCaption})}
+
+
+
+Genera un mapa compuesto de Calidad General (ICA). 
+
+Descarga todos los gases disponibles, superpone sus intensidades y se queda con el peor valor (máximo) en cada punto geográfico. 
+\begin{DoxyParams}{Parameters}
+{\em \{string\}} & fecha\+ISO -\/ Fecha solicitada. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{Promise$<$\+Object$>$\} Datos del mapa general. 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00301}{301}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 0
+\Hypertarget{users__map__data_8js_af498823bdb604ede736ba16f25825191}\index{users\_map\_data.js@{users\_map\_data.js}!descargarGasIndividual@{descargarGasIndividual}}
+\index{descargarGasIndividual@{descargarGasIndividual}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{descargarGasIndividual()}{descargarGasIndividual()}}
+{\footnotesize\ttfamily \label{users__map__data_8js_af498823bdb604ede736ba16f25825191} 
+async function descargar\+Gas\+Individual (\begin{DoxyParamCaption}\item[{fecha\+ISO}]{}{, }\item[{tipo\+Gas}]{}{}\end{DoxyParamCaption})}
+
+
+
+Descarga los datos de un gas específico desde Firestore. 
+
+
+\begin{DoxyEnumerate}
+\item Consulta la colección {\ttfamily Tipo\+\_\+\+Gas} para obtener umbrales y colores.
+\item Consulta la colección {\ttfamily Mapas\+\_\+\+Diarios} para obtener los puntos de medición.
+\item Rellena {\ttfamily \doxylink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{global\+Datos\+Cache}} con los valores numéricos reales.
+\item Genera los puntos visuales (normalizados 0-\/1) para el Heatmap.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{string\}} & fecha\+ISO -\/ Fecha solicitada. \\
+\hline
+{\em \{string\}} & tipo\+Gas -\/ Tipo de gas. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00117}{117}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+Here is the call graph for this function:\+
+% FIG 1
+Here is the caller graph for this function:\+
+% FIG 2
+\Hypertarget{users__map__data_8js_a94675ad2b00e078bc343933d1f097c55}\index{users\_map\_data.js@{users\_map\_data.js}!if@{if}}
+\index{if@{if}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{if()}{if()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a94675ad2b00e078bc343933d1f097c55} 
+if (\begin{DoxyParamCaption}\item[{typeof firebase !}]{}{ = {\ttfamily =~\textquotesingle{}undefined\textquotesingle{}~\&\&~firebaseConfig.apiKey}}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00072}{72}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_a055563d333ba4a61b84ebe56ced06d6b}\index{users\_map\_data.js@{users\_map\_data.js}!if@{if}}
+\index{if@{if}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{if()}{if()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a055563d333ba4a61b84ebe56ced06d6b} 
+if (\begin{DoxyParamCaption}\item[{typeof module !}]{}{ = {\ttfamily =~\textquotesingle{}undefined\textquotesingle{}~\&\&~module.exports}}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00363}{363}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}\index{users\_map\_data.js@{users\_map\_data.js}!obtenerIntensidadSegunNivel@{obtenerIntensidadSegunNivel}}
+\index{obtenerIntensidadSegunNivel@{obtenerIntensidadSegunNivel}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{obtenerIntensidadSegunNivel()}{obtenerIntensidadSegunNivel()}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57} 
+function obtener\+Intensidad\+Segun\+Nivel (\begin{DoxyParamCaption}\item[{valor}]{}{, }\item[{niveles}]{}{}\end{DoxyParamCaption})}
+
+
+
+Determina la intensidad visual (0-\/1) de un valor según los umbrales. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{number\}} & valor -\/ Valor numérico del contaminante. \\
+\hline
+{\em \{\+Array\}} & niveles -\/ Configuración de niveles de la BBDD. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{number\} Intensidad para el Heatmap (ej:\+ 0.\+2, 0.\+6, 1.\+0). 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00260}{260}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 3
+\Hypertarget{users__map__data_8js_a42cd18fde1c03a3c4851edcce7aa2c0a}\index{users\_map\_data.js@{users\_map\_data.js}!procesarColoresDeBBDD@{procesarColoresDeBBDD}}
+\index{procesarColoresDeBBDD@{procesarColoresDeBBDD}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{procesarColoresDeBBDD()}{procesarColoresDeBBDD()}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a42cd18fde1c03a3c4851edcce7aa2c0a} 
+function procesar\+Colores\+De\+BBDD (\begin{DoxyParamCaption}\item[{niveles}]{}{}\end{DoxyParamCaption})}
+
+
+
+Genera un objeto gradiente compatible con Leaflet a partir de niveles BBDD. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{\+Array\}} & niveles -\/ Configuración de niveles. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{Object\} Objeto gradiente \{ 0.\+2:\+ \textquotesingle{}green\textquotesingle{}, ... \}. 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00282}{282}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+Here is the caller graph for this function:\+
+% FIG 4
+\Hypertarget{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36}\index{users\_map\_data.js@{users\_map\_data.js}!setCachePruebas@{setCachePruebas}}
+\index{setCachePruebas@{setCachePruebas}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{setCachePruebas()}{setCachePruebas()}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36} 
+function set\+Cache\+Pruebas (\begin{DoxyParamCaption}\item[{datos\+Falsos}]{}{}\end{DoxyParamCaption})}
+
+
+
+Inyecta datos falsos en la caché para pruebas unitarias. 
+
+Permite probar {\ttfamily \doxylink{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}{calcular\+Contaminacion\+En\+Ubicacion}} sin conexión a Firebase. 
+\begin{DoxyParams}{Parameters}
+{\em \{\+Array\}} & datos\+Falsos -\/ Datos mock. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00353}{353}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{users__map__data_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{users__map__data_8js_ae32b74d86240025f829d81e222ef88dd}\index{users\_map\_data.js@{users\_map\_data.js}!auth@{auth}}
+\index{auth@{auth}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{auth}{auth}}
+{\footnotesize\ttfamily \label{users__map__data_8js_ae32b74d86240025f829d81e222ef88dd} 
+let auth = null}
+
+
+
+Instancia de Firebase Auth. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00036}{36}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}\index{users\_map\_data.js@{users\_map\_data.js}!calcularContaminacionEnUbicacion@{calcularContaminacionEnUbicacion}}
+\index{calcularContaminacionEnUbicacion@{calcularContaminacionEnUbicacion}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{calcularContaminacionEnUbicacion}{calcularContaminacionEnUbicacion}}
+{\footnotesize\ttfamily \label{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} calcular\+Contaminacion\+En\+Ubicacion}
+
+
+
+Calcula el nivel de contaminación estimado en una coordenada específica. 
+
+Utiliza el algoritmo de Interpolación de Ponderación de Distancia Inversa (IDW).
+\begin{DoxyItemize}
+\item Busca puntos en {\ttfamily \doxylink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{global\+Datos\+Cache}}.
+\item Pondera los valores cercanos (más peso cuanto más cerca).
+\item Si está fuera del rango ({\ttfamily DISTANCIA\+\_\+\+CORTE}), devuelve 0.
+\item Incluye correcciones para evitar el "{}efecto borde vacío"{}.
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{number\}} & lat -\/ Latitud del punto a consultar. \\
+\hline
+{\em \{number\}} & lng -\/ Longitud del punto a consultar. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{number\} Valor interpolado de contaminación. 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00197}{197}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_af670582b5c8da7efc1bd7486225bcec7}\index{users\_map\_data.js@{users\_map\_data.js}!db@{db}}
+\index{db@{db}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{db}{db}}
+{\footnotesize\ttfamily \label{users__map__data_8js_af670582b5c8da7efc1bd7486225bcec7} 
+let db = null}
+
+
+
+Instancia de Firestore Database. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00034}{34}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_ad13e75ec0ea0c900a9d05a75c3382b75}\index{users\_map\_data.js@{users\_map\_data.js}!firebaseConfig@{firebaseConfig}}
+\index{firebaseConfig@{firebaseConfig}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{firebaseConfig}{firebaseConfig}}
+{\footnotesize\ttfamily \label{users__map__data_8js_ad13e75ec0ea0c900a9d05a75c3382b75} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} firebase\+Config}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ typeof\ \doxymbox{\hyperlink{users__map__logic_8test_8js_a516f298d4f12a96439e819204eeee081}{\_\_firebase\_config}}\ !==\ \textcolor{stringliteral}{'undefined'}\ ?\ JSON.parse(\doxymbox{\hyperlink{users__map__logic_8test_8js_a516f298d4f12a96439e819204eeee081}{\_\_firebase\_config}})\ :\ \{}
+\DoxyCodeLine{\ \ \ \ apiKey:\ \textcolor{stringliteral}{"{}AIzaSyCbAVEYYdtSLmrH\_opCM72G\_G01QXPRZ48"{}},}
+\DoxyCodeLine{\ \ \ \ authDomain:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebaseapp.com"{}},}
+\DoxyCodeLine{\ \ \ \ databaseURL:\ \textcolor{stringliteral}{"{}https://biometria-\/g3-\/default-\/rtdb.europe-\/west1.firebasedatabase.app"{}},}
+\DoxyCodeLine{\ \ \ \ projectId:\ \textcolor{stringliteral}{"{}biometria-\/g3"{}},}
+\DoxyCodeLine{\ \ \ \ storageBucket:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebasestorage.app"{}},}
+\DoxyCodeLine{\ \ \ \ messagingSenderId:\ \textcolor{stringliteral}{"{}817957103566"{}},}
+\DoxyCodeLine{\ \ \ \ appId:\ \textcolor{stringliteral}{"{}1:817957103566:web:75c78a0a28f3380d092d9f"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Configuración de conexión a Firebase. 
+
+Intenta leer una configuración global inyectada ({\ttfamily \doxylink{users__map__logic_8test_8js_a516f298d4f12a96439e819204eeee081}{\+\_\+\+\_\+firebase\+\_\+config}}) o usa la por defecto. 
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00023}{23}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}\index{users\_map\_data.js@{users\_map\_data.js}!globalDatosCache@{globalDatosCache}}
+\index{globalDatosCache@{globalDatosCache}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{globalDatosCache}{globalDatosCache}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49} 
+let global\+Datos\+Cache = \+[$\,$]\+}
+
+
+
+Caché global de datos descargados. 
+
+Almacena un array de arrays {\ttfamily \+[lat, lng, valor]\+} para realizar cálculos matemáticos sin tener que volver a consultar el DOM o la base de datos. @type \{Array$<$\+Array$<$number$>$$>$\} 
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00044}{44}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_ae6e0332bc363e59ff8d87c1a82ed69f4}\index{users\_map\_data.js@{users\_map\_data.js}!inicializarFirebase@{inicializarFirebase}}
+\index{inicializarFirebase@{inicializarFirebase}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{inicializarFirebase}{inicializarFirebase}}
+{\footnotesize\ttfamily \label{users__map__data_8js_ae6e0332bc363e59ff8d87c1a82ed69f4} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} inicializar\+Firebase}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ function(callback)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (!\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.signInAnonymously().then((cred)\ =>\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (callback)\ callback(cred.user);}
+\DoxyCodeLine{\ \ \ \ \}).\textcolor{keywordflow}{catch}(e\ =>\ console.error(\textcolor{stringliteral}{"{}Error\ Auth:"{}},\ e));}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Inicializa la autenticación anónima con Firebase. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \{\+Function\}} & callback -\/ Función a ejecutar cuando la autenticación sea exitosa. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00084}{84}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_a88ee1072f21f77c3535e762b5113145e}\index{users\_map\_data.js@{users\_map\_data.js}!INTENSIDAD\_COLORES@{INTENSIDAD\_COLORES}}
+\index{INTENSIDAD\_COLORES@{INTENSIDAD\_COLORES}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{INTENSIDAD\_COLORES}{INTENSIDAD\_COLORES}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a88ee1072f21f77c3535e762b5113145e} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} INTENSIDAD\+\_\+\+COLORES}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{'verde'}:\ 0.2,\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{'amarillo'}:\ 0.6,\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{'naranja'}:\ 0.6,\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{'rojo'}:\ 1.0,\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{'morado'}:\ 1.0\ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Mapeo de nombres de colores a valores de intensidad del Heatmap (0.\+0 a 1.\+0). 
+
+Se usa para traducir la configuración de colores de la BBDD a lo que entiende Leaflet.\+heat. @const \{Object\} 
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00061}{61}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_ab38a3a30ab2d8b0f8da8e7a946a7ced8}\index{users\_map\_data.js@{users\_map\_data.js}!obtenerDatosDelSensor@{obtenerDatosDelSensor}}
+\index{obtenerDatosDelSensor@{obtenerDatosDelSensor}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{obtenerDatosDelSensor}{obtenerDatosDelSensor}}
+{\footnotesize\ttfamily \label{users__map__data_8js_ab38a3a30ab2d8b0f8da8e7a946a7ced8} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} obtener\+Datos\+Del\+Sensor}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ async\ function(fechaISO,\ tipoGas)\ \{}
+\DoxyCodeLine{\ \ \ \ console.log(\`{}\ Descargando\ datos\ para:\ \$\{tipoGas\}\ (\$\{fechaISO\})\`{});}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (tipoGas\ ===\ \textcolor{stringliteral}{'GENERAL'})\ \textcolor{keywordflow}{return}\ await\ \doxymbox{\hyperlink{users__map__data_8js_a090cfa046f5a7b8586a8a410da42bb3f}{calcularMapaCalidadGeneral}}(fechaISO);}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ await\ \doxymbox{\hyperlink{users__map__data_8js_af498823bdb604ede736ba16f25825191}{descargarGasIndividual}}(fechaISO,\ tipoGas);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Función principal para obtener datos de sensores. 
+
+Decide si descargar un gas individual o calcular el mapa general compuesto. 
+\begin{DoxyParams}{Parameters}
+{\em \{string\}} & fecha\+ISO -\/ Fecha en formato YYYY-\/\+MM-\/\+DD. \\
+\hline
+{\em \{string\}} & tipo\+Gas -\/ Identificador del gas (ej:\+ "{}\+CO2"{}, "{}\+GENERAL"{}). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{Promise$<$\+Object$>$\} Objeto con puntos, gradiente y unidad. 
+\end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00100}{100}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+
+\Hypertarget{users__map__data_8js_a99a063512d952b9ad340a08ad61f328e}\index{users\_map\_data.js@{users\_map\_data.js}!UNIDADES\_ESTANDAR@{UNIDADES\_ESTANDAR}}
+\index{UNIDADES\_ESTANDAR@{UNIDADES\_ESTANDAR}!users\_map\_data.js@{users\_map\_data.js}}
+\doxysubsubsection{\texorpdfstring{UNIDADES\_ESTANDAR}{UNIDADES\_ESTANDAR}}
+{\footnotesize\ttfamily \label{users__map__data_8js_a99a063512d952b9ad340a08ad61f328e} 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} UNIDADES\+\_\+\+ESTANDAR}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{'CO2'}:\ \textcolor{stringliteral}{'ppm'},\ \textcolor{stringliteral}{'CO'}:\ \textcolor{stringliteral}{'ppm'},\ \textcolor{stringliteral}{'O3'}:\ \textcolor{stringliteral}{'µg/m³'},\ \textcolor{stringliteral}{'NO2'}:\ \textcolor{stringliteral}{'µg/m³'},\ \textcolor{stringliteral}{'SO2'}:\ \textcolor{stringliteral}{'µg/m³'},\ \textcolor{stringliteral}{'GENERAL'}:\ \textcolor{stringliteral}{'ICA'}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Diccionario de unidades de medida estándar por tipo de gas. @const \{Object\}. 
+
+
+
+Definition at line \doxymbox{\hyperlink{users__map__data_8js_source_l00051}{51}} of file \doxymbox{\hyperlink{users__map__data_8js_source}{users\+\_\+map\+\_\+data.\+js}}.
+

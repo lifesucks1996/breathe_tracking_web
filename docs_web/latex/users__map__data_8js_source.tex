@@ -1,0 +1,376 @@
+\doxysection{users\+\_\+map\+\_\+data.\+js}
+\hypertarget{users__map__data_8js_source}{}\label{users__map__data_8js_source}\index{src/js/users\_map\_data.js@{src/js/users\_map\_data.js}}
+\doxymbox{\hyperlink{users__map__data_8js}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00001}00001\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00002}00002\ \textcolor{comment}{\ *\ @file\ users\_map\_data.js}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00003}00003\ \textcolor{comment}{\ *\ @brief\ Gestión\ de\ datos\ de\ mapas,\ conexión\ a\ Firebase\ y\ cálculos\ matemáticos.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00004}00004\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00005}00005\ \textcolor{comment}{\ *\ Este\ archivo\ actúa\ como\ la\ capa\ de\ datos\ (Model)\ para\ el\ mapa\ de\ usuarios.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00006}00006\ \textcolor{comment}{\ *\ Sus\ responsabilidades\ principales\ son:}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00007}00007\ \textcolor{comment}{\ *\ 1.\ Conectar\ con\ Firebase\ Firestore\ para\ descargar\ mapas\ diarios\ de\ contaminantes.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00008}00008\ \textcolor{comment}{\ *\ 2.\ Procesar\ los\ datos\ crudos\ y\ convertirlos\ en\ puntos\ visuales\ (Heatmap)\ con\ intensidad\ 0-\/1.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00009}00009\ \textcolor{comment}{\ *\ 3.\ Realizar\ cálculos\ matemáticos\ (Interpolación\ IDW)\ para\ estimar\ la\ contaminación}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00010}00010\ \textcolor{comment}{\ *\ en\ cualquier\ punto\ donde\ el\ usuario\ haga\ clic,\ basándose\ en\ los\ sensores\ cercanos.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00011}00011\ \textcolor{comment}{\ *\ 4.\ Gestionar\ la\ caché\ de\ datos\ para\ evitar\ descargas\ innecesarias.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00012}00012\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00013}00013\ \textcolor{comment}{\ *\ @version\ 1.5\ (Con\ Depuración\ y\ IDW\ corregido)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00014}00014\ \textcolor{comment}{\ *\ @author\ Breathe\ Tracking\ Team}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00015}00015\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00017}00017\ \textcolor{comment}{//\ =========================\ CONFIGURACIÓN\ FIREBASE\ =========================}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00018}00018\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00019}00019\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00020}00020\ \textcolor{comment}{\ *\ @brief\ Configuración\ de\ conexión\ a\ Firebase.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00021}00021\ \textcolor{comment}{\ *\ @details\ Intenta\ leer\ una\ configuración\ global\ inyectada\ (`\_\_firebase\_config`)\ o\ usa\ la\ por\ defecto.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00022}00022\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00023}\doxymbox{\hyperlink{users__map__data_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{00023}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebaseConfig}}\ =\ typeof\ \doxymbox{\hyperlink{users__map__logic_8test_8js_a516f298d4f12a96439e819204eeee081}{\_\_firebase\_config}}\ !==\ \textcolor{stringliteral}{'undefined'}\ ?\ JSON.parse(\doxymbox{\hyperlink{users__map__logic_8test_8js_a516f298d4f12a96439e819204eeee081}{\_\_firebase\_config}})\ :\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00024}00024\ \ \ \ \ apiKey:\ \textcolor{stringliteral}{"{}AIzaSyCbAVEYYdtSLmrH\_opCM72G\_G01QXPRZ48"{}},}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00025}00025\ \ \ \ \ authDomain:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebaseapp.com"{}},}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00026}00026\ \ \ \ \ databaseURL:\ \textcolor{stringliteral}{"{}https://biometria-\/g3-\/default-\/rtdb.europe-\/west1.firebasedatabase.app"{}},}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00027}00027\ \ \ \ \ projectId:\ \textcolor{stringliteral}{"{}biometria-\/g3"{}},}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00028}00028\ \ \ \ \ storageBucket:\ \textcolor{stringliteral}{"{}biometria-\/g3.firebasestorage.app"{}},}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00029}00029\ \ \ \ \ messagingSenderId:\ \textcolor{stringliteral}{"{}817957103566"{}},}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00030}00030\ \ \ \ \ appId:\ \textcolor{stringliteral}{"{}1:817957103566:web:75c78a0a28f3380d092d9f"{}}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00031}00031\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00032}00032\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00033}00033\ \textcolor{comment}{/**\ @brief\ Instancia\ de\ Firestore\ Database.\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00034}\doxymbox{\hyperlink{users__map__data_8js_af670582b5c8da7efc1bd7486225bcec7}{00034}}\ let\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}\ =\ null;\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00035}00035\ \textcolor{comment}{/**\ @brief\ Instancia\ de\ Firebase\ Auth.\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00036}\doxymbox{\hyperlink{users__map__data_8js_ae32b74d86240025f829d81e222ef88dd}{00036}}\ let\ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}\ =\ null;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00037}00037\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00038}00038\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00039}00039\ \textcolor{comment}{\ *\ @brief\ Caché\ global\ de\ datos\ descargados.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00040}00040\ \textcolor{comment}{\ *\ @details\ Almacena\ un\ array\ de\ arrays\ \`{}[lat,\ lng,\ valor]`\ para\ realizar\ cálculos\ matemáticos}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00041}00041\ \textcolor{comment}{\ *\ sin\ tener\ que\ volver\ a\ consultar\ el\ DOM\ o\ la\ base\ de\ datos.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00042}00042\ \textcolor{comment}{\ *\ @type\ \{Array<Array<number>>\}}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00043}00043\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00044}\doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{00044}}\ let\ \doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{globalDatosCache}}\ =\ [];\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00046}00046\ \textcolor{comment}{//\ UNIDADES}\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00047}00047\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00048}00048\ \textcolor{comment}{\ *\ @brief\ Diccionario\ de\ unidades\ de\ medida\ estándar\ por\ tipo\ de\ gas.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00049}00049\ \textcolor{comment}{\ *\ @const\ \{Object\}}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00050}00050\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00051}\doxymbox{\hyperlink{users__map__data_8js_a99a063512d952b9ad340a08ad61f328e}{00051}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{users__map__data_8js_a99a063512d952b9ad340a08ad61f328e}{UNIDADES\_ESTANDAR}}\ =\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00052}00052\ \ \ \ \ \textcolor{stringliteral}{'CO2'}:\ \textcolor{stringliteral}{'ppm'},\ \textcolor{stringliteral}{'CO'}:\ \textcolor{stringliteral}{'ppm'},\ \textcolor{stringliteral}{'O3'}:\ \textcolor{stringliteral}{'µg/m³'},\ \textcolor{stringliteral}{'NO2'}:\ \textcolor{stringliteral}{'µg/m³'},\ \textcolor{stringliteral}{'SO2'}:\ \textcolor{stringliteral}{'µg/m³'},\ \textcolor{stringliteral}{'GENERAL'}:\ \textcolor{stringliteral}{'ICA'}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00053}00053\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00055}00055\ \textcolor{comment}{//\ SEMÁFORO\ ESTRICTO\ (3\ NIVELES)}\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00056}00056\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00057}00057\ \textcolor{comment}{\ *\ @brief\ Mapeo\ de\ nombres\ de\ colores\ a\ valores\ de\ intensidad\ del\ Heatmap\ (0.0\ a\ 1.0).}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00058}00058\ \textcolor{comment}{\ *\ @details\ Se\ usa\ para\ traducir\ la\ configuración\ de\ colores\ de\ la\ BBDD\ a\ lo\ que\ entiende\ Leaflet.heat.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00059}00059\ \textcolor{comment}{\ *\ @const\ \{Object\}}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00060}00060\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00061}\doxymbox{\hyperlink{users__map__data_8js_a88ee1072f21f77c3535e762b5113145e}{00061}}\ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{users__map__data_8js_a88ee1072f21f77c3535e762b5113145e}{INTENSIDAD\_COLORES}}\ =\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00062}00062\ \ \ \ \ \textcolor{stringliteral}{'verde'}:\ 0.2,\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00063}00063\ \ \ \ \ \textcolor{stringliteral}{'amarillo'}:\ 0.6,\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00064}00064\ \ \ \ \ \textcolor{stringliteral}{'naranja'}:\ 0.6,\ \textcolor{comment}{//\ Naranja\ -\/>\ Amarillo\ (Simplificación\ visual)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00065}00065\ \ \ \ \ \textcolor{stringliteral}{'rojo'}:\ 1.0,\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00066}00066\ \ \ \ \ \textcolor{stringliteral}{'morado'}:\ 1.0\ \ \ \textcolor{comment}{//\ Morado\ -\/>\ Rojo\ (Simplificación\ visual)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00067}00067\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00069}00069\ \textcolor{comment}{//\ =========================\ INICIALIZACIÓN\ =========================}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00070}00070\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00071}00071\ \textcolor{comment}{//\ Inicialización\ segura\ si\ la\ librería\ firebase\ está\ cargada}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00072}\doxymbox{\hyperlink{users__map__data_8js_a94675ad2b00e078bc343933d1f097c55}{00072}}\ \textcolor{keywordflow}{if}\ (typeof\ firebase\ !==\ \textcolor{stringliteral}{'undefined'}\ \&\&\ \doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebaseConfig}}.apiKey)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00073}00073\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00074}00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!firebase.apps.length)\ firebase.initializeApp(\doxymbox{\hyperlink{login__auth_8js_ad13e75ec0ea0c900a9d05a75c3382b75}{firebaseConfig}});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00075}00075\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}\ =\ firebase.firestore();}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00076}00076\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}\ =\ firebase.auth();}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00077}00077\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (e)\ \{\ console.error(\textcolor{stringliteral}{"{}Error\ init\ Firebase:"{}},\ e);\ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00078}00078\ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00079}00079\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00080}00080\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00081}00081\ \textcolor{comment}{\ *\ @brief\ Inicializa\ la\ autenticación\ anónima\ con\ Firebase.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00082}00082\ \textcolor{comment}{\ *\ @param\ \{Function\}\ callback\ -\/\ Función\ a\ ejecutar\ cuando\ la\ autenticación\ sea\ exitosa.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00083}00083\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00084}\doxymbox{\hyperlink{users__map__data_8js_ae6e0332bc363e59ff8d87c1a82ed69f4}{00084}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.inicializarFirebase\ =\ function(callback)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00085}00085\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00086}00086\ \ \ \ \ \doxymbox{\hyperlink{login__auth_8js_ae24006db5a243dcdeeb58c174e0bba64}{auth}}.signInAnonymously().then((cred)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00087}00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (callback)\ callback(cred.user);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00088}00088\ \ \ \ \ \}).\textcolor{keywordflow}{catch}(e\ =>\ console.error(\textcolor{stringliteral}{"{}Error\ Auth:"{}},\ e));}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00089}00089\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00090}00090\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00091}00091\ \textcolor{comment}{//\ =========================\ OBTENCIÓN\ DE\ DATOS\ =========================}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00092}00092\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00093}00093\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00094}00094\ \textcolor{comment}{\ *\ @brief\ Función\ principal\ para\ obtener\ datos\ de\ sensores.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00095}00095\ \textcolor{comment}{\ *\ @details\ Decide\ si\ descargar\ un\ gas\ individual\ o\ calcular\ el\ mapa\ general\ compuesto.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00096}00096\ \textcolor{comment}{\ *\ @param\ \{string\}\ fechaISO\ -\/\ Fecha\ en\ formato\ YYYY-\/MM-\/DD.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00097}00097\ \textcolor{comment}{\ *\ @param\ \{string\}\ tipoGas\ -\/\ Identificador\ del\ gas\ (ej:\ "{}CO2"{},\ "{}GENERAL"{}).}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00098}00098\ \textcolor{comment}{\ *\ @return\ \{Promise<Object>\}\ Objeto\ con\ puntos,\ gradiente\ y\ unidad.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00099}00099\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00100}\doxymbox{\hyperlink{users__map__data_8js_ab38a3a30ab2d8b0f8da8e7a946a7ced8}{00100}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.obtenerDatosDelSensor\ =\ async\ function(fechaISO,\ tipoGas)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00101}00101\ \ \ \ \ console.log(\`{}\ Descargando\ datos\ para:\ \$\{tipoGas\}\ (\$\{fechaISO\})\`{});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00102}00102\ \ \ \ \ \textcolor{keywordflow}{if}\ (tipoGas\ ===\ \textcolor{stringliteral}{'GENERAL'})\ \textcolor{keywordflow}{return}\ await\ \doxymbox{\hyperlink{users__map__data_8js_a090cfa046f5a7b8586a8a410da42bb3f}{calcularMapaCalidadGeneral}}(fechaISO);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00103}00103\ \ \ \ \ \textcolor{keywordflow}{return}\ await\ \doxymbox{\hyperlink{users__map__data_8js_af498823bdb604ede736ba16f25825191}{descargarGasIndividual}}(fechaISO,\ tipoGas);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00104}00104\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00105}00105\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00106}00106\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00107}00107\ \textcolor{comment}{\ *\ @brief\ Descarga\ los\ datos\ de\ un\ gas\ específico\ desde\ Firestore.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00108}00108\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00109}00109\ \textcolor{comment}{\ *\ 1.\ Consulta\ la\ colección\ \`{}Tipo\_Gas`\ para\ obtener\ umbrales\ y\ colores.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00110}00110\ \textcolor{comment}{\ *\ 2.\ Consulta\ la\ colección\ \`{}Mapas\_Diarios`\ para\ obtener\ los\ puntos\ de\ medición.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00111}00111\ \textcolor{comment}{\ *\ 3.\ Rellena\ \`{}globalDatosCache`\ con\ los\ valores\ numéricos\ reales.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00112}00112\ \textcolor{comment}{\ *\ 4.\ Genera\ los\ puntos\ visuales\ (normalizados\ 0-\/1)\ para\ el\ Heatmap.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00113}00113\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00114}00114\ \textcolor{comment}{\ *\ @param\ \{string\}\ fechaISO\ -\/\ Fecha\ solicitada.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00115}00115\ \textcolor{comment}{\ *\ @param\ \{string\}\ tipoGas\ -\/\ Tipo\ de\ gas.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00116}00116\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00117}\doxymbox{\hyperlink{users__map__data_8js_af498823bdb604ede736ba16f25825191}{00117}}\ async\ function\ \doxymbox{\hyperlink{users__map__data_8js_af498823bdb604ede736ba16f25825191}{descargarGasIndividual}}(fechaISO,\ tipoGas)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00118}00118\ \ \ \ \ \textcolor{keyword}{const}\ partes\ =\ fechaISO.split(\textcolor{charliteral}{'-\/'});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00119}00119\ \ \ \ \ \textcolor{keyword}{const}\ fechaFormateada\ =\ \`{}\$\{partes[2]\}-\/\$\{partes[1]\}-\/\$\{partes[0]\}\`{};\ \textcolor{comment}{//\ DD-\/MM-\/YYYY}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00120}00120\ \ \ \ \ \textcolor{keyword}{const}\ idMap\ =\ \`{}\$\{tipoGas\}\_\$\{fechaFormateada\}\`{};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00121}00121\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00122}00122\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00123}00123\ \ \ \ \ \ \ \ \ let\ nivelesBBDD\ =\ [];}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00124}00124\ \ \ \ \ \ \ \ \ let\ unidad\ =\ \doxymbox{\hyperlink{users__map__data_8js_a99a063512d952b9ad340a08ad61f328e}{UNIDADES\_ESTANDAR}}[tipoGas]\ ||\ \textcolor{stringliteral}{"{}ppm"{}};\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00125}00125\ \ \ \ \ \ \ \ \ let\ configGradiente\ =\ null;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00126}00126\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00127}00127\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1.\ Obtener\ Configuración\ del\ Gas\ (Umbrales)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00128}00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00129}00129\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ docConfig\ =\ await\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}.collection(\textcolor{stringliteral}{"{}Tipo\_Gas"{}}).doc(tipoGas).get();}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00130}00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (docConfig.exists)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00131}00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ data\ =\ docConfig.data();}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data.Umbrales?.Unidad)\ unidad\ =\ data.Umbrales.Unidad;\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data.Umbrales?.niveles)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nivelesBBDD\ =\ data.Umbrales.niveles;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configGradiente\ =\ \doxymbox{\hyperlink{users__map__data_8js_a42cd18fde1c03a3c4851edcce7aa2c0a}{procesarColoresDeBBDD}}(nivelesBBDD);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00136}00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00137}00137\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00138}00138\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (e)\ \{\ console.warn(\textcolor{stringliteral}{"{}Usando\ config\ default\ para"{}},\ tipoGas);\ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00139}00139\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00140}00140\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2.\ Obtener\ Datos\ del\ Mapa\ (Puntos)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00141}00141\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ docMapa\ =\ await\ \doxymbox{\hyperlink{admin__sensor__detail_8js_a89a7f6028a19c3dc081cc5f16eb53891}{db}}.collection(\textcolor{stringliteral}{"{}Mapas\_Diarios"{}}).doc(idMap).get();}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00142}00142\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00143}00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!docMapa.exists)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00144}00144\ \ \ \ \ \ \ \ \ \ \ \ \ console.warn(\textcolor{stringliteral}{"{}\ No\ hay\ datos\ para\ esta\ fecha\ en\ BBDD."{}});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00145}00145\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{globalDatosCache}}\ =\ [];}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00146}00146\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \{\ puntos:\ [],\ gradiente:\ configGradiente,\ unidad\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00147}00147\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00148}00148\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00149}00149\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ arrayPuntos\ =\ docMapa.data().Puntos\_array\ ||\ [];}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00150}00150\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00151}00151\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ DEBUG\ IMPORTANTE:\ Ver\ qué\ valores\ llegan\ realmente\ -\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00152}00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (arrayPuntos.length\ >\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00153}00153\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ valores\ =\ arrayPuntos.map(p\ =>\ parseFloat(p.valor));}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00154}00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ maxVal\ =\ Math.max(...valores);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00155}00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ minVal\ =\ Math.min(...valores);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00156}00156\ \ \ \ \ \ \ \ \ \ \ \ \ console.log(\`{}\ Datos\ RAW\ BBDD\ -\/>\ N°\ Puntos:\ \$\{arrayPuntos.length\},\ Min:\ \$\{minVal\},\ Max:\ \$\{maxVal\}\`{});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00157}00157\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00158}00158\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxVal\ <=\ 1.0\ \&\&\ unidad\ !==\ \textcolor{stringliteral}{'ICA'})\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00159}00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ console.warn(\textcolor{stringliteral}{"{}\ ALERTA:\ Los\ valores\ parecen\ normalizados\ (0-\/1).\ El\ mapa\ saldrá\ coloreado\ pero\ el\ dato\ numérico\ será\ muy\ bajo\ (0.x).\ Revisa\ si\ guardas\ el\ valor\ real\ en\ BBDD."{}});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00160}00160\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00161}00161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00162}00162\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00163}00163\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00164}00164\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Guardamos\ en\ cache\ los\ valores\ CRUDOS\ para\ el\ cálculo\ numérico\ posterior}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00165}00165\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{globalDatosCache}}\ =\ arrayPuntos.map(p\ =>\ [parseFloat(p.lat),\ parseFloat(p.lng),\ parseFloat(p.valor)]);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00166}00166\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00167}00167\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Preparamos\ los\ puntos\ para\ el\ Heatmap\ (Intensidad\ visual\ 0-\/1)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00168}00168\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ puntosHeatmap\ =\ arrayPuntos.map(p\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00169}00169\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ val\ =\ parseFloat(p.valor);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00170}00170\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ intensidad\ =\ \doxymbox{\hyperlink{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}{obtenerIntensidadSegunNivel}}(val,\ nivelesBBDD);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00171}00171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ [parseFloat(p.lat),\ parseFloat(p.lng),\ intensidad];}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00172}00172\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00173}00173\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00174}00174\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \{\ puntos:\ puntosHeatmap,\ gradiente:\ configGradiente,\ unidad\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00175}00175\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00176}00176\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (error)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00177}00177\ \ \ \ \ \ \ \ \ console.error(\textcolor{stringliteral}{"{}Error\ descargando\ gas:"{}},\ error);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00178}00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \{\ puntos:\ [],\ gradiente:\ null,\ unidad:\ \textcolor{stringliteral}{"{}ppm"{}}\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00179}00179\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00180}00180\ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00181}00181\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00182}00182\ \textcolor{comment}{//\ =========================\ CÁLCULO\ MATEMÁTICO\ (CORREGIDO)\ =========================}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00183}00183\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00184}00184\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00185}00185\ \textcolor{comment}{\ *\ @brief\ Calcula\ el\ nivel\ de\ contaminación\ estimado\ en\ una\ coordenada\ específica.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00186}00186\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00187}00187\ \textcolor{comment}{\ *\ Utiliza\ el\ algoritmo\ de\ Interpolación\ de\ Ponderación\ de\ Distancia\ Inversa\ (IDW).}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00188}00188\ \textcolor{comment}{\ *\ -\/\ Busca\ puntos\ en\ \`{}globalDatosCache`.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00189}00189\ \textcolor{comment}{\ *\ -\/\ Pondera\ los\ valores\ cercanos\ (más\ peso\ cuanto\ más\ cerca).}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00190}00190\ \textcolor{comment}{\ *\ -\/\ Si\ está\ fuera\ del\ rango\ (`DISTANCIA\_CORTE`),\ devuelve\ 0.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00191}00191\ \textcolor{comment}{\ *\ -\/\ Incluye\ correcciones\ para\ evitar\ el\ "{}efecto\ borde\ vacío"{}.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00192}00192\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00193}00193\ \textcolor{comment}{\ *\ @param\ \{number\}\ lat\ -\/\ Latitud\ del\ punto\ a\ consultar.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00194}00194\ \textcolor{comment}{\ *\ @param\ \{number\}\ lng\ -\/\ Longitud\ del\ punto\ a\ consultar.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00195}00195\ \textcolor{comment}{\ *\ @return\ \{number\}\ Valor\ interpolado\ de\ contaminación.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00196}00196\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00197}\doxymbox{\hyperlink{users__map__data_8js_ad1225d02c49bbe4d322c50cb97c7ca21}{00197}}\ \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}}.calcularContaminacionEnUbicacion\ =\ function(lat,\ lng)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00198}00198\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{globalDatosCache}}\ ||\ !\doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{globalDatosCache}}.length)\ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00199}00199\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00200}00200\ \ \ \ \ \textcolor{comment}{//\ Distancias\ en\ GRADOS\ (aprox:\ 0.01\ grados\ \string~\ 1.1km)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00201}00201\ \ \ \ \ \textcolor{comment}{//\ Aumentamos\ un\ poco\ el\ radio\ para\ asegurar\ que\ pille\ datos\ si\ estás\ cerca}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00202}00202\ \ \ \ \ \textcolor{keyword}{const}\ DISTANCIA\_CORTE\ =\ 0.05;\ \ \textcolor{comment}{//\ \string~5.5km\ (Si\ estás\ más\ lejos,\ devuelve\ 0)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00203}00203\ \ \ \ \ \textcolor{keyword}{const}\ RADIO\_VISUAL\ =\ 0.035;\ \ \ \ \textcolor{comment}{//\ \string~3.8km\ (Radio\ de\ influencia\ para\ interpolar)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00204}00204\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00205}00205\ \ \ \ \ let\ sumaPonderada\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00206}00206\ \ \ \ \ let\ pesoTotal\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00207}00207\ \ \ \ \ let\ distMasCercana\ =\ Infinity;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00208}00208\ \ \ \ \ let\ valorMasCercano\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00209}00209\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00210}00210\ \ \ \ \ \doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{globalDatosCache}}.forEach(pt\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00211}00211\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Distancia\ Euclidiana\ simple\ (suficiente\ para\ distancias\ cortas)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00212}00212\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ d\ =\ Math.sqrt(Math.pow(lat\ -\/\ pt[0],\ 2)\ +\ Math.pow(lng\ -\/\ pt[1],\ 2));}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00213}00213\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00214}00214\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Rastrear\ siempre\ el\ punto\ más\ cercano\ absoluto}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00215}00215\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ <\ distMasCercana)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00216}00216\ \ \ \ \ \ \ \ \ \ \ \ \ distMasCercana\ =\ d;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00217}00217\ \ \ \ \ \ \ \ \ \ \ \ \ valorMasCercano\ =\ pt[2];}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00218}00218\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00219}00219\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00220}00220\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Interpolación\ IDW\ (Inverse\ Distance\ Weighting)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00221}00221\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ <\ RADIO\_VISUAL)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00222}00222\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Factor\ de\ suavizado\ (0.001)\ para\ evitar\ división\ por\ cero\ si\ estás\ encima}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00223}00223\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ peso\ =\ 1\ /\ Math.pow(d\ +\ 0.001,\ 2);\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00224}00224\ \ \ \ \ \ \ \ \ \ \ \ \ sumaPonderada\ +=\ pt[2]\ *\ peso;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00225}00225\ \ \ \ \ \ \ \ \ \ \ \ \ pesoTotal\ +=\ peso;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00226}00226\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00227}00227\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00228}00228\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00229}00229\ \ \ \ \ console.log(\`{}\ Cálculo\ Pin\ (\$\{lat.toFixed(4)\},\$\{lng.toFixed(4)\}):\ DistanciaMin=\$\{distMasCercana.toFixed(4)\},\ ValorCercano=\$\{valorMasCercano\}\`{});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00230}00230\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00231}00231\ \ \ \ \ \textcolor{comment}{//\ CASO\ 1:\ Estás\ demasiado\ lejos\ de\ cualquier\ sensor}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00232}00232\ \ \ \ \ \textcolor{keywordflow}{if}\ (distMasCercana\ >\ DISTANCIA\_CORTE)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00233}00233\ \ \ \ \ \ \ \ \ console.log(\textcolor{stringliteral}{"{}-\/>\ Fuera\ de\ rango\ (0.0)"{}});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00234}00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.0;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00235}00235\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00236}00236\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00237}00237\ \ \ \ \ \textcolor{comment}{//\ CASO\ 2:\ Estás\ en\ zona\ de\ influencia\ (Interpolar)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00238}00238\ \ \ \ \ \textcolor{keywordflow}{if}\ (pesoTotal\ >\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00239}00239\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ resultado\ =\ parseFloat((sumaPonderada\ /\ pesoTotal).toFixed(2));}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00240}00240\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FIX:\ Si\ el\ resultado\ es\ absurdamente\ pequeño\ (<0.1)\ pero\ hay\ datos\ cercanos\ grandes,}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00241}00241\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ forzamos\ el\ valor\ más\ cercano\ para\ evitar\ el\ "{}efecto\ borde\ vacío"{}.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00242}00242\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resultado\ <\ 0.1\ \&\&\ valorMasCercano\ >\ 1)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00243}00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ parseFloat(valorMasCercano.toFixed(2));}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00244}00244\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00245}00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ resultado;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00246}00246\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00247}00247\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00248}00248\ \ \ \ \ \textcolor{comment}{//\ CASO\ 3:\ Fallback\ (Mancha\ aislada\ sin\ peso\ suficiente)}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00249}00249\ \ \ \ \ \textcolor{keywordflow}{return}\ parseFloat(valorMasCercano.toFixed(2));}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00250}00250\ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00251}00251\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00252}00252\ \textcolor{comment}{//\ =========================\ UTILIDADES\ =========================}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00253}00253\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00254}00254\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00255}00255\ \textcolor{comment}{\ *\ @brief\ Determina\ la\ intensidad\ visual\ (0-\/1)\ de\ un\ valor\ según\ los\ umbrales.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00256}00256\ \textcolor{comment}{\ *\ @param\ \{number\}\ valor\ -\/\ Valor\ numérico\ del\ contaminante.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00257}00257\ \textcolor{comment}{\ *\ @param\ \{Array\}\ niveles\ -\/\ Configuración\ de\ niveles\ de\ la\ BBDD.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00258}00258\ \textcolor{comment}{\ *\ @return\ \{number\}\ Intensidad\ para\ el\ Heatmap\ (ej:\ 0.2,\ 0.6,\ 1.0).}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00259}00259\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00260}\doxymbox{\hyperlink{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}{00260}}\ function\ \doxymbox{\hyperlink{users__map__data_8js_a3d09d7af17832e814e54ac4d5f0d3d57}{obtenerIntensidadSegunNivel}}(valor,\ niveles)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00261}00261\ \ \ \ \ \textcolor{keywordflow}{if}\ (!niveles\ ||\ niveles.length\ ===\ 0)\ \textcolor{keywordflow}{return}\ 0.2;\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00262}00262\ \ \ \ \ let\ colorEncontrado\ =\ \textcolor{stringliteral}{'verde'};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00263}00263\ \ \ \ \ \textcolor{keywordflow}{for}\ (let\ nivel\ of\ niveles)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00264}00264\ \ \ \ \ \ \ \ \ let\ cumpleMin\ =\ (nivel.min\ ===\ undefined)\ ||\ (valor\ >=\ nivel.min);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00265}00265\ \ \ \ \ \ \ \ \ let\ cumpleMax\ =\ (nivel.max\ ===\ undefined)\ ||\ (valor\ <=\ nivel.max);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00266}00266\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cumpleMin\ \&\&\ cumpleMax)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00267}00267\ \ \ \ \ \ \ \ \ \ \ \ \ let\ c\ =\ nivel.color\ ?\ nivel.color.toLowerCase()\ :\ \textcolor{stringliteral}{'verde'};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00268}00268\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (c\ ===\ \textcolor{stringliteral}{'naranja'})\ c\ =\ \textcolor{stringliteral}{'amarillo'};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00269}00269\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (c\ ===\ \textcolor{stringliteral}{'morado'})\ c\ =\ \textcolor{stringliteral}{'rojo'};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00270}00270\ \ \ \ \ \ \ \ \ \ \ \ \ colorEncontrado\ =\ c;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00271}00271\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00272}00272\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00273}00273\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00274}00274\ \ \ \ \ \textcolor{keywordflow}{return}\ \doxymbox{\hyperlink{users__map__data_8js_a88ee1072f21f77c3535e762b5113145e}{INTENSIDAD\_COLORES}}[colorEncontrado]\ ||\ 0.2;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00275}00275\ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00276}00276\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00277}00277\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00278}00278\ \textcolor{comment}{\ *\ @brief\ Genera\ un\ objeto\ gradiente\ compatible\ con\ Leaflet\ a\ partir\ de\ niveles\ BBDD.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00279}00279\ \textcolor{comment}{\ *\ @param\ \{Array\}\ niveles\ -\/\ Configuración\ de\ niveles.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00280}00280\ \textcolor{comment}{\ *\ @return\ \{Object\}\ Objeto\ gradiente\ \{\ 0.2:\ 'green',\ ...\ \}.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00281}00281\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00282}\doxymbox{\hyperlink{users__map__data_8js_a42cd18fde1c03a3c4851edcce7aa2c0a}{00282}}\ function\ \doxymbox{\hyperlink{users__map__data_8js_a42cd18fde1c03a3c4851edcce7aa2c0a}{procesarColoresDeBBDD}}(niveles)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00283}00283\ \ \ \ \ let\ grad\ =\ \{\};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00284}00284\ \ \ \ \ grad[0.0]\ =\ \textcolor{stringliteral}{'rgba(0,0,0,0)'};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00285}00285\ \ \ \ \ grad[0.2]\ =\ \textcolor{stringliteral}{'green'};\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00286}00286\ \ \ \ \ grad[0.6]\ =\ \textcolor{stringliteral}{'yellow'};\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00287}00287\ \ \ \ \ grad[1.0]\ =\ \textcolor{stringliteral}{'red'};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00288}00288\ \ \ \ \ \textcolor{keywordflow}{return}\ grad;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00289}00289\ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00290}00290\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00291}00291\ \textcolor{comment}{//\ =========================\ MAPA\ GENERAL\ =========================}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00292}00292\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00293}00293\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00294}00294\ \textcolor{comment}{\ *\ @brief\ Genera\ un\ mapa\ compuesto\ de\ Calidad\ General\ (ICA).}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00295}00295\ \textcolor{comment}{\ *\ @details}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00296}00296\ \textcolor{comment}{\ *\ Descarga\ todos\ los\ gases\ disponibles,\ superpone\ sus\ intensidades\ y\ se\ queda}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00297}00297\ \textcolor{comment}{\ *\ con\ el\ peor\ valor\ (máximo)\ en\ cada\ punto\ geográfico.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00298}00298\ \textcolor{comment}{\ *\ @param\ \{string\}\ fechaISO\ -\/\ Fecha\ solicitada.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00299}00299\ \textcolor{comment}{\ *\ @return\ \{Promise<Object>\}\ Datos\ del\ mapa\ general.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00300}00300\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00301}\doxymbox{\hyperlink{users__map__data_8js_a090cfa046f5a7b8586a8a410da42bb3f}{00301}}\ async\ function\ \doxymbox{\hyperlink{users__map__data_8js_a090cfa046f5a7b8586a8a410da42bb3f}{calcularMapaCalidadGeneral}}(fechaISO)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00302}00302\ \ \ \ \ \textcolor{keyword}{const}\ gases\ =\ [\textcolor{stringliteral}{'O3'},\ \textcolor{stringliteral}{'NO2'},\ \textcolor{stringliteral}{'CO'},\ \textcolor{stringliteral}{'SO2'},\ \textcolor{stringliteral}{'CO2'}];}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00303}00303\ \ \ \ \ \textcolor{keyword}{const}\ promesas\ =\ gases.map(gas\ =>\ \doxymbox{\hyperlink{users__map__data_8js_af498823bdb604ede736ba16f25825191}{descargarGasIndividual}}(fechaISO,\ gas));}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00304}00304\ \ \ \ \ \textcolor{keyword}{const}\ resultados\ =\ await\ Promise.all(promesas);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00305}00305\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00306}00306\ \ \ \ \ \textcolor{keyword}{const}\ mapaUnificado\ =\ \textcolor{keyword}{new}\ Map();}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00307}00307\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00308}00308\ \ \ \ \ resultados.forEach(res\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00309}00309\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!res.puntos)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00310}00310\ \ \ \ \ \ \ \ \ res.puntos.forEach(pt\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00311}00311\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ key\ =\ \`{}\$\{pt[0].toFixed(5)\}\_\$\{pt[1].toFixed(5)\}\`{};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00312}00312\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ intensidad\ =\ pt[2];}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00313}00313\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mapaUnificado.has(key))\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00314}00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (intensidad\ >\ mapaUnificado.get(key))\ mapaUnificado.set(key,\ intensidad);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00315}00315\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00316}00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapaUnificado.set(key,\ intensidad);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00317}00317\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00318}00318\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00319}00319\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00320}00320\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00321}00321\ \ \ \ \ \textcolor{keyword}{const}\ puntosFinales\ =\ [];}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00322}00322\ \ \ \ \ \textcolor{keyword}{const}\ arrayParaCache\ =\ [];\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00323}00323\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00324}00324\ \ \ \ \ mapaUnificado.forEach((intensidad,\ key)\ =>\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00325}00325\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ [lat,\ lng]\ =\ key.split(\textcolor{charliteral}{'\_'}).map(parseFloat);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00326}00326\ \ \ \ \ \ \ \ \ puntosFinales.push([lat,\ lng,\ intensidad]);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00327}00327\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00328}00328\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Convertimos\ Intensidad\ a\ valor\ numérico\ ICA\ legible}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00329}00329\ \ \ \ \ \ \ \ \ let\ valorICA\ =\ 0;\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00330}00330\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (intensidad\ >=\ 0.2)\ valorICA\ =\ 25;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00331}00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (intensidad\ >=\ 0.6)\ valorICA\ =\ 75;\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00332}00332\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (intensidad\ >=\ 1.0)\ valorICA\ =\ 150;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00333}00333\ \ \ \ \ \ \ \ \ arrayParaCache.push([lat,\ lng,\ valorICA]);}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00334}00334\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00335}00335\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00336}00336\ \ \ \ \ \doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{globalDatosCache}}\ =\ arrayParaCache;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00337}00337\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00338}00338\ \ \ \ \ \textcolor{keywordflow}{return}\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00339}00339\ \ \ \ \ \ \ \ \ puntos:\ puntosFinales,}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00340}00340\ \ \ \ \ \ \ \ \ gradiente:\ \{\ 0.0:\ \textcolor{stringliteral}{'rgba(0,0,0,0)'},\ 0.2:\ \textcolor{stringliteral}{'green'},\ 0.6:\ \textcolor{stringliteral}{'yellow'},\ 1.0:\ \textcolor{stringliteral}{'red'}\ \},}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00341}00341\ \ \ \ \ \ \ \ \ unidad:\ \textcolor{stringliteral}{"{}ICA\ Global"{}}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00342}00342\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00343}00343\ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00344}00344\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00345}00345\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00346}00346\ \textcolor{comment}{//\ =========================\ FUNCIONES\ AUXILIARES\ PARA\ TESTS\ =========================}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00347}00347\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00348}00348\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00349}00349\ \textcolor{comment}{\ *\ @brief\ Inyecta\ datos\ falsos\ en\ la\ caché\ para\ pruebas\ unitarias.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00350}00350\ \textcolor{comment}{\ *\ @details\ Permite\ probar\ \`{}calcularContaminacionEnUbicacion`\ sin\ conexión\ a\ Firebase.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00351}00351\ \textcolor{comment}{\ *\ @param\ \{Array\}\ datosFalsos\ -\/\ Datos\ mock.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00352}00352\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00353}\doxymbox{\hyperlink{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36}{00353}}\ function\ \doxymbox{\hyperlink{users__map__data_8js_a3a8c27d4ee5fa05274f9c051fa7eab36}{setCachePruebas}}(datosFalsos)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00354}00354\ \ \ \ \ \doxymbox{\hyperlink{users__map__data_8js_a78405de443fe3fae5472e489b77e7e49}{globalDatosCache}}\ =\ datosFalsos;}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00355}00355\ \}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00356}00356\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00357}00357\ \textcolor{comment}{//\ =========================\ EXPORTACIÓN\ PARA\ JEST\ =========================}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00358}00358\ }
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00359}00359\ \textcolor{comment}{/*\ Esto\ comprueba\ si\ estamos\ en\ un\ entorno\ de\ Node.js\ (Jest).}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00360}00360\ \textcolor{comment}{\ \ \ Si\ es\ así,\ exportamos\ las\ funciones\ para\ que\ el\ test\ las\ pueda\ leer.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00361}00361\ \textcolor{comment}{\ \ \ Si\ estamos\ en\ el\ navegador,\ esto\ se\ ignora\ y\ no\ rompe\ nada.}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00362}00362\ \textcolor{comment}{*/}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00363}\doxymbox{\hyperlink{users__map__data_8js_a055563d333ba4a61b84ebe56ced06d6b}{00363}}\ \textcolor{keywordflow}{if}\ (typeof\ module\ !==\ \textcolor{stringliteral}{'undefined'}\ \&\&\ module.exports)\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00364}00364\ \ \ \ \ \textcolor{keyword}{module}.exports\ =\ \{}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00365}00365\ \ \ \ \ \ \ \ \ obtenerIntensidadSegunNivel,}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00366}00366\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Como\ calcularContaminacion\ está\ definida\ en\ window,\ la\ referenciamos\ así:}}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00367}00367\ \ \ \ \ \ \ \ \ calcularContaminacionEnUbicacion:\ window.calcularContaminacionEnUbicacion,}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00368}00368\ \ \ \ \ \ \ \ \ setCachePruebas}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00369}00369\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{users__map__data_8js_source_l00370}00370\ \}}
+
+\end{DoxyCode}

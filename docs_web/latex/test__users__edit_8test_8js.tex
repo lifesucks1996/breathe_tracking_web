@@ -1,0 +1,91 @@
+\doxysection{test/\+test\+\_\+users\+\_\+edit.test.\+js File Reference}
+\hypertarget{test__users__edit_8test_8js}{}\label{test__users__edit_8test_8js}\index{test/test\_users\_edit.test.js@{test/test\_users\_edit.test.js}}
+
+
+Test automático de validación de usuarios usando Jest.  
+
+
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a233bce6933e38aef4869391b0f4edfee}{describe}} (\textquotesingle{}Validación de Edición de Usuarios\textquotesingle{},()=$>$ \{ test(\textquotesingle{}Debe aceptar datos válidos(Nombre, Apellidos y CP correctos)\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} datos\+Correctos=\{ nombre:\+"{}\+Ana"{}, apellidos:\+"{}\+López"{}, cp:\+"{}46001"{}, \};expect(\doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}}(datos\+Correctos)).to\+Be(true);\});test(\textquotesingle{}Debe rechazar nombres demasiado cortos\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} datos\+Mal\+Nombre=\{ nombre:\+"{}\+A"{}, apellidos:\+"{}\+López"{}, cp:\+"{}46001"{} \};expect(\doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}}(datos\+Mal\+Nombre)).to\+Be(false);\});test(\textquotesingle{}Debe rechazar Códigos Postales incompletos\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} datos\+Mal\+CP=\{ nombre:\+"{}\+Ana"{}, apellidos:\+"{}\+López"{}, cp:\+"{}460"{} \};expect(\doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}}(datos\+Mal\+CP)).to\+Be(false);\});\})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+global \doxymbox{\hyperlink{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}{document}}
+\item 
+global \doxymbox{\hyperlink{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}{window}} = \{\}
+\item 
+\doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} \{ \doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}} \} = require(\textquotesingle{}../\+src/\+js/\+users\+\_\+edit.\+js\textquotesingle{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Test automático de validación de usuarios usando Jest. 
+
+
+
+Definition in file \doxymbox{\hyperlink{test__users__edit_8test_8js_source}{test\+\_\+users\+\_\+edit.\+test.\+js}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{test__users__edit_8test_8js_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{test__users__edit_8test_8js_a233bce6933e38aef4869391b0f4edfee}\index{test\_users\_edit.test.js@{test\_users\_edit.test.js}!describe@{describe}}
+\index{describe@{describe}!test\_users\_edit.test.js@{test\_users\_edit.test.js}}
+\doxysubsubsection{\texorpdfstring{describe()}{describe()}}
+{\footnotesize\ttfamily \label{test__users__edit_8test_8js_a233bce6933e38aef4869391b0f4edfee} 
+describe (\begin{DoxyParamCaption}\item[{\textquotesingle{}Validación de Edición de Usuarios\textquotesingle{}}]{}{, }\item[{()}]{}{, }\item[{\{ test(\textquotesingle{}Debe aceptar datos válidos(Nombre, Apellidos y CP correctos)\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} datos\+Correctos=\{ nombre:\+"{}\+Ana"{}, apellidos:\+"{}\+López"{}, cp:\+"{}46001"{}, \};expect(\doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}}(datos\+Correctos)).to\+Be(true);\});test(\textquotesingle{}Debe rechazar nombres demasiado cortos\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} datos\+Mal\+Nombre=\{ nombre:\+"{}\+A"{}, apellidos:\+"{}\+López"{}, cp:\+"{}46001"{} \};expect(\doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}}(datos\+Mal\+Nombre)).to\+Be(false);\});test(\textquotesingle{}Debe rechazar Códigos Postales incompletos\textquotesingle{},()=$>$ \{ \doxymbox{\hyperlink{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}{const}} datos\+Mal\+CP=\{ nombre:\+"{}\+Ana"{}, apellidos:\+"{}\+López"{}, cp:\+"{}460"{} \};expect(\doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}}(datos\+Mal\+CP)).to\+Be(false);\});\}}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+% FIG 0
+
+
+\label{doc-var-members}
+\Hypertarget{test__users__edit_8test_8js_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c}\index{test\_users\_edit.test.js@{test\_users\_edit.test.js}!const@{const}}
+\index{const@{const}!test\_users\_edit.test.js@{test\_users\_edit.test.js}}
+\doxysubsubsection{\texorpdfstring{const}{const}}
+{\footnotesize\ttfamily \label{test__users__edit_8test_8js_a92b303b76a3f942ea819498907d5e83c} 
+const \{ \doxymbox{\hyperlink{users__edit_8js_a59fa906553f8f5affc08ed3f0a6cc396}{validate}} \} = require(\textquotesingle{}../\+src/\+js/\+users\+\_\+edit.\+js\textquotesingle{})}
+
+
+
+Definition at line \doxymbox{\hyperlink{test__users__edit_8test_8js_source_l00022}{22}} of file \doxymbox{\hyperlink{test__users__edit_8test_8js_source}{test\+\_\+users\+\_\+edit.\+test.\+js}}.
+
+\Hypertarget{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec}\index{test\_users\_edit.test.js@{test\_users\_edit.test.js}!document@{document}}
+\index{document@{document}!test\_users\_edit.test.js@{test\_users\_edit.test.js}}
+\doxysubsubsection{\texorpdfstring{document}{document}}
+{\footnotesize\ttfamily \label{test__users__edit_8test_8js_a9fa3fd903584388c98582833a2532aec} 
+global document}
+
+{\bfseries Initial value:\+}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \{}
+\DoxyCodeLine{\ \ \ \ getElementById:\ ()\ =>\ null,}
+\DoxyCodeLine{\ \ \ \ querySelector:\ ()\ =>\ (\{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ classList:\ \{\ add:\ ()\ =>\ \{\},\ remove:\ ()\ =>\ \{\}\ \},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ textContent:\ \textcolor{stringliteral}{''}\ }
+\DoxyCodeLine{\ \ \ \ \}),}
+\DoxyCodeLine{\ \ \ \ querySelectorAll:\ ()\ =>\ [],}
+\DoxyCodeLine{\ \ \ \ activeElement:\ null}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line \doxymbox{\hyperlink{test__users__edit_8test_8js_source_l00008}{8}} of file \doxymbox{\hyperlink{test__users__edit_8test_8js_source}{test\+\_\+users\+\_\+edit.\+test.\+js}}.
+
+\Hypertarget{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af}\index{test\_users\_edit.test.js@{test\_users\_edit.test.js}!window@{window}}
+\index{window@{window}!test\_users\_edit.test.js@{test\_users\_edit.test.js}}
+\doxysubsubsection{\texorpdfstring{window}{window}}
+{\footnotesize\ttfamily \label{test__users__edit_8test_8js_a8ac3c63e523598549c2264ad7042f8af} 
+global window = \{\}}
+
+
+
+Definition at line \doxymbox{\hyperlink{test__users__edit_8test_8js_source_l00018}{18}} of file \doxymbox{\hyperlink{test__users__edit_8test_8js_source}{test\+\_\+users\+\_\+edit.\+test.\+js}}.
+
