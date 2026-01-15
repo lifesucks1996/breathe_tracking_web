@@ -1,7 +1,6 @@
 /* css/users_map.css */
 
-/* --- FIX 1: AJUSTE DE PANTALLA COMPLETA --- */
-/* Forzamos al body a ocupar exactamente el alto de la ventana y ocultamos el scroll general */
+/* --- CONFIGURACIÓN BASE --- */
 body {
     height: 100vh; 
     overflow: hidden; 
@@ -10,55 +9,46 @@ body {
     margin: 0;
 }
 
-/* 2. PEGA ESTO A CONTINUACIÓN (Sustituye cualquier cosa de .main-header que tuvieras ahí) */
-
 /* =================== HEADER / ENCABEZADO =================== */
 .main-header {
-    display: flex;                  /* Flexbox para alinear */
-    justify-content: space-between; /* Logo a un lado, botón al otro */
-    align-items: center;            /* CENTRADO VERTICAL PERFECTO */
-    padding: 0 30px;                /* Margen lateral (aire) */
-    height: 90px;                   /* Altura fija */
-    background-color: #1A2E44;      /* Color de fondo azul oscuro */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombra suave */
-    
-    /* Propiedades de estructura */
+    display: flex;                
+    justify-content: space-between; 
+    align-items: center;            
+    padding: 0 30px;                
+    height: 90px;                   
+    background-color: #1A2E44;      
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
     flex-shrink: 0;
     z-index: 50;
     box-sizing: border-box;
 }
 
-/* Alineación de la caja del logo */
 .logo {
     display: flex;
     align-items: center;
     height: 100%;
 }
 
-/* Tamaño de la imagen del logo */
 .logo img {
-    height: 35px;       /* Altura controlada para que no sea gigante */
-    width: auto;        /* Mantiene proporción */
+    height: 35px;       
+    width: auto;        
     object-fit: contain;
 }
 
-/* Contenedor de botones derecha (Icono user + Cerrar Sesión) */
 .header-nav {
     display: flex;
     align-items: center;
-    gap: 20px; /* Separación entre elementos */
+    gap: 20px; 
 }
 
-/* Icono de usuario */
 .nav-icon {
     font-size: 1.6em;
     color: rgba(255,255,255,0.8);
     transition: color 0.3s;
-    display: flex; /* Para centrar el icono en sí mismo */
+    display: flex; 
 }
 .nav-icon:hover { color: #fff; }
 
-/* Botón Cerrar Sesión (Estilo Ghost) */
 .nav-button-ghost {
     background: transparent;
     border: 1px solid rgba(255,255,255,0.3);
@@ -76,20 +66,18 @@ body {
     background-color: rgba(255,255,255,0.1);
 }
 
-/* =================== FIN HEADER =================== */
+/* =================== LAYOUT PRINCIPAL =================== */
 
-/* --- Contenedor Principal (El cuerpo del mapa) --- */
 .main-container {
     display: flex;
-    /* FIX 2: flex: 1 hace que ocupe TODO el espacio disponible entre header y footer */
     flex: 1; 
     width: 100%;
     position: relative;
-    overflow: hidden; /* Evita que el mapa genere scrollbars dobles */
-    height: 100%; /* Asegura altura completa */
+    overflow: hidden; 
+    height: 100%; 
 }
 
-/* --- Panel Izquierdo --- */
+/* --- Panel Izquierdo (Lista) --- */
 .left-panel {
     width: 380px;
     background-color: var(--left-panel-bg);
@@ -100,8 +88,6 @@ body {
     padding: 25px;
     box-sizing: border-box;
     z-index: 20;
-    
-    /* FIX 3: Scroll interno solo para este panel si la lista es muy larga */
     height: 100%; 
     overflow-y: auto; 
 }
@@ -127,7 +113,7 @@ body {
     border-radius: 8px;
     overflow: hidden;
     background: #fff;
-    flex-shrink: 0; /* Evita que se aplaste */
+    flex-shrink: 0; 
 }
 
 .left-panel .search-bar input,
@@ -154,8 +140,8 @@ body {
 /* Lista de Pines */
 .pins-container {
     flex-grow: 1;
-    overflow-y: auto; /* Scroll independiente para la lista */
-    padding-right: 5px; /* Espacio para el scrollbar */
+    overflow-y: auto; 
+    padding-right: 5px; 
 }
 
 .pin-item {
@@ -168,7 +154,6 @@ body {
     margin-bottom: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
-    /* Aseguramos que la caja se vea bien sin la flecha */
     justify-content: flex-start; 
 }
 
@@ -191,7 +176,6 @@ body {
 }
 
 .pin-item .pin-info {
-    /* Ocupa todo el espacio restante ahora que no hay botón */
     flex-grow: 1; 
 }
 
@@ -210,7 +194,6 @@ body {
 
 /* --- Vista Detalles --- */
 #pin-detail-view {
-    /* Animación suave al aparecer */
     animation: fadeIn 0.3s ease;
 }
 
@@ -262,18 +245,6 @@ body {
     padding-bottom: 5px;
 }
 
-.chart-placeholder {
-    width: 100%;
-    height: 100px;
-    background-color: #f8f9fa;
-    border: 1px dashed #ccc;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
 .detail-actions {
     display: flex;
     justify-content: space-between;
@@ -300,14 +271,14 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-    height: 100%; /* FIX: Asegura altura completa */
+    height: 100%; 
 }
 
 #mapa {
     flex-grow: 1;
     background-color: #e6f2ff;
     z-index: 1;
-    height: 100%; /* FIX: El mapa llena el panel */
+    height: 100%; 
 }
 
 /* Controles Flotantes */
@@ -392,33 +363,13 @@ body {
 }
 .button-danger:hover { background-color: #d9363e; }
 
-/* Botón Mover Pin */
-#move-pin-btn {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-/* Botones Zoom */
+/* Botones Zoom (Si los hubiera) */
 .zoom-controls {
     display: flex;
     border: 1px solid #ddd;
     border-radius: 6px;
     overflow: hidden;
 }
-.zoom-controls button {
-    background: #fff;
-    border: none;
-    padding: 5px 12px;
-    font-size: 1.2em;
-    cursor: pointer;
-    color: #555;
-}
-.zoom-controls button:first-child { border-right: 1px solid #eee; }
-.zoom-controls button:hover { background-color: #f9f9f9; }
 
 /* --- MODAL --- */
 .modal-overlay {
@@ -450,11 +401,6 @@ body {
     margin-bottom: 10px;
 }
 
-.modal-content p {
-    color: #666;
-    margin-bottom: 20px;
-}
-
 .modal-content input {
     width: 100%;
     padding: 12px;
@@ -463,6 +409,7 @@ body {
     border-radius: 8px;
     font-size: 1em;
     font-family: var(--font-primary);
+    box-sizing: border-box; /* Fix padding */
 }
 
 .modal-actions {
@@ -480,10 +427,7 @@ body {
     from { opacity: 0; } to { opacity: 1; }
 }
 
-
 /* --- ESTILOS PREMIUM --- */
-
-/* Botón Dorado */
 .button-premium {
     background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
     color: white;
@@ -498,7 +442,7 @@ body {
     gap: 8px;
     box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
     transition: all 0.3s ease;
-    flex-grow: 1; /* Para que ocupe espacio */
+    flex-grow: 1;
     justify-content: center;
 }
 
@@ -508,7 +452,6 @@ body {
     background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
 }
 
-/* Modal de Pago */
 .payment-content {
     border-top: 5px solid #f1c40f;
     max-width: 400px;
@@ -549,108 +492,105 @@ body {
     margin-bottom: 0 !important;
 }
 
-/* --- ESTILOS PARA ESTACIONES OFICIALES (WAQI) --- */
-.official-popup {
-    font-family: 'Helvetica', sans-serif;
-    min-width: 200px;
-}
-
+/* --- WAQI POPUPS --- */
+.official-popup { font-family: 'Helvetica', sans-serif; min-width: 200px; }
 .popup-header {
-    padding: 10px;
-    color: white;
-    border-radius: 4px 4px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #999; /* Color por defecto */
+    padding: 10px; color: white; border-radius: 4px 4px 0 0;
+    display: flex; justify-content: space-between; align-items: center; background-color: #999;
 }
-
 .city-name { font-size: 1.1em; font-weight: bold; }
-.aqi-badge { 
-    background: rgba(0,0,0,0.2); 
-    padding: 3px 8px; 
-    border-radius: 10px; 
-    font-weight: 800; 
-}
-
+.aqi-badge { background: rgba(0,0,0,0.2); padding: 3px 8px; border-radius: 10px; font-weight: 800; }
 .popup-body { padding: 10px; }
-
-.last-update {
-    font-size: 0.8em;
-    color: #666;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
-}
-
-.pollutant-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.pollutant-list li {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0;
-    font-size: 0.95em;
-    border-bottom: 1px dashed #f0f0f0;
-}
-
+.last-update { font-size: 0.8em; color: #666; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+.pollutant-list { list-style: none; padding: 0; margin: 0; }
+.pollutant-list li { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.95em; border-bottom: 1px dashed #f0f0f0; }
 .gas-name { font-weight: 600; color: #1A2E44; }
 .gas-value { font-family: monospace; font-weight: bold; color: #333; }
+.popup-footer { margin-top: 8px; font-size: 0.7em; color: #999; text-align: right; font-style: italic; }
 
-.popup-footer {
-    margin-top: 8px;
-    font-size: 0.7em;
-    color: #999;
-    text-align: right;
-    font-style: italic;
-}
-
-/* --- ESTILOS PARA LA ESTACIÓN OFICIAL (ICONO) --- */
-
-/* El contenedor del icono en el mapa */
 .station-icon-marker {
-    background: white;
-    border: 2px solid white;
-    border-radius: 6px; /* Bordes un poco redondeados */
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4); /* Sombra para que flote */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.2s ease;
+    background: white; border: 2px solid white; border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4); display: flex; justify-content: center; align-items: center; transition: transform 0.2s ease;
 }
+.station-icon-marker:hover { transform: scale(1.15); z-index: 1000 !important; }
+.station-icon-marker i { color: white; font-size: 16px; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 
-.station-icon-marker:hover {
-    transform: scale(1.15); /* Efecto zoom al pasar el ratón */
-    z-index: 1000 !important;
-}
 
-/* El icono de FontAwesome dentro */
-.station-icon-marker i {
-    color: white; /* El icono siempre blanco */
-    font-size: 16px;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
+/* ========================================================
+   RESPONSIVE / MÓVIL (MAX-WIDTH 768px)
+   ======================================================== */
+@media (max-width: 768px) {
+    
+    /* 1. HEADER COMPACTO */
+    .main-header {
+        height: 60px;
+        padding: 0 15px;
+    }
+    .logo img {
+        height: 28px; /* Logo más pequeño */
+    }
+    .header-nav {
+        gap: 12px;
+    }
+    .nav-button-ghost {
+        font-size: 0.8em;
+        padding: 6px 12px;
+    }
 
-/* Estilo para el Popup (Mejora visual) */
-.official-popup {
-    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-    min-width: 220px;
-}
-.official-popup .popup-header {
-    padding: 12px;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 4px 4px 0 0;
-}
-.official-popup .city-name { font-weight: bold; font-size: 1.1em; }
-.official-popup .aqi-badge { 
-    background: rgba(0,0,0,0.3); 
-    padding: 4px 8px; 
-    border-radius: 12px;
-    font-size: 0.9em;
+    /* 2. CONTENEDOR PRINCIPAL: COLUMNA (Mapa Arriba, Lista Abajo) */
+    .main-container {
+        flex-direction: column;
+    }
+
+    /* 3. MAPA: Ocupa el 60% superior de la pantalla (excluyendo header) */
+    .map-panel {
+        order: 1; /* El mapa va primero visualmente */
+        height: 60%; 
+        width: 100%;
+        border-bottom: 2px solid #5BA3F5; /* Separador visual */
+    }
+
+    /* 4. LISTA: Ocupa el 40% inferior */
+    .left-panel {
+        order: 2; /* La lista va debajo */
+        width: 100%;
+        height: 40%;
+        padding: 15px;
+    }
+
+    /* 5. CONTROLES DEL MAPA (Los flotantes) */
+    /* Apilamos el Select y el Botón "Actualizar" para que quepan */
+    .map-controls-top {
+        width: 85%; /* Casi todo el ancho */
+        flex-direction: column; /* Apilar verticalmente */
+        align-items: stretch; /* Estirar a lo ancho */
+        padding: 12px;
+        border-radius: 12px; /* Menos redondeado para ahorrar espacio */
+        top: 10px;
+    }
+
+    .map-controls-top select {
+        margin-bottom: 8px; /* Separación */
+        font-size: 0.9em;
+    }
+
+    .map-controls-top button {
+        width: 100%; /* Botón ancho completo */
+        justify-content: center;
+        padding: 8px;
+    }
+
+    /* Botón "Añadir Marcador" */
+    .map-controls-bottom {
+        bottom: 15px;
+        left: 15px;
+        transform: none;
+    }
+
+    /* 6. MODALES */
+    .modal-content {
+        width: 90%; /* Que no se salga de pantalla */
+        max-width: 320px;
+        padding: 20px;
+    }
 }
